@@ -9398,6 +9398,10 @@ void Unit::StopMoving(bool force)
         init.SetStop(); // Will trigger CMSG_MOVE_SPLINE_DONE from client.
         init.Launch();
     }
+    else if (GetTypeId() != TYPEID_PLAYER) {
+        init.SetFacing(GetOrientation());
+        init.Launch();
+    }
 
     DisableSpline();
 }
