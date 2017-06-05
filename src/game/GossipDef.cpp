@@ -473,10 +473,9 @@ void PlayerMenu::SendQuestGiverQuestDetails(Quest const *pQuest, ObjectGuid npcG
     {
         ItemPrototype const* IProto;
 
-        auto count = pQuest->GetRewChoiceItemsCount(); // // QUEST_REWARD_CHOICES_COUNT
-        data << uint32(count); 
+        data << uint32(pQuest->GetRewChoiceItemsCount());
 
-        for (uint32 i = 0; i < count; ++i)
+        for (uint32 i = 0; i < QUEST_REWARD_CHOICES_COUNT; ++i)
         {
             data << uint32(pQuest->RewChoiceItemId[i]);
             data << uint32(pQuest->RewChoiceItemCount[i]);
@@ -489,10 +488,9 @@ void PlayerMenu::SendQuestGiverQuestDetails(Quest const *pQuest, ObjectGuid npcG
                 data << uint32(0x00);
         }
 
-        count = pQuest->GetRewItemsCount(); // QUEST_REWARDS_COUNT
-        data << uint32(count);
-        
-        for (uint32 i = 0; i < count; ++i)
+        data << uint32(pQuest->GetRewItemsCount());
+
+        for (uint32 i = 0; i < QUEST_REWARDS_COUNT; ++i)
         {
             data << uint32(pQuest->RewItemId[i]);
             data << uint32(pQuest->RewItemCount[i]);
@@ -508,16 +506,43 @@ void PlayerMenu::SendQuestGiverQuestDetails(Quest const *pQuest, ObjectGuid npcG
         data << uint32(pQuest->GetRewOrReqMoney());
     }
 
+    data << pQuest->GetReqItemsCount();
+    for (uint32 i = 0; i <  QUEST_OBJECTIVES_COUNT; i++)
+    {
+        data << pQuest->ReqItemId[i];
+        data << pQuest->ReqItemCount[i];
+    }
+
+
+    data << pQuest->GetReqCreatureOrGOcount();
+    for (uint32 i = 0; i < QUEST_OBJECTIVES_COUNT; i++)
+    {
+        data << uint32(pQuest->ReqCreatureOrGOId[i]);
+        data << pQuest->ReqCreatureOrGOCount[i];
+    }
+
+    /*[-ZERO]
+    // rewarded honor points. Multiply with 10 to satisfy client
     data << uint32(pQuest->GetRewSpell());                  // reward spell, this spell will display (icon) (casted if RewSpellCast==0)
+    data << uint32(pQuest->GetRewSpellCast());              // casted spell
+
     data << uint32(QUEST_EMOTE_COUNT);
 
     for (uint32 i = 0; i < QUEST_EMOTE_COUNT; ++i)
     {
         data << uint32(pQuest->DetailsEmote[i]);
-        data << uint32(pQuest->DetailsEmoteDelay[i]); // delay between emotes in ms
+        data << uint32(pQuest->DetailsEmoteDelay[i]);       // DetailsEmoteDelay (in ms)
     }
-
+    */
     GetMenuSession()->SendPacket(&data);
+
+    // The DetailsEmote is not part of this packet in vanilla.
+    // We have to send it separately with a delayed event.
+    for (uint32 i = 0; i < QUEST_EMOTE_COUNT; ++i)
+    {
+        if (pQuest->DetailsEmote[i] > 0)
+            GetMenuSession()->GetPlayer()->AddDelayedEmote(pQuest->DetailsEmote[i], ObjectGuid(npcGUID), pQuest->DetailsEmoteDelay[i]);
+    }
 
     DEBUG_LOG("WORLD: Sent SMSG_QUESTGIVER_QUEST_DETAILS NPCGuid = %s, questid = %u", npcGUID.GetString().c_str(), pQuest->GetQuestId());
 }
