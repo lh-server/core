@@ -2729,6 +2729,9 @@ bool Unit::IsSpellBlocked(Unit *pCaster, SpellEntry const *spellEntry, WeaponAtt
 // Crit or block - determined on damage calculation phase! (and can be both in some time)
 float Unit::MeleeSpellMissChance(Unit *pVictim, WeaponAttackType attType, int32 skillDiff, SpellEntry const *spell, Spell* spellPtr)
 {
+    if (!pVictim || !pVictim->IsStandState())
+        return 0.0f;
+
     // Calculate hit chance (more correct for chance mod)
     float hitChance = 0.0f;
 
@@ -3072,7 +3075,7 @@ bool Unit::IsAuraResist(SpellEntry const* spell)
 
 float Unit::MeleeMissChanceCalc(const Unit *pVictim, WeaponAttackType attType) const
 {
-    if (!pVictim)
+    if (!pVictim || !pVictim->IsStandState())
         return 0.0f;
 
     // Base misschance 5%
