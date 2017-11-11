@@ -5394,7 +5394,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             }
         }
 
-        if (IsPositiveSpell(m_spellInfo->Id))
+        if (IsPositiveSpell(m_spellInfo->Id, m_caster, target))
             if (target->IsImmuneToSpell(m_spellInfo, target == m_caster))
                 return SPELL_FAILED_TARGET_AURASTATE;
 
@@ -6235,7 +6235,13 @@ SpellCastResult Spell::CheckCast(bool strict)
                     {
                         bool positive = holder->IsPositive();
                         // do not remove positive auras if friendly target
-                        //               negative auras if non-friendly target
+                        // do not remove negative auras if non-friendly target
+                        // when removing charm auras ignore hostile reaction from the charm
+                        if (!friendly_dispel && !positive && IsCharmSpell(holder->GetSpellProto()))
+                            if (CharmInfo *charm = unit_target->GetCharmInfo())
+                                if (FactionTemplateEntry const* ft = charm->GetOriginalFactionTemplate())
+                                    if (charm->GetOriginalFactionTemplate()->IsFriendlyTo(*m_caster->getFactionTemplateEntry()))
+                                        bFoundOneDispell = true;
                         if (positive == friendly_dispel)
                             continue;
                     }
