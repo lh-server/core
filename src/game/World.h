@@ -375,6 +375,7 @@ enum eConfigFloatValues
     CONFIG_FLOAT_THREAT_RADIUS,
     CONFIG_FLOAT_GHOST_RUN_SPEED_WORLD,
     CONFIG_FLOAT_GHOST_RUN_SPEED_BG,
+    CONFIG_FLOAT_RATE_WAR_EFFORT_RESOURCE,
     CONFIG_FLOAT_VALUE_COUNT
 };
 
@@ -779,6 +780,23 @@ class World
         };
         uint32 InsertLog(std::string const& message, AccountTypes sec);
         ArchivedLogMessage* GetLog(uint32 logId, AccountTypes my_sec);
+
+        /**
+        * \brief: force all client to request player data
+        * \param: ObjectGuid guid : guid of the specified player
+        * \returns: void
+        *
+        * Description: InvalidatePlayerDataToAllClient force all connected clients to clear specified player cache
+        * FullName: World::InvalidatePlayerDataToAllClient
+        * Access: public
+        **/
+        void InvalidatePlayerDataToAllClient(ObjectGuid guid);
+
+        // Manually override timer update secs to force a faster update
+        void SetWorldUpdateTimer(WorldTimers timer, uint32 current);
+        time_t GetWorldUpdateTimer(WorldTimers timer);
+        time_t GetWorldUpdateTimerInterval(WorldTimers timer);
+
     protected:
         void _UpdateGameTime();
         // callback for UpdateRealmCharacters
