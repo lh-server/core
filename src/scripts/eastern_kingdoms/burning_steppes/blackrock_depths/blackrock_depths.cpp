@@ -1570,7 +1570,7 @@ enum
 };
 
 //#define GOSSIP_ITEM_ATTAQUE  "On pay bien pour votre tête..."
-#define GOSSIP_ITEM_ATTAQUE "We will be paid well for your head..."
+#define GOSSIP_ITEM_ATTAQUE "Your family says hello, Ribbly. And they want your head!"
 
 struct npc_ribbly_fermevanneAI : public ScriptedAI
 {
@@ -1633,7 +1633,7 @@ bool GossipSelect_npc_ribbly_fermevanne(Player* pPlayer, Creature* pCreature, ui
     if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
-        pCreature->MonsterYell(NOST_TEXT(154), 0, pPlayer);
+        pCreature->MonsterYell(4973, 0, pPlayer);
         pCreature->setFaction(14);
         pCreature->AI()->AttackStart(pPlayer);
 
@@ -1670,7 +1670,7 @@ struct npc_golem_lord_argelmachAI : public ScriptedAI
     {
         m_creature->GetMotionMaster()->MovePoint(0, 846.801025f, 16.280600f, -53.639500f);
         //m_creature->MonsterYell("Golems, votre Seigneur a besoin de vous!", 0, pWho);
-        m_creature->MonsterYell(NOST_TEXT(155), 0, pWho);
+        //m_creature->MonsterYell(NOST_TEXT(155), 0, pWho); // seems to be custom
 
         if (m_pInstance)
             m_pInstance->SetData(DATA_ARGELMACH_AGGRO, IN_PROGRESS);
