@@ -3057,6 +3057,8 @@ void Aura::HandleModCharm(bool apply, bool Real)
         target->CastStop(target == caster ? GetId() : 0);
         caster->SetCharm(target);
 
+        // Clear threat list to prevent previously hostile enemies attacking,
+        // and allow combat to drop
         target->CombatStop(true);
         target->DeleteThreatList();
         target->getHostileRefManager().deleteReferences();
@@ -3108,28 +3110,22 @@ void Aura::HandleModCharm(bool apply, bool Real)
         }
         else if (Player* pPlayer = target->ToPlayer())
         {
-            if (caster->GetTypeId() == TYPEID_UNIT)
-            {
-                pPlayer->SetControlledBy(caster);
-                if (pPlayer->i_AI && m_spellAuraHolder->GetId() == 28410)
-                    pPlayer->i_AI->enablePositiveSpells = true;
-            }
-            else
-            {
-                PlayerAI *oldAi = pPlayer->i_AI;
-                delete oldAi;
-                pPlayer->i_AI = new PlayerControlledAI(pPlayer, caster);
-            }
+            pPlayer->SetControlledBy(caster);
+            if (pPlayer->i_AI && m_spellAuraHolder->GetId() == 28410)
+                pPlayer->i_AI->enablePositiveSpells = true;
         }
+
         target->UpdateControl();
         if (caster->GetTypeId() == TYPEID_PLAYER)
             ((Player*)caster)->CharmSpellInitialize();
     }
     else
     {
+        Creature *pCasterCreature = caster ? caster->ToCreature() : nullptr;
+
         target->SetCharmerGuid(ObjectGuid());
 
-        if(target->GetTypeId() != TYPEID_PLAYER)
+        if (target->GetTypeId() != TYPEID_PLAYER)
         {
             CreatureInfo const *cinfo = ((Creature*)target)->GetCreatureInfo();
 
@@ -3166,46 +3162,36 @@ void Aura::HandleModCharm(bool apply, bool Real)
         
         target->UpdateControl();
 
-        if (target->GetTypeId() == TYPEID_PLAYER)
+        if (Player* pPlayer = target->ToPlayer())
         {
-            Player* pPlayer = target->ToPlayer();
-            ((Player*)target)->setFactionForRace(target->getRace());
+            pPlayer->setFactionForRace(target->getRace());
+            pPlayer->SendAttackSwingCancelAttack();
+
+            pPlayer->RemoveAI();
+
+            // Charmed players are seen as hostile and not in the group for other clients, restore
+            // group upon charm end
+            if (pPlayer->GetGroup())
+                pPlayer->GetGroup()->BroadcastGroupUpdate();
         }
-        // this should possibly be the case for other spells too...
-        // why on earth remove player from combat if, for example, its a boss casting it
-        if (m_spellAuraHolder->GetId() == 28410 && target->GetTypeId() == TYPEID_PLAYER)
+
+        if (target->IsNonMeleeSpellCasted(false))
+            target->InterruptNonMeleeSpells(false);
+
+        // Clear threat list for targets engaged while charmed
+        target->DeleteThreatList();
+        target->getHostileRefManager().deleteReferences();
+
+        // Re-add the target to the caster's hated list to prevent combat dropping.
+        // Combat reset timer kicks in once the hated list is empty. If the caster is
+        // a creature and combat ended, remove the target (likely player) from combat too.
+        if (pCasterCreature && pCasterCreature->isAlive() && pCasterCreature->isInCombat())
         {
-            if (caster->isAlive() && caster->isInCombat())
-            {
-                if (target->GetTypeId() == TYPEID_PLAYER)
-                    ((Player*)target)->SendAttackSwingCancelAttack();
-
-                if (target->IsNonMeleeSpellCasted(false))
-                    target->InterruptNonMeleeSpells(false);
-
-                target->AttackStop();
-                target->RemoveAllAttackers();
-                target->DeleteThreatList();
-                target->getHostileRefManager().deleteReferences();
-
-                caster->SetInCombatWith(target);
-                target->SetInCombatWith(caster);
-                
-                target->SetInCombatState(false, caster);
-            }
-            else
-            {
-                target->CombatStop(true);
-                target->DeleteThreatList();
-                target->getHostileRefManager().deleteReferences();
-            }
+            pCasterCreature->SetInCombatWith(target);
+            pCasterCreature->AddThreat(target);
         }
         else
-        {
-            target->CombatStop(true);
-            target->DeleteThreatList();
-            target->getHostileRefManager().deleteReferences();
-        }
+            target->CombatStop(false);
 
         target->SetUnitMovementFlags(MOVEFLAG_NONE);
         target->StopMoving();
@@ -3218,16 +3204,6 @@ void Aura::HandleModCharm(bool apply, bool Real)
                 pTargetCrea->AIM_Initialize();
             if (caster)
                 pTargetCrea->AttackedBy(caster);
-        }
-        else if (Player* pPlayer = target->ToPlayer())
-        {
-            pPlayer->RemoveAI();
-
-            // Charmed players are seen as hostile and not in the group for other clients, restore
-            // group upon charm end
-            pPlayer->setFactionForRace(target->getRace());
-            if(pPlayer->GetGroup())
-                pPlayer->GetGroup()->BroadcastGroupUpdate();
         }
     }
 }
