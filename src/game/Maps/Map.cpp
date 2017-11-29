@@ -1808,7 +1808,7 @@ bool DungeonMap::CanEnter(Player *player)
     {
         if (sGameEventMgr.IsActiveEvent(EVENT_AQ_GATE))
         {
-            player->SendTransferAborted(GetId(), TRANSFER_ABORT_NOT_FOUND);
+            player->SendTransferAborted(TRANSFER_ABORT_SILENTLY);
             return false;
         }
     }
