@@ -1292,6 +1292,9 @@ void World::SetInitialWorldSettings()
     sLog.outString("Loading Equipment templates...");
     sObjectMgr.LoadEquipmentTemplates();
 
+    sLog.outString("Loading Creature spell scripts...");
+    sScriptMgr.LoadCreatureSpellScripts();
+
     sLog.outString("Loading Creature spells...");
     sObjectMgr.LoadCreatureSpells();
 
