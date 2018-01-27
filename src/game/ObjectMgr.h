@@ -163,8 +163,6 @@ typedef UNORDERED_MAP<uint32/*mapid*/,CellObjectGuidsMap> MapObjectGuids;
 // mangos string ranges
 #define MIN_MANGOS_STRING_ID           1                    // 'mangos_string'
 #define MAX_MANGOS_STRING_ID           2000000000
-#define MIN_NOSTALRIUS_STRING_ID       2000010000
-#define MAX_NOSTALRIUS_STRING_ID       2000090000
 #define MIN_CREATURE_AI_TEXT_STRING_ID (-1)                 // 'creature_ai_texts'
 #define MAX_CREATURE_AI_TEXT_STRING_ID (-1200000)
 
@@ -848,7 +846,6 @@ class ObjectMgr
 
         bool LoadMangosStrings(DatabaseType& db, char const* table, int32 min_value, int32 max_value, bool extra_content);
         bool LoadMangosStrings() { return LoadMangosStrings(WorldDatabase,"mangos_string",MIN_MANGOS_STRING_ID,MAX_MANGOS_STRING_ID, false); }
-        bool LoadNostalriusStrings();
         void LoadBroadcastTexts();
         void LoadBroadcastTextLocales();
         bool LoadQuestGreetings();

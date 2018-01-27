@@ -3071,13 +3071,6 @@ bool ChatHandler::HandleReloadCreatureModelInfo(char*)
     return true;
 }
 
-bool ChatHandler::HandleReloadNostalriusStrings(char*)
-{
-    sObjectMgr.LoadNostalriusStrings();
-    SendSysMessage(">> Table `nostalrius_string` reloaded.");
-    return true;
-}
-
 bool ChatHandler::HandleReloadIPBanList(char*)
 {
     sAccountMgr.LoadIPBanList();
