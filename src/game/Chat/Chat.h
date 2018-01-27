@@ -332,7 +332,6 @@ class MANGOS_DLL_SPEC ChatHandler
         bool HandleReloadFactionChangeQuests(char* args);
         bool HandleReloadFactionChangeMounts(char* args);
         bool HandleReloadCreatureModelInfo(char* args);
-        bool HandleReloadNostalriusStrings(char* args);
         bool HandleReloadIPBanList(char* args);
         bool HandleReloadAccountBanList(char* args);
         bool HandleReloadCreatureCommand(char* args);

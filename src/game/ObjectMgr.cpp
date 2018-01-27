@@ -279,7 +279,7 @@ void ObjectMgr::LoadSpellDisabledEntrys()
         uint32 spellid = fields[0].GetUInt32();
         if (!sSpellMgr.GetSpellEntry(spellid))
         {
-            sLog.outError("Spell entry %u from `spell_disabled` doesn't exist in dbc, ignoring.", spellid);
+            sLog.outError("Spell entry %u from `spell_disabled` doesn't exist, ignoring.", spellid);
             continue;
         }
         m_DisabledSpells.insert(spellid);
@@ -7761,82 +7761,6 @@ bool ObjectMgr::LoadMangosStrings(DatabaseType& db, char const* table, int32 min
     return true;
 }
 
-
-bool ObjectMgr::LoadNostalriusStrings()
-{
-    int32 start_value = MIN_NOSTALRIUS_STRING_ID;
-    int32 end_value   = MAX_NOSTALRIUS_STRING_ID;
-
-    // cleanup affected map part for reloading case
-    for (MangosStringLocaleMap::iterator itr = mMangosStringLocaleMap.begin(); itr != mMangosStringLocaleMap.end();)
-    {
-        if (itr->first >= start_value && itr->first < end_value)
-            mMangosStringLocaleMap.erase(itr++);
-        else
-            ++itr;
-    }
-
-    QueryResult *result = WorldDatabase.Query("SELECT entry,content_default,content_loc1,content_loc2,content_loc3,content_loc4,content_loc5,content_loc6,content_loc7,content_loc8 FROM nostalrius_string");
-
-    if (!result)
-    {
-        sLog.outString(">> Chargement d'aucun text Nostalrius. La table 'nostalrius_string' est vide.");
-        return false;
-    }
-
-    uint32 count = 0;
-
-    do
-    {
-        Field *fields = result->Fetch();
-        int32 entry = fields[0].GetInt32() + MIN_NOSTALRIUS_STRING_ID;
-        if (entry < start_value || entry >= end_value)
-        {
-            sLog.outErrorDb("Table `nostalrius_string` contain entry %i out of allowed range (%u - %u), ignored.", entry, start_value, end_value);
-            continue;
-        }
-
-        MangosStringLocale& data = mMangosStringLocaleMap[entry];
-
-        if (data.Content.size() > 0)
-        {
-            sLog.outErrorDb("Table `nostalrius_string` contain data for already loaded entry  %i (from another table?), ignored.", entry);
-            continue;
-        }
-
-        data.Content.resize(1);
-        ++count;
-
-        // 0 -> default, idx in to idx+1
-        data.Content[0] = fields[1].GetCppString();
-
-        for (int i = 1; i < MAX_LOCALE; ++i)
-        {
-            std::string str = fields[i + 1].GetCppString();
-            if (!str.empty())
-            {
-                int idx = GetOrNewIndexForLocale(LocaleConstant(i));
-                if (idx >= 0)
-                {
-                    // 0 -> default, idx in to idx+1
-                    if ((int32)data.Content.size() <= idx + 1)
-                        data.Content.resize(idx + 2);
-
-                    data.Content[idx + 1] = str;
-                }
-            }
-        }
-    }
-    while (result->NextRow());
-
-    delete result;
-
-    sLog.outString();
-    sLog.outString(">> Loaded %u texts from 'nostalrius_string'.", count);
-
-    return true;
-}
-
 const char *ObjectMgr::GetMangosString(int32 entry, int locale_idx) const
 {
     // locale_idx==-1 -> default, locale_idx >= 0 in to idx+1
@@ -8887,7 +8811,7 @@ bool LoadMangosStrings(DatabaseType& db, char const* table, int32 start_value, i
 {
     // MAX_DB_SCRIPT_STRING_ID is max allowed negative value for scripts (scrpts can use only more deep negative values
     // start/end reversed for negative values
-    if (start_value > MAX_NOSTALRIUS_STRING_ID || end_value >= start_value)
+    if (end_value >= start_value)
     {
         sLog.outErrorDb("Table '%s' attempt loaded with reserved by mangos range (%d - %d), strings not loaded.", table, start_value, end_value + 1);
         return false;

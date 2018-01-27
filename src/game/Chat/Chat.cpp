@@ -695,7 +695,6 @@ ChatCommand * ChatHandler::getCommandTable()
         { MSTR, "player_factionchange_quests", SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadFactionChangeQuests,            "", nullptr },
         { MSTR, "player_factionchange_mounts", SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadFactionChangeMounts,            "", nullptr },
         { MSTR, "creature_model_info",         SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadCreatureModelInfo,              "", nullptr },
-        { MSTR, "nostalrius_string",           SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadNostalriusStrings,              "", nullptr },
         { MSTR, "ip_banned",                   SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadIPBanList,                      "", nullptr },
         { MSTR, "account_banned",              SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadAccountBanList,                 "", nullptr },
         { MSTR, "instance_buff_removal",       SEC_ADMINISTRATOR, true,  &ChatHandler::HandleReloadInstanceBuffRemoval,            "", nullptr },

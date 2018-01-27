@@ -1647,10 +1647,6 @@ void World::SetInitialWorldSettings()
     uint32 nextGameEvent = sGameEventMgr.Initialize();
     m_timers[WUPDATE_EVENTS].SetInterval(nextGameEvent);    //depend on next event
 
-    // === Nostalrius ===
-    sLog.outString("Loading Nostalrius texts (nostalrius_string)");
-    sObjectMgr.LoadNostalriusStrings();
-
     sLog.outString("Loading disabled spells");
     sObjectMgr.LoadSpellDisabledEntrys();
 
