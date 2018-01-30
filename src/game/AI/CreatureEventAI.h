@@ -415,6 +415,8 @@ struct CreatureEventAI_Event
 
     uint32 creature_id;
 
+    uint32 condition_id;
+
     uint32 event_inverse_phase_mask;
 
     EventAI_Type event_type : 16;
@@ -528,9 +530,6 @@ struct CreatureEventAI_Event
         struct
         {
             uint32 emoteId;
-            uint32 condition;
-            uint32 conditionValue1;
-            uint32 conditionValue2;
         } receive_emote;
         // EVENT_T_AURA                                     = 23
         // EVENT_T_TARGET_AURA                              = 24

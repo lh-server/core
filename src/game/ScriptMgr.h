@@ -190,8 +190,9 @@ enum eScriptCommand
                                                             // datalong = field
                                                             // datalong2 = data
                                                             // datalong3 = eSetInstData64Options
-    SCRIPT_COMMAND_MAX
+    SCRIPT_COMMAND_MAX,
 
+    SCRIPT_COMMAND_DISABLED                 = 9999          // Script action was disabled during loading.
 };
 
 #define MAX_TEXT_ID 4                                       // used for SCRIPT_COMMAND_TALK
@@ -874,6 +875,7 @@ class ScriptMgr
         void CollectPossibleEventIds(std::set<uint32>& eventIds);
         void LoadScripts(ScriptMapMap& scripts, const char* tablename);
         void CheckScriptTexts(ScriptMapMap const& scripts);
+        void DisableScriptAction(ScriptInfo& script);
 
         typedef std::vector<std::string> ScriptNameMap;
         typedef UNORDERED_MAP<uint32, uint32> AreaTriggerScriptMap;

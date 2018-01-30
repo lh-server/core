@@ -60,6 +60,12 @@ ScriptMgr::~ScriptMgr()
     num_sc_scripts = 0;
 }
 
+void ScriptMgr::DisableScriptAction(ScriptInfo& script)
+{
+    script.command = SCRIPT_COMMAND_DISABLED;
+    script.buddy_id = 0;
+}
+
 void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
 {
     if (IsScriptScheduled())                                // function don't must be called in time scripts use.
@@ -122,8 +128,13 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
                 {
                     if (!ObjectMgr::GetCreatureTemplate(tmp.buddy_id))
                     {
-                        sLog.outErrorDb("Table `%s` has buddy_id = %u for script id %u, but this creature_template does not exist.", tablename, tmp.buddy_id, tmp.id);
-                        continue;
+                        if (!sObjectMgr.IsExistingCreatureId(tmp.buddy_id))
+                        {
+                            sLog.outErrorDb("Table `%s` has buddy_id = %u for script id %u, but this creature_template does not exist.", tablename, tmp.buddy_id, tmp.id);
+                            continue;
+                        }
+                        else
+                            DisableScriptAction(tmp);
                     }
                     if (!tmp.buddy_radius)
                     {
@@ -136,8 +147,13 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
                 {
                     if (!sObjectMgr.GetCreatureData(tmp.buddy_id))
                     {
-                        sLog.outErrorDb("Table `%s` has buddy_id = %u for script id %u, but this creature guid does not exist.", tablename, tmp.buddy_id, tmp.id);
-                        continue;
+                        if (!sObjectMgr.IsExistingCreatureGuid(tmp.buddy_id))
+                        {
+                            sLog.outErrorDb("Table `%s` has buddy_id = %u for script id %u, but this creature guid does not exist.", tablename, tmp.buddy_id, tmp.id);
+                            continue;
+                        }
+                        else
+                            DisableScriptAction(tmp);
                     }
                     break;
                 }
@@ -145,8 +161,13 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
                 {
                     if (!ObjectMgr::GetGameObjectInfo(tmp.buddy_id))
                     {
-                        sLog.outErrorDb("Table `%s` has buddy_id = %u for script id %u, but this gameobject_template does not exist.", tablename, tmp.buddy_id, tmp.id);
-                        continue;
+                        if (!sObjectMgr.IsExistingGameObjectId(tmp.buddy_id))
+                        {
+                            sLog.outErrorDb("Table `%s` has buddy_id = %u for script id %u, but this gameobject_template does not exist.", tablename, tmp.buddy_id, tmp.id);
+                            continue;
+                        }
+                        else
+                            DisableScriptAction(tmp);
                     }
                     break;
                 }
@@ -155,8 +176,17 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
                     GameObjectData const* data = sObjectMgr.GetGOData(tmp.buddy_id);
                     if (!data)
                     {
-                        sLog.outErrorDb("Table `%s` has buddy_id = %u for script id %u, but this gameobject guid does not exist.", tablename, tmp.buddy_id, tmp.id);
-                        continue;
+                        if (!sObjectMgr.IsExistingGameObjectGuid(tmp.buddy_id))
+                        {
+                            sLog.outErrorDb("Table `%s` has buddy_id = %u for script id %u, but this gameobject guid does not exist.", tablename, tmp.buddy_id, tmp.id);
+                            continue;
+                        }
+                        else
+                        {
+                            DisableScriptAction(tmp);
+                            break;
+                        }
+                        
                     }
 
                     GameObjectInfo const* info = ObjectMgr::GetGameObjectInfo(data->id);
@@ -267,8 +297,16 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
                 Quest const* quest = sObjectMgr.GetQuestTemplate(tmp.questExplored.questId);
                 if (!quest)
                 {
-                    sLog.outErrorDb("Table `%s` has invalid quest (ID: %u) in SCRIPT_COMMAND_QUEST_EXPLORED in `datalong` for script id %u", tablename, tmp.questExplored.questId, tmp.id);
-                    continue;
+                    if (!sObjectMgr.IsExistingQuestId(tmp.questExplored.questId))
+                    {
+                        sLog.outErrorDb("Table `%s` has invalid quest (ID: %u) in SCRIPT_COMMAND_QUEST_EXPLORED in `datalong` for script id %u", tablename, tmp.questExplored.questId, tmp.id);
+                        continue;
+                    }
+                    else
+                    {
+                        DisableScriptAction(tmp);
+                        break;
+                    }
                 }
 
                 if (!quest->HasSpecialFlag(QUEST_SPECIAL_FLAG_EXPLORATION_OR_EVENT))
@@ -308,8 +346,13 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
             {
                 if (!ObjectMgr::GetCreatureTemplate(tmp.killCredit.creatureEntry))
                 {
-                    sLog.outErrorDb("Table `%s` has invalid creature (Entry: %u) in SCRIPT_COMMAND_KILL_CREDIT for script id %u", tablename, tmp.killCredit.creatureEntry, tmp.id);
-                    continue;
+                    if (!sObjectMgr.IsExistingCreatureId(tmp.killCredit.creatureEntry))
+                    {
+                        sLog.outErrorDb("Table `%s` has invalid creature (Entry: %u) in SCRIPT_COMMAND_KILL_CREDIT for script id %u", tablename, tmp.killCredit.creatureEntry, tmp.id);
+                        continue;
+                    }
+                    else
+                        DisableScriptAction(tmp);
                 }
                 break;
             }
@@ -320,8 +363,16 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
                     GameObjectData const* data = sObjectMgr.GetGOData(tmp.GetGOGuid());
                     if (!data)
                     {
-                        sLog.outErrorDb("Table `%s` has invalid gameobject (GUID: %u) in SCRIPT_COMMAND_RESPAWN_GAMEOBJECT for script id %u", tablename, tmp.GetGOGuid(), tmp.id);
-                        continue;
+                        if (!sObjectMgr.IsExistingGameObjectGuid(tmp.GetGOGuid()))
+                        {
+                            sLog.outErrorDb("Table `%s` has invalid gameobject (GUID: %u) in SCRIPT_COMMAND_RESPAWN_GAMEOBJECT for script id %u", tablename, tmp.GetGOGuid(), tmp.id);
+                            continue;
+                        }
+                        else
+                        {
+                            DisableScriptAction(tmp);
+                            break;
+                        }
                     }
 
                     GameObjectInfo const* info = ObjectMgr::GetGameObjectInfo(data->id);
@@ -354,8 +405,13 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
 
                 if (!ObjectMgr::GetCreatureTemplate(tmp.summonCreature.creatureEntry))
                 {
-                    sLog.outErrorDb("Table `%s` has invalid creature (Entry: %u) in SCRIPT_COMMAND_TEMP_SUMMON_CREATURE for script id %u", tablename, tmp.summonCreature.creatureEntry, tmp.id);
-                    continue;
+                    if (!sObjectMgr.IsExistingCreatureId(tmp.summonCreature.creatureEntry))
+                    {
+                        sLog.outErrorDb("Table `%s` has invalid creature (Entry: %u) in SCRIPT_COMMAND_TEMP_SUMMON_CREATURE for script id %u", tablename, tmp.summonCreature.creatureEntry, tmp.id);
+                        continue;
+                    }
+                    else
+                        DisableScriptAction(tmp);
                 }
                 break;
             }
@@ -367,8 +423,16 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
                     GameObjectData const* data = sObjectMgr.GetGOData(tmp.GetGOGuid());
                     if (!data)
                     {
-                        sLog.outErrorDb("Table `%s` has invalid gameobject (GUID: %u) in %s for script id %u", tablename, tmp.GetGOGuid(), (tmp.command == SCRIPT_COMMAND_OPEN_DOOR ? "SCRIPT_COMMAND_OPEN_DOOR" : "SCRIPT_COMMAND_CLOSE_DOOR"), tmp.id);
-                        continue;
+                        if (!sObjectMgr.IsExistingGameObjectGuid(tmp.GetGOGuid()))
+                        {
+                            sLog.outErrorDb("Table `%s` has invalid gameobject (GUID: %u) in %s for script id %u", tablename, tmp.GetGOGuid(), (tmp.command == SCRIPT_COMMAND_OPEN_DOOR ? "SCRIPT_COMMAND_OPEN_DOOR" : "SCRIPT_COMMAND_CLOSE_DOOR"), tmp.id);
+                            continue;
+                        }
+                        else
+                        {
+                            DisableScriptAction(tmp);
+                            break;
+                        }
                     }
 
                     GameObjectInfo const* info = ObjectMgr::GetGameObjectInfo(data->id);
@@ -417,9 +481,14 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
             {
                 if (!ObjectMgr::GetItemPrototype(tmp.createItem.itemEntry))
                 {
-                    sLog.outErrorDb("Table `%s` has nonexistent item (entry: %u) in SCRIPT_COMMAND_CREATE_ITEM for script id %u",
-                                    tablename, tmp.createItem.itemEntry, tmp.id);
-                    continue;
+                    if (!sObjectMgr.IsExistingItemId(tmp.createItem.itemEntry))
+                    {
+                        sLog.outErrorDb("Table `%s` has nonexistent item (entry: %u) in SCRIPT_COMMAND_CREATE_ITEM for script id %u",
+                            tablename, tmp.createItem.itemEntry, tmp.id);
+                        continue;
+                    }
+                    else
+                        DisableScriptAction(tmp);
                 }
                 if (!tmp.createItem.amount)
                 {
@@ -436,21 +505,31 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
             case SCRIPT_COMMAND_SET_EQUIPMENT:
             {
                 bool cancel = false;
+                bool disable = false;
+
                 for (int i = 0; i < 3; i++)
                 {
                     if (tmp.setEquipment.slot[i] > 0)
                     {
                         if (!ObjectMgr::GetItemPrototype(tmp.setEquipment.slot[i]))
                         {
-                            sLog.outErrorDb("Table `%s` has nonexistent item (dataint%i: %u) in SCRIPT_COMMAND_SET_EQUIPMENT for script id %u",
-                                tablename, i, tmp.setEquipment.slot[i], tmp.id);
-                            cancel=true;
+                            if (!sObjectMgr.IsExistingItemId(tmp.createItem.itemEntry))
+                            {
+                                sLog.outErrorDb("Table `%s` has nonexistent item (dataint%i: %u) in SCRIPT_COMMAND_SET_EQUIPMENT for script id %u",
+                                    tablename, i, tmp.setEquipment.slot[i], tmp.id);
+                                cancel = true;
+                            }
+                            else
+                                disable = true;
                         }
                     }
                 }
                 
                 if (cancel)
                     continue;
+
+                if (disable)
+                    DisableScriptAction(tmp);
 
                 break;
             }
@@ -514,8 +593,13 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
                 {
                     if (tmp.morph.creatureOrModelEntry && !ObjectMgr::GetCreatureTemplate(tmp.morph.creatureOrModelEntry))
                     {
-                        sLog.outErrorDb("Table `%s` has datalong = %u in SCRIPT_COMMAND_MORPH_TO_ENTRY_OR_MODEL for script id %u, but this creature_template does not exist.", tablename, tmp.morph.creatureOrModelEntry, tmp.id);
-                        continue;
+                        if (!sObjectMgr.IsExistingCreatureId(tmp.morph.creatureOrModelEntry))
+                        {
+                            sLog.outErrorDb("Table `%s` has datalong = %u in SCRIPT_COMMAND_MORPH_TO_ENTRY_OR_MODEL for script id %u, but this creature_template does not exist.", tablename, tmp.morph.creatureOrModelEntry, tmp.id);
+                            continue;
+                        }
+                        else
+                            DisableScriptAction(tmp);
                     }
                 }
 
@@ -535,8 +619,13 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
                 {
                     if (tmp.mount.creatureOrModelEntry && !ObjectMgr::GetCreatureTemplate(tmp.mount.creatureOrModelEntry))
                     {
-                        sLog.outErrorDb("Table `%s` has datalong2 = %u in SCRIPT_COMMAND_MOUNT_TO_ENTRY_OR_MODEL for script id %u, but this creature_template does not exist.", tablename, tmp.mount.creatureOrModelEntry, tmp.id);
-                        continue;
+                        if (!sObjectMgr.IsExistingCreatureId(tmp.mount.creatureOrModelEntry))
+                        {
+                            sLog.outErrorDb("Table `%s` has datalong2 = %u in SCRIPT_COMMAND_MOUNT_TO_ENTRY_OR_MODEL for script id %u, but this creature_template does not exist.", tablename, tmp.mount.creatureOrModelEntry, tmp.id);
+                            continue;
+                        }
+                        else
+                            DisableScriptAction(tmp);
                     }
                 }
 
@@ -554,8 +643,13 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
             {
                 if (!ObjectMgr::GetCreatureTemplate(tmp.updateEntry.creatureEntry))
                 {
-                    sLog.outErrorDb("Table `%s` has invalid creature (Entry: %u) in SCRIPT_COMMAND_UPDATE_ENTRY for script id %u", tablename, tmp.updateEntry.creatureEntry, tmp.id);
-                    continue;
+                    if (!sObjectMgr.IsExistingCreatureId(tmp.updateEntry.creatureEntry))
+                    {
+                        sLog.outErrorDb("Table `%s` has invalid creature (Entry: %u) in SCRIPT_COMMAND_UPDATE_ENTRY for script id %u", tablename, tmp.updateEntry.creatureEntry, tmp.id);
+                        continue;
+                    }
+                    else
+                        DisableScriptAction(tmp);
                 }
 
                 break;
@@ -591,8 +685,13 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
             {
                 if (tmp.terminateScript.creatureEntry && !ObjectMgr::GetCreatureTemplate(tmp.terminateScript.creatureEntry))
                 {
-                    sLog.outErrorDb("Table `%s` has datalong = %u in SCRIPT_COMMAND_TERMINATE_SCRIPT for script id %u, but this npc entry does not exist.", tablename, tmp.terminateScript.creatureEntry, tmp.id);
-                    continue;
+                    if (!sObjectMgr.IsExistingCreatureId(tmp.terminateScript.creatureEntry))
+                    {
+                        sLog.outErrorDb("Table `%s` has datalong = %u in SCRIPT_COMMAND_TERMINATE_SCRIPT for script id %u, but this npc entry does not exist.", tablename, tmp.terminateScript.creatureEntry, tmp.id);
+                        continue;
+                    }
+                    else
+                        DisableScriptAction(tmp);
                 }
                 if (tmp.terminateScript.creatureEntry && !tmp.terminateScript.searchRadius)
                 {
@@ -686,7 +785,8 @@ void ScriptMgr::LoadGameObjectScripts()
     for (ScriptMapMap::const_iterator itr = sGameObjectScripts.begin(); itr != sGameObjectScripts.end(); ++itr)
     {
         if (!sObjectMgr.GetGOData(itr->first))
-            sLog.outErrorDb("Table `gameobject_scripts` has not existing gameobject (GUID: %u) as script id", itr->first);
+            if (!sObjectMgr.IsExistingGameObjectGuid(itr->first))
+                sLog.outErrorDb("Table `gameobject_scripts` has not existing gameobject (GUID: %u) as script id", itr->first);
     }
 }
 
@@ -697,7 +797,7 @@ void ScriptMgr::LoadQuestEndScripts()
     // check ids
     for (ScriptMapMap::const_iterator itr = sQuestEndScripts.begin(); itr != sQuestEndScripts.end(); ++itr)
     {
-        if (!sObjectMgr.GetQuestTemplate(itr->first) && (sWorld.GetWowPatch()==WOW_PATCH_112))
+        if (!sObjectMgr.GetQuestTemplate(itr->first) && !sObjectMgr.IsExistingQuestId(itr->first))
             sLog.outErrorDb("Table `quest_end_scripts` has not existing quest (Id: %u) as script id", itr->first);
     }
 }
@@ -709,7 +809,7 @@ void ScriptMgr::LoadQuestStartScripts()
     // check ids
     for (ScriptMapMap::const_iterator itr = sQuestStartScripts.begin(); itr != sQuestStartScripts.end(); ++itr)
     {
-        if (!sObjectMgr.GetQuestTemplate(itr->first) && (sWorld.GetWowPatch() == WOW_PATCH_112))
+        if (!sObjectMgr.GetQuestTemplate(itr->first) && !sObjectMgr.IsExistingQuestId(itr->first))
             sLog.outErrorDb("Table `quest_start_scripts` has not existing quest (Id: %u) as script id", itr->first);
     }
 }
@@ -1563,7 +1663,7 @@ void ScriptMgr::LoadEscortData()
                 sLog.outErrorDb("Le PNJ %u de script_escort_data n'a pas de donnees de Waypoints !", pTemp.uiCreatureEntry);
                 continue;
             }
-			pTemp.uiLastWaypointEntry = 0;
+            pTemp.uiLastWaypointEntry = 0;
             std::vector<ScriptPointMove>::const_iterator it;
             for(it = points.begin(); it != points.end(); ++it)
             {
@@ -1807,8 +1907,8 @@ void DoOrSimulateScriptTextForMap(int32 iTextEntry, uint32 uiCreatureEntry, Map*
 {
     if (!pMap)
     {
-	sLog.outError("DoOrSimulateScriptTextForMap entry %i, invalid Map pointer.", iTextEntry);
-	return;
+    sLog.outError("DoOrSimulateScriptTextForMap entry %i, invalid Map pointer.", iTextEntry);
+    return;
     }
 
     CreatureInfo const* pInfo = GetCreatureTemplateStore(uiCreatureEntry);
@@ -1855,21 +1955,21 @@ void DoOrSimulateScriptTextForMap(int32 iTextEntry, uint32 uiCreatureEntry, Map*
     }
 
     sLog.outDebug("SD2: DoOrSimulateScriptTextForMap: text entry=%i, Sound=%u, Type=%u, Language=%u, Emote=%u",
-	      iTextEntry, SoundId, Type, LanguageId, Emote);
+          iTextEntry, SoundId, Type, LanguageId, Emote);
 
     if (Type != CHAT_TYPE_ZONE_YELL)
     {
-	    sLog.outError("DoSimulateScriptTextForMap entry %i has not supported chat type %u.", iTextEntry, Type);
-	    return;
+        sLog.outError("DoSimulateScriptTextForMap entry %i has not supported chat type %u.", iTextEntry, Type);
+        return;
     }
 
     if (SoundId)
-	    pMap->PlayDirectSoundToMap(SoundId);
+        pMap->PlayDirectSoundToMap(SoundId);
 
     if (pCreatureSource)                                // If provided pointer for sayer, use direct version
-	    pMap->MonsterYellToMap(pCreatureSource->GetObjectGuid(), iTextEntry, LanguageId, pTarget);
+        pMap->MonsterYellToMap(pCreatureSource->GetObjectGuid(), iTextEntry, LanguageId, pTarget);
     else                                                // Simulate yell
-	    pMap->MonsterYellToMap(pInfo, iTextEntry, LanguageId, pTarget);
+        pMap->MonsterYellToMap(pInfo, iTextEntry, LanguageId, pTarget);
 }
 
 void Script::RegisterSelf(bool bReportError)

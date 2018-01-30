@@ -1162,6 +1162,9 @@ void World::SetInitialWorldSettings()
         exit(1);                                            // Error message displayed in function already
     }
 
+    // Loads existing IDs in the database.
+    sObjectMgr.LoadAllIdentifiers();
+
     sLog.outString("Loading Instance Statistics...");
     sInstanceStatistics.LoadFromDB();
 

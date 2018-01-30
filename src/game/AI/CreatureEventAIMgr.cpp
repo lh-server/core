@@ -218,30 +218,24 @@ void CreatureEventAIMgr::CheckUnusedAISummons()
     for (CreatureEventAI_Summon_Map::const_iterator itr = m_CreatureEventAI_Summon_Map.begin(); itr != m_CreatureEventAI_Summon_Map.end(); ++itr)
         idx_set.insert(itr->first);
 
-    for (CreatureEventAI_Event_Map::const_iterator itr = m_CreatureEventAI_Event_Map.begin(); itr != m_CreatureEventAI_Event_Map.end(); ++itr)
+    for (uint8 i = 1; i <= MAX_ACTIONS; i++)
     {
-        for (size_t i = 0; i < itr->second.size(); ++i)
+        Field* fields;
+        QueryResult* result = WorldDatabase.PQuery("SELECT action%u_param3 FROM creature_ai_scripts WHERE action%u_type=32", i, i);
+
+        if (result)
         {
-            CreatureEventAI_Event const& event = itr->second[i];
-
-            for (int j = 0; j < MAX_ACTIONS; ++j)
+            do
             {
-                CreatureEventAI_Action const& action = event.action[j];
-                switch (action.type)
-                {
-                    case ACTION_T_SUMMON_ID:
-                    {
-                        if (action.summon_id.spawnId)
-                            idx_set.erase(action.summon_id.spawnId);
-                        break;
-                    }
-                    default:
-                        break;
-                }
-
-            }
+                fields = result->Fetch();
+                int id = fields[0].GetInt32();
+                if (id)
+                    idx_set.erase(id);
+            } while (result->NextRow());
+            delete result;
         }
     }
+    
 
     for (std::set<int32>::const_iterator itr = idx_set.begin(); itr != idx_set.end(); ++itr)
         sLog.outErrorDb("CreatureEventAI:  Entry %i in table `creature_ai_summons` but not used in EventAI scripts.", *itr);
@@ -254,7 +248,7 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
     m_CreatureEventAI_Event_Map.clear();
 
     // Gather event data
-    QueryResult *result = WorldDatabase.Query("SELECT id, creature_id, event_type, event_inverse_phase_mask, event_chance, event_flags, "
+    QueryResult *result = WorldDatabase.Query("SELECT id, creature_id, condition_id, event_type, event_inverse_phase_mask, event_chance, event_flags, "
                           "event_param1, event_param2, event_param3, event_param4, "
                           "action1_type, action1_param1, action1_param2, action1_param3, "
                           "action2_type, action2_param1, action2_param2, action2_param3, "
@@ -277,7 +271,9 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
             temp.creature_id = fields[1].GetUInt32();
             uint32 creature_id = temp.creature_id;
 
-            uint32 e_type = fields[2].GetUInt32();
+            temp.condition_id = fields[2].GetUInt32();
+
+            uint32 e_type = fields[3].GetUInt32();
             //Report any errors in event
             if (e_type >= EVENT_T_END)
             {
@@ -286,18 +282,19 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
             }
             temp.event_type = EventAI_Type(e_type);
 
-            temp.event_inverse_phase_mask = fields[3].GetUInt32();
-            temp.event_chance = fields[4].GetUInt8();
-            temp.event_flags  = fields[5].GetUInt8();
-            temp.raw.param1 = fields[6].GetUInt32();
-            temp.raw.param2 = fields[7].GetUInt32();
-            temp.raw.param3 = fields[8].GetUInt32();
-            temp.raw.param4 = fields[9].GetUInt32();
+            temp.event_inverse_phase_mask = fields[4].GetUInt32();
+            temp.event_chance = fields[5].GetUInt8();
+            temp.event_flags  = fields[6].GetUInt8();
+            temp.raw.param1 = fields[7].GetUInt32();
+            temp.raw.param2 = fields[8].GetUInt32();
+            temp.raw.param3 = fields[9].GetUInt32();
+            temp.raw.param4 = fields[10].GetUInt32();
 
             //Creature does not exist in database
             if (!sCreatureStorage.LookupEntry<CreatureInfo>(temp.creature_id))
             {
-                sLog.outErrorDb("CreatureEventAI:  Event %u has script for non-existing creature entry (%u), skipping.", i, temp.creature_id);
+                if (!sObjectMgr.IsExistingCreatureId(temp.creature_id))
+                    sLog.outErrorDb("CreatureEventAI:  Event %u has script for non-existing creature entry (%u), skipping.", i, temp.creature_id);
                 continue;
             }
 
@@ -309,6 +306,16 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
             {
                 sLog.outErrorDb("CreatureEventAI:  Creature %u are using event %u with more than 100 percent chance. Adjusting to 100 percent.", temp.creature_id, i);
                 temp.event_chance = 100;
+            }
+
+            if (temp.condition_id)
+            {
+                const PlayerCondition* condition = sConditionStorage.LookupEntry<PlayerCondition>(temp.condition_id);
+                if (!condition)
+                {
+                    sLog.outErrorDb("CreatureEventAI: Creature %u has condition_id %u that does not exist in `conditions`, ignoring", temp.creature_id, temp.condition_id);
+                    temp.condition_id = 0;
+                }
             }
 
             //Individual event checks
@@ -455,12 +462,6 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                         continue;
                     }
 
-                    if (!PlayerCondition::IsValid(0, ConditionType(temp.receive_emote.condition), temp.receive_emote.conditionValue1, temp.receive_emote.conditionValue2))
-                    {
-                        sLog.outErrorDb("Creature %u using event %u: param2 (Condition: %u) are not valid.", temp.creature_id, i, temp.receive_emote.condition);
-                        continue;
-                    }
-
                     if (!(temp.event_flags & EFLAG_REPEATABLE))
                     {
                         sLog.outErrorDb("CreatureEventAI: Creature %u using event %u: EFLAG_REPEATABLE not set. Event must always be repeatable. Flag applied.", temp.creature_id, i);
@@ -497,7 +498,7 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
 
             for (uint32 j = 0; j < MAX_ACTIONS; j++)
             {
-                uint16 action_type = fields[10 + (j * 4)].GetUInt16();
+                uint16 action_type = fields[11 + (j * 4)].GetUInt16();
                 if (action_type >= ACTION_T_END)
                 {
                     sLog.outErrorDb("CreatureEventAI:  Event %u Action %u has incorrect action type (%u), replace by ACTION_T_NONE.", i, j + 1, action_type);
@@ -508,9 +509,9 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                 CreatureEventAI_Action& action = temp.action[j];
 
                 action.type = EventAI_ActionType(action_type);
-                action.raw.param1 = fields[11 + (j * 4)].GetUInt32();
-                action.raw.param2 = fields[12 + (j * 4)].GetUInt32();
-                action.raw.param3 = fields[13 + (j * 4)].GetUInt32();
+                action.raw.param1 = fields[12 + (j * 4)].GetUInt32();
+                action.raw.param2 = fields[13 + (j * 4)].GetUInt32();
+                action.raw.param3 = fields[14 + (j * 4)].GetUInt32();
 
                 //Report any errors in actions
                 switch (action.type)
@@ -667,7 +668,7 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                             if (!qid->HasSpecialFlag(QUEST_SPECIAL_FLAG_EXPLORATION_OR_EVENT))
                                 sLog.outErrorDb("CreatureEventAI:  Event %u Action %u. SpecialFlags for quest entry %u does not include |2, Action will not have any effect.", i, j + 1, action.quest_event.questId);
                         }
-                        else
+                        else if (!sObjectMgr.IsExistingQuestId(action.quest_event.questId))
                             sLog.outErrorDb("CreatureEventAI:  Event %u Action %u uses nonexistent Quest entry %u.", i, j + 1, action.quest_event.questId);
 
                         if (action.quest_event.target >= TARGET_T_END)

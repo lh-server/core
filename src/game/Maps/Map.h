@@ -531,6 +531,7 @@ class MANGOS_DLL_SPEC Map : public GridRefManager<NGridType>, public MaNGOS::Obj
 
         void setNGrid(NGridType* grid, uint32 x, uint32 y);
         void ScriptsProcess();
+        bool FindScriptTargets(Object*& source, Object*& target, const ScriptAction& step);
 
         void SendObjectUpdates();
         void UpdateVisibilityForRelocations();
