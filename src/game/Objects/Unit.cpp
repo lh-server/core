@@ -5483,7 +5483,7 @@ void Unit::setPowerType(Powers new_powertype)
 
 FactionTemplateEntry const* Unit::getFactionTemplateEntry() const
 {
-    FactionTemplateEntry const* entry = sFactionTemplateStore.LookupEntry(getFaction());
+    FactionTemplateEntry const* entry = sObjectMgr.GetFactionTemplateEntry(getFaction());
     if (!entry)
     {
         static ObjectGuid guid;                             // prevent repeating spam same faction problem
@@ -5571,7 +5571,7 @@ ReputationRank Unit::GetReactionTo(Unit const* target) const
             {
                 if (ReputationRank const* repRank = selfPlayerOwner->GetReputationMgr().GetForcedRankIfAny(targetFactionTemplateEntry))
                     return *repRank;
-                if (FactionEntry const* targetFactionEntry = sFactionStore.LookupEntry(targetFactionTemplateEntry->faction))
+                if (FactionEntry const* targetFactionEntry = sObjectMgr.GetFactionEntry(targetFactionTemplateEntry->faction))
                 {
                     if (targetFactionEntry->CanHaveReputation())
                     {
@@ -5612,7 +5612,7 @@ ReputationRank Unit::GetFactionReactionTo(FactionTemplateEntry const* factionTem
             return REP_HOSTILE;
         if (ReputationRank const* repRank = targetPlayerOwner->GetReputationMgr().GetForcedRankIfAny(factionTemplateEntry))
             return *repRank;
-        if (FactionEntry const* factionEntry = sFactionStore.LookupEntry(factionTemplateEntry->faction))
+        if (FactionEntry const* factionEntry = sObjectMgr.GetFactionEntry(factionTemplateEntry->faction))
         {
             if (factionEntry->CanHaveReputation())
             {
@@ -5655,7 +5655,7 @@ bool Unit::IsHostileToPlayers() const
     if (!my_faction || !my_faction->faction)
         return false;
 
-    FactionEntry const* raw_faction = sFactionStore.LookupEntry(my_faction->faction);
+    FactionEntry const* raw_faction = sObjectMgr.GetFactionEntry(my_faction->faction);
     if (raw_faction && raw_faction->reputationListID >= 0)
         return false;
 
@@ -5668,7 +5668,7 @@ bool Unit::IsNeutralToAll() const
     if (!my_faction || !my_faction->faction)
         return true;
 
-    FactionEntry const* raw_faction = sFactionStore.LookupEntry(my_faction->faction);
+    FactionEntry const* raw_faction = sObjectMgr.GetFactionEntry(my_faction->faction);
     if (raw_faction && raw_faction->reputationListID >= 0)
         return false;
 
@@ -7469,7 +7469,7 @@ bool Unit::_IsValidAttackTarget(Unit const* target, SpellEntry const* bySpell, W
             if (FactionTemplateEntry const* factionTemplate = creature->getFactionTemplateEntry())
             {
                 if (!(player->GetReputationMgr().GetForcedRankIfAny(factionTemplate)))
-                    if (FactionEntry const* factionEntry = sFactionStore.LookupEntry(factionTemplate->faction))
+                    if (FactionEntry const* factionEntry = sObjectMgr.GetFactionEntry(factionTemplate->faction))
                         if (FactionState const* repState = player->GetReputationMgr().GetState(factionEntry))
                             if (!(repState->Flags & FACTION_FLAG_AT_WAR))
                                 return false;

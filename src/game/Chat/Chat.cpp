@@ -431,6 +431,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { NODE, "pool",           SEC_GAMEMASTER,     true,  &ChatHandler::HandleLookupPoolCommand,          "", nullptr },
         { NODE, "skill",          SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleLookupSkillCommand,         "", nullptr },
         { NODE, "spell",          SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleLookupSpellCommand,         "", nullptr },
+        { NODE, "sound",          SEC_MODERATOR,      true,  &ChatHandler::HandleLookupSoundCommand,         "", nullptr },
         { NODE, "taxinode",       SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleLookupTaxiNodeCommand,      "", nullptr },
         { NODE, "tele",           SEC_MODERATOR,      true,  &ChatHandler::HandleLookupTeleCommand,          "", nullptr },
         { MSTR, nullptr,       0,                  false, nullptr,                                           "", nullptr }

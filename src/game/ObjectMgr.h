@@ -132,6 +132,12 @@ struct BroadcastText
 
 typedef std::unordered_map<uint32, BroadcastText> BroadcastTextLocaleMap;
 
+struct SoundEntriesEntry
+{
+    uint32          Id;
+    std::string     Name;
+};
+
 struct CreatureSpellsEntry
 {
     const uint16 spellId;
@@ -1310,6 +1316,18 @@ class ObjectMgr
         uint32 AddGOData(uint32 entry, uint32 map, float, float, float, float, uint32 spawnTimeDelay, float, float, float, float);
         bool MoveCreData(uint32 guid, uint32 mapId, const Position& pos);
 
+        // Sound Entries
+        void LoadSoundEntries();
+        SoundEntriesEntry const* GetSoundEntry(uint32 id) const { return id < GetMaxSoundId() ? mSoundEntries[id] : nullptr; }
+        uint32 GetMaxSoundId() const { return mSoundEntries.size(); }
+
+        // Factions
+        void LoadFactions();
+        FactionEntry const* GetFactionEntry(uint32 id) const { return id < GetMaxFactionId() ? mFactions[id] : nullptr; }
+        uint32 GetMaxFactionId() const { return mFactions.size(); }
+        FactionTemplateEntry const* GetFactionTemplateEntry(uint32 id) const { return id < GetMaxFactionTemplateId() ? mFactionTemplates[id] : nullptr; }
+        uint32 GetMaxFactionTemplateId() const { return mFactionTemplates.size(); }
+
         // Changes of faction
         typedef std::map<uint32, uint32> CharacterConversionMap;
         CharacterConversionMap factionchange_reputations;
@@ -1493,6 +1511,14 @@ class ObjectMgr
         // Storage for Conditions. First element (index 0) is reserved for zero-condition (nothing required)
         typedef std::vector<PlayerCondition> ConditionStore;
         ConditionStore mConditions;
+
+        typedef std::vector<FactionEntry*> FactionStore;
+        FactionStore mFactions;
+        typedef std::vector<FactionTemplateEntry*> FactionTemplateStore;
+        FactionTemplateStore mFactionTemplates;
+
+        typedef std::vector<SoundEntriesEntry*> SoundEntryStore;
+        SoundEntryStore mSoundEntries;
 
         CacheNpcTextIdMap m_mCacheNpcTextIdMap;
         CacheVendorItemMap m_mCacheVendorTemplateItemMap;

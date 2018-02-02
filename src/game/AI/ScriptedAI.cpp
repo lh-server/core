@@ -144,7 +144,7 @@ void ScriptedAI::DoPlaySoundToSet(WorldObject* pSource, uint32 uiSoundId)
     if (!pSource)
         return;
 
-    if (!GetSoundEntriesStore()->LookupEntry(uiSoundId))
+    if (!sObjectMgr.GetSoundEntry(uiSoundId))
     {
         sLog.outError("Invalid soundId %u used in DoPlaySoundToSet (Source: TypeId %u, GUID %u)", uiSoundId, pSource->GetTypeId(), pSource->GetGUIDLow());
         return;

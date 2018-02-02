@@ -2526,7 +2526,7 @@ bool ChatHandler::HandleRecupCommand(char* c)
             fields = recupReputations->Fetch();
             uint32 faction  = fields[0].GetUInt32();
             uint32 standing  = fields[1].GetUInt32();
-            FactionEntry const *factionEntry = sFactionStore.LookupEntry(faction);
+            FactionEntry const *factionEntry = sObjectMgr.GetFactionEntry(faction);
             if (!factionEntry)
                 continue;
             if (factionEntry->reputationListID < 0)

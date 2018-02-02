@@ -2409,9 +2409,9 @@ Creature* Player::GetNPCIfCanInteractWith(ObjectGuid guid, uint32 npcflagmask)
         return NULL;
 
     // not unfriendly
-    if (FactionTemplateEntry const* factionTemplate = sFactionTemplateStore.LookupEntry(unit->getFaction()))
+    if (FactionTemplateEntry const* factionTemplate = sObjectMgr.GetFactionTemplateEntry(unit->getFaction()))
         if (factionTemplate->faction)
-            if (FactionEntry const* faction = sFactionStore.LookupEntry(factionTemplate->faction))
+            if (FactionEntry const* faction = sObjectMgr.GetFactionEntry(factionTemplate->faction))
                 if (faction->reputationListID >= 0 && GetReputationMgr().GetRank(faction) <= REP_UNFRIENDLY)
                     return NULL;
 
@@ -6104,7 +6104,7 @@ void Player::setFactionForRace(uint8 race)
 
 ReputationRank Player::GetReputationRank(uint32 faction) const
 {
-    FactionEntry const* factionEntry = sFactionStore.LookupEntry(faction);
+    FactionEntry const* factionEntry = sObjectMgr.GetFactionEntry(faction);
     return GetReputationMgr().GetRank(factionEntry);
 }
 
@@ -6231,7 +6231,7 @@ void Player::RewardReputation(Unit *pVictim, float rate)
     {
         int32 donerep1 = CalculateReputationGain(REPUTATION_SOURCE_KILL, Rep->repvalue1, Rep->repfaction1, pVictim->getLevel());
         donerep1 = int32(donerep1 * rate);
-        FactionEntry const *factionEntry1 = sFactionStore.LookupEntry(Rep->repfaction1);
+        FactionEntry const *factionEntry1 = sObjectMgr.GetFactionEntry(Rep->repfaction1);
         uint32 current_reputation_rank1 = GetReputationMgr().GetRank(factionEntry1);
         if (factionEntry1 && current_reputation_rank1 <= Rep->reputation_max_cap1)
             GetReputationMgr().ModifyReputation(factionEntry1, donerep1);
@@ -6239,7 +6239,7 @@ void Player::RewardReputation(Unit *pVictim, float rate)
         // Wiki: Team factions value divided by 2
         if (factionEntry1 && Rep->is_teamaward1)
         {
-            FactionEntry const *team1_factionEntry = sFactionStore.LookupEntry(factionEntry1->team);
+            FactionEntry const *team1_factionEntry = sObjectMgr.GetFactionEntry(factionEntry1->team);
             if (team1_factionEntry)
                 GetReputationMgr().ModifyReputation(team1_factionEntry, donerep1 / 2, true);
         }
@@ -6249,7 +6249,7 @@ void Player::RewardReputation(Unit *pVictim, float rate)
     {
         int32 donerep2 = CalculateReputationGain(REPUTATION_SOURCE_KILL, Rep->repvalue2, Rep->repfaction2, pVictim->getLevel());
         donerep2 = int32(donerep2 * rate);
-        FactionEntry const *factionEntry2 = sFactionStore.LookupEntry(Rep->repfaction2);
+        FactionEntry const *factionEntry2 = sObjectMgr.GetFactionEntry(Rep->repfaction2);
         uint32 current_reputation_rank2 = GetReputationMgr().GetRank(factionEntry2);
         if (factionEntry2 && current_reputation_rank2 <= Rep->reputation_max_cap2)
             GetReputationMgr().ModifyReputation(factionEntry2, donerep2);
@@ -6257,7 +6257,7 @@ void Player::RewardReputation(Unit *pVictim, float rate)
         // Wiki: Team factions value divided by 2
         if (factionEntry2 && Rep->is_teamaward2)
         {
-            FactionEntry const *team2_factionEntry = sFactionStore.LookupEntry(factionEntry2->team);
+            FactionEntry const *team2_factionEntry = sObjectMgr.GetFactionEntry(factionEntry2->team);
             if (team2_factionEntry)
                 GetReputationMgr().ModifyReputation(team2_factionEntry, donerep2 / 2, true);
         }
@@ -6277,7 +6277,7 @@ void Player::RewardReputation(Quest const *pQuest)
         {
             int32 rep = CalculateReputationGain(REPUTATION_SOURCE_QUEST,  pQuest->RewRepValue[i], pQuest->RewRepFaction[i], GetQuestLevelForPlayer(pQuest));
 
-            if (FactionEntry const* factionEntry = sFactionStore.LookupEntry(pQuest->RewRepFaction[i]))
+            if (FactionEntry const* factionEntry = sObjectMgr.GetFactionEntry(pQuest->RewRepFaction[i]))
                 GetReputationMgr().ModifyReputation(factionEntry, rep);
         }
     }
@@ -12671,7 +12671,7 @@ void Player::AddQuest(Quest const *pQuest, Object *questGiver)
     }
 
     if (pQuest->GetRepObjectiveFaction())
-        if (FactionEntry const* factionEntry = sFactionStore.LookupEntry(pQuest->GetRepObjectiveFaction()))
+        if (FactionEntry const* factionEntry = sObjectMgr.GetFactionEntry(pQuest->GetRepObjectiveFaction()))
             GetReputationMgr().SetVisible(factionEntry);
 
     uint32 qtime = 0;
@@ -12820,7 +12820,7 @@ void Player::FullQuestComplete(uint32 questId)
         uint32 repValue = pQuest->GetRepObjectiveValue();
         uint32 curRep = GetReputationMgr().GetReputation(repFaction);
         if (curRep < repValue)
-            if (FactionEntry const *factionEntry = sFactionStore.LookupEntry(repFaction))
+            if (FactionEntry const *factionEntry = sObjectMgr.GetFactionEntry(repFaction))
                 GetReputationMgr().SetReputation(factionEntry, repValue);
     }
 
@@ -20261,8 +20261,8 @@ bool Player::ChangeReputationsForRace(uint8 oldRace, uint8 newRace)
     uint32 oldRaceMask = 1 << (oldRace - 1);
     uint32 newRaceMask = 1 << (newRace - 1);
     uint32 newCapitalId = GetCapitalReputationForRace(newRace);
-    FactionEntry const* oldCapitalFaction = sFactionStore.LookupEntry(GetCapitalReputationForRace(oldRace));
-    FactionEntry const* newCapitalFaction = sFactionStore.LookupEntry(newCapitalId);
+    FactionEntry const* oldCapitalFaction = sObjectMgr.GetFactionEntry(GetCapitalReputationForRace(oldRace));
+    FactionEntry const* newCapitalFaction = sObjectMgr.GetFactionEntry(newCapitalId);
 
     if (!newCapitalFaction || !oldCapitalFaction)
         return false;
@@ -20306,7 +20306,7 @@ bool Player::ChangeReputationsForRace(uint8 oldRace, uint8 newRace)
         if (found)
             continue;
         FactionState* pState = (FactionState*)GetReputationMgr().GetState(it->second.ID);
-        FactionEntry const* pFactionEntry = sFactionStore.LookupEntry(it->second.ID);
+        FactionEntry const* pFactionEntry = sObjectMgr.GetFactionEntry(it->second.ID);
         if (!pState || !pFactionEntry)
             continue;
 
@@ -20334,8 +20334,8 @@ bool Player::ChangeReputationsForRace(uint8 oldRace, uint8 newRace)
     // Certaines reputs a inverser
     for (std::map<uint32, uint32>::const_iterator it = sObjectMgr.factionchange_reputations.begin(); it != sObjectMgr.factionchange_reputations.end(); ++it)
     {
-        FactionEntry const* my_new_reputation = sFactionStore.LookupEntry(newTeam == ALLIANCE ? it->first : it->second);
-        FactionEntry const* my_old_reputation = sFactionStore.LookupEntry(newTeam == ALLIANCE ? it->second : it->first);
+        FactionEntry const* my_new_reputation = sObjectMgr.GetFactionEntry(newTeam == ALLIANCE ? it->first : it->second);
+        FactionEntry const* my_old_reputation = sObjectMgr.GetFactionEntry(newTeam == ALLIANCE ? it->second : it->first);
         // 'my_new_reputation' = 'my_old_reputation'
         // Et on supprime 'my_old_reputation'
         FactionState* pNew = (FactionState*)GetReputationMgr().GetState(my_new_reputation);
