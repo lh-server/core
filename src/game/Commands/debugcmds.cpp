@@ -323,10 +323,15 @@ bool ChatHandler::HandleDebugPlaySoundCommand(char* args)
     // USAGE: .debug playsound #soundid
     // #soundid - ID decimal number from SoundEntries.dbc (1st column)
     uint32 dwSoundId;
-    if (!ExtractUInt32(&args, dwSoundId))
-        return false;
 
-    if (!sSoundEntriesStore.LookupEntry(dwSoundId))
+    if (!ExtractUint32KeyFromLink(&args, "Hsound", dwSoundId))
+    {
+        PSendSysMessage(LANG_SOUND_NOT_EXIST, dwSoundId);
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    if (!sObjectMgr.GetSoundEntry(dwSoundId))
     {
         PSendSysMessage(LANG_SOUND_NOT_EXIST, dwSoundId);
         SetSentErrorMessage(true);
@@ -354,10 +359,14 @@ bool ChatHandler::HandleDebugPlayMusicCommand(char* args)
 {
     uint32 dwSoundId;
 
-    if (!ExtractUInt32(&args, dwSoundId))
+    if (!ExtractUint32KeyFromLink(&args, "Hsound", dwSoundId))
+    {
+        PSendSysMessage(LANG_SOUND_NOT_EXIST, dwSoundId);
+        SetSentErrorMessage(true);
         return false;
+    }
 
-    if (!sSoundEntriesStore.LookupEntry(dwSoundId))
+    if (!sObjectMgr.GetSoundEntry(dwSoundId))
     {
         PSendSysMessage(LANG_SOUND_NOT_EXIST, dwSoundId);
         SetSentErrorMessage(true);

@@ -1114,11 +1114,11 @@ void ObjectMgr::CheckCreatureTemplates()
         if (!cInfo)
             continue;
 
-        FactionTemplateEntry const* factionTemplate = sFactionTemplateStore.LookupEntry(cInfo->faction_A);
+        FactionTemplateEntry const* factionTemplate = GetFactionTemplateEntry(cInfo->faction_A);
         if (!factionTemplate)
             sLog.outErrorDb("Creature (Entry: %u) has nonexistent faction_A template (%u)", cInfo->Entry, cInfo->faction_A);
 
-        factionTemplate = sFactionTemplateStore.LookupEntry(cInfo->faction_H);
+        factionTemplate = GetFactionTemplateEntry(cInfo->faction_H);
         if (!factionTemplate)
             sLog.outErrorDb("Creature (Entry: %u) has nonexistent faction_H template (%u)", cInfo->Entry, cInfo->faction_H);
 
@@ -2403,7 +2403,7 @@ void ObjectMgr::LoadItemPrototypes()
 
         if (proto->RequiredReputationFaction)
         {
-            if (!sFactionStore.LookupEntry(proto->RequiredReputationFaction))
+            if (!GetFactionEntry(proto->RequiredReputationFaction))
             {
                 sLog.outErrorDb("Item (Entry: %u) has wrong (not existing) faction in RequiredReputationFaction (%u)", i, proto->RequiredReputationFaction);
                 const_cast<ItemPrototype*>(proto)->RequiredReputationFaction = 0;
@@ -3824,21 +3824,21 @@ void ObjectMgr::LoadQuests()
         }
         // else Skill quests can have 0 skill level, this is ok
 
-        if (qinfo->RepObjectiveFaction && !sFactionStore.LookupEntry(qinfo->RepObjectiveFaction))
+        if (qinfo->RepObjectiveFaction && !GetFactionEntry(qinfo->RepObjectiveFaction))
         {
             sLog.outErrorDb("Quest %u has `RepObjectiveFaction` = %u but faction template %u does not exist, quest can't be done.",
                             qinfo->GetQuestId(), qinfo->RepObjectiveFaction, qinfo->RepObjectiveFaction);
             // no changes, quest can't be done for this requirement
         }
 
-        if (qinfo->RequiredMinRepFaction && !sFactionStore.LookupEntry(qinfo->RequiredMinRepFaction))
+        if (qinfo->RequiredMinRepFaction && !GetFactionEntry(qinfo->RequiredMinRepFaction))
         {
             sLog.outErrorDb("Quest %u has `RequiredMinRepFaction` = %u but faction template %u does not exist, quest can't be done.",
                             qinfo->GetQuestId(), qinfo->RequiredMinRepFaction, qinfo->RequiredMinRepFaction);
             // no changes, quest can't be done for this requirement
         }
 
-        if (qinfo->RequiredMaxRepFaction && !sFactionStore.LookupEntry(qinfo->RequiredMaxRepFaction))
+        if (qinfo->RequiredMaxRepFaction && !GetFactionEntry(qinfo->RequiredMaxRepFaction))
         {
             sLog.outErrorDb("Quest %u has `RequiredMaxRepFaction` = %u but faction template %u does not exist, quest can't be done.",
                             qinfo->GetQuestId(), qinfo->RequiredMaxRepFaction, qinfo->RequiredMaxRepFaction);
@@ -4126,7 +4126,7 @@ void ObjectMgr::LoadQuests()
                     // no changes
                 }
 
-                if (!sFactionStore.LookupEntry(qinfo->RewRepFaction[j]))
+                if (!GetFactionEntry(qinfo->RewRepFaction[j]))
                 {
                     sLog.outErrorDb("Quest %u has `RewRepFaction%d` = %u but raw faction (faction.dbc) %u does not exist, quest will not reward reputation for this faction.",
                                     qinfo->GetQuestId(), j + 1, qinfo->RewRepFaction[j] , qinfo->RewRepFaction[j]);
@@ -6418,6 +6418,139 @@ void ObjectMgr::LoadCorpses()
     sLog.outString(">> Loaded %u corpses", count);
 }
 
+void ObjectMgr::LoadFactions()
+{
+    sLog.outString("Loading factions ...");
+
+    // Getting the maximum ID.
+    QueryResult* result = WorldDatabase.Query("SELECT MAX(ID) FROM faction");
+
+    if (!result)
+    {
+        sLog.outString(">> Loaded 0 factions. DB table `faction` is empty.");
+        return;
+    }
+    auto fields = result->Fetch();
+    uint32 maxFactionEntry = fields[0].GetUInt32() + 1;
+    delete result;
+
+    // Actually loading the factions.
+    result = WorldDatabase.Query("SELECT * FROM faction");
+
+    if (!result)
+    {
+        sLog.outString(">> Loaded 0 factions. DB table `faction` is empty.");
+        return;
+    }
+
+    mFactions.resize(maxFactionEntry, nullptr);
+
+    do
+    {
+        fields = result->Fetch();
+
+        FactionEntry* faction = new FactionEntry();
+
+        uint32 factionId = fields[0].GetUInt32();
+
+        faction->ID = factionId;
+        faction->reputationListID = fields[1].GetInt32();
+        faction->BaseRepRaceMask[0] = fields[2].GetUInt32();
+        faction->BaseRepRaceMask[1] = fields[3].GetUInt32();
+        faction->BaseRepRaceMask[2] = fields[4].GetUInt32();
+        faction->BaseRepRaceMask[3] = fields[5].GetUInt32();
+        faction->BaseRepClassMask[0] = fields[6].GetUInt32();
+        faction->BaseRepClassMask[1] = fields[7].GetUInt32();
+        faction->BaseRepClassMask[2] = fields[8].GetUInt32();
+        faction->BaseRepClassMask[3] = fields[9].GetUInt32();
+        faction->BaseRepValue[0] = fields[10].GetInt32();
+        faction->BaseRepValue[1] = fields[11].GetInt32();
+        faction->BaseRepValue[2] = fields[12].GetInt32();
+        faction->BaseRepValue[3] = fields[13].GetInt32();
+        faction->ReputationFlags[0] = fields[14].GetUInt32();
+        faction->ReputationFlags[1] = fields[15].GetUInt32();
+        faction->ReputationFlags[2] = fields[16].GetUInt32();
+        faction->ReputationFlags[3] = fields[17].GetUInt32();
+        faction->team = fields[18].GetUInt32();
+        faction->name[0] = new char[strlen(fields[19].GetString()) + 1];
+        strcpy(faction->name[0], fields[19].GetString());
+        faction->name[1] = new char[strlen(fields[20].GetString()) + 1];
+        strcpy(faction->name[1], fields[20].GetString());
+        faction->name[2] = new char[strlen(fields[21].GetString()) + 1];
+        strcpy(faction->name[2], fields[21].GetString());
+        faction->name[3] = new char[strlen(fields[22].GetString()) + 1];
+        strcpy(faction->name[3], fields[22].GetString());
+        faction->name[4] = new char[strlen(fields[23].GetString()) + 1];
+        strcpy(faction->name[4], fields[23].GetString());
+        faction->name[5] = new char[strlen(fields[24].GetString()) + 1];
+        strcpy(faction->name[5], fields[24].GetString());
+        faction->name[6] = new char[strlen(fields[25].GetString()) + 1];
+        strcpy(faction->name[6], fields[25].GetString());
+        faction->name[7] = new char[strlen(fields[26].GetString()) + 1];
+        strcpy(faction->name[7], fields[26].GetString());
+
+        mFactions[factionId] = faction;
+
+    } while (result->NextRow());
+
+    delete result;
+
+    // Getting the maximum ID.
+    result = WorldDatabase.Query("SELECT MAX(ID) FROM faction_template");
+
+    if (!result)
+    {
+        sLog.outString(">> Loaded 0 faction templates. DB table `faction_template` is empty.");
+        return;
+    }
+    fields = result->Fetch();
+    uint32 maxFactionTemplateEntry = fields[0].GetUInt32() + 1;
+    delete result;
+
+    // Actually loading the faction templates.
+    result = WorldDatabase.Query("SELECT * FROM faction_template");
+
+    if (!result)
+    {
+        sLog.outString(">> Loaded 0 faction templates. DB table `faction_template` is empty.");
+        return;
+    }
+
+    mFactionTemplates.resize(maxFactionTemplateEntry, nullptr);
+
+    do
+    {
+        fields = result->Fetch();
+
+        FactionTemplateEntry* faction = new FactionTemplateEntry();
+
+        uint32 factionId = fields[0].GetUInt32();
+
+        faction->ID = factionId;
+        faction->faction = fields[1].GetUInt32();
+        faction->factionFlags = fields[2].GetUInt32();
+        faction->ourMask = fields[3].GetUInt32();
+        faction->friendlyMask = fields[4].GetUInt32();
+        faction->hostileMask = fields[5].GetUInt32();
+        faction->enemyFaction[0] = fields[6].GetUInt32();
+        faction->enemyFaction[1] = fields[7].GetUInt32();
+        faction->enemyFaction[2] = fields[8].GetUInt32();
+        faction->enemyFaction[3] = fields[9].GetUInt32();
+        faction->friendFaction[0] = fields[10].GetInt32();
+        faction->friendFaction[1] = fields[11].GetInt32();
+        faction->friendFaction[2] = fields[12].GetInt32();
+        faction->friendFaction[3] = fields[13].GetInt32();
+
+        mFactionTemplates[factionId] = faction;
+
+    } while (result->NextRow());
+
+    delete result;
+
+    sLog.outString();
+    sLog.outString(">> Loaded %u factions and %u faction templates.", maxFactionEntry, maxFactionTemplateEntry);
+}
+
 void ObjectMgr::LoadReputationRewardRate()
 {
     m_RepRewardRateMap.clear();                             // for reload case
@@ -6452,7 +6585,7 @@ void ObjectMgr::LoadReputationRewardRate()
         repRate.creature_rate   = fields[2].GetFloat();
         repRate.spell_rate      = fields[3].GetFloat();
 
-        FactionEntry const *factionEntry = sFactionStore.LookupEntry(factionId);
+        FactionEntry const *factionEntry = GetFactionEntry(factionId);
         if (!factionEntry)
         {
             sLog.outErrorDb("Faction (faction.dbc) %u does not exist but is used in `reputation_reward_rate`", factionId);
@@ -6539,7 +6672,7 @@ void ObjectMgr::LoadReputationOnKill()
 
         if (repOnKill.repfaction1)
         {
-            FactionEntry const *factionEntry1 = sFactionStore.LookupEntry(repOnKill.repfaction1);
+            FactionEntry const *factionEntry1 = GetFactionEntry(repOnKill.repfaction1);
             if (!factionEntry1)
             {
                 sLog.outErrorDb("Faction (faction.dbc) %u does not exist but is used in `creature_onkill_reputation`", repOnKill.repfaction1);
@@ -6549,7 +6682,7 @@ void ObjectMgr::LoadReputationOnKill()
 
         if (repOnKill.repfaction2)
         {
-            FactionEntry const *factionEntry2 = sFactionStore.LookupEntry(repOnKill.repfaction2);
+            FactionEntry const *factionEntry2 = GetFactionEntry(repOnKill.repfaction2);
             if (!factionEntry2)
             {
                 sLog.outErrorDb("Faction (faction.dbc) %u does not exist but is used in `creature_onkill_reputation`", repOnKill.repfaction2);
@@ -6612,7 +6745,7 @@ void ObjectMgr::LoadReputationSpilloverTemplate()
         repTemplate.faction_rate[3]     = fields[11].GetFloat();
         repTemplate.faction_rank[3]     = fields[12].GetUInt32();
 
-        FactionEntry const *factionEntry = sFactionStore.LookupEntry(factionId);
+        FactionEntry const *factionEntry = GetFactionEntry(factionId);
 
         if (!factionEntry)
         {
@@ -6624,7 +6757,7 @@ void ObjectMgr::LoadReputationSpilloverTemplate()
         {
             if (repTemplate.faction[i])
             {
-                FactionEntry const *factionSpillover = sFactionStore.LookupEntry(repTemplate.faction[i]);
+                FactionEntry const *factionSpillover = GetFactionEntry(repTemplate.faction[i]);
 
                 if (!factionSpillover)
                 {
@@ -6646,25 +6779,25 @@ void ObjectMgr::LoadReputationSpilloverTemplate()
             }
         }
 
-        FactionEntry const *factionEntry0 = sFactionStore.LookupEntry(repTemplate.faction[0]);
+        FactionEntry const *factionEntry0 = GetFactionEntry(repTemplate.faction[0]);
         if (repTemplate.faction[0] && !factionEntry0)
         {
             sLog.outErrorDb("Faction (faction.dbc) %u does not exist but is used in `reputation_spillover_template`", repTemplate.faction[0]);
             continue;
         }
-        FactionEntry const *factionEntry1 = sFactionStore.LookupEntry(repTemplate.faction[1]);
+        FactionEntry const *factionEntry1 = GetFactionEntry(repTemplate.faction[1]);
         if (repTemplate.faction[1] && !factionEntry1)
         {
             sLog.outErrorDb("Faction (faction.dbc) %u does not exist but is used in `reputation_spillover_template`", repTemplate.faction[1]);
             continue;
         }
-        FactionEntry const *factionEntry2 = sFactionStore.LookupEntry(repTemplate.faction[2]);
+        FactionEntry const *factionEntry2 = GetFactionEntry(repTemplate.faction[2]);
         if (repTemplate.faction[2] && !factionEntry2)
         {
             sLog.outErrorDb("Faction (faction.dbc) %u does not exist but is used in `reputation_spillover_template`", repTemplate.faction[2]);
             continue;
         }
-        FactionEntry const *factionEntry3 = sFactionStore.LookupEntry(repTemplate.faction[3]);
+        FactionEntry const *factionEntry3 = GetFactionEntry(repTemplate.faction[3]);
         if (repTemplate.faction[3] && !factionEntry3)
         {
             sLog.outErrorDb("Faction (faction.dbc) %u does not exist but is used in `reputation_spillover_template`", repTemplate.faction[3]);
@@ -7246,6 +7379,53 @@ void ObjectMgr::LoadGameObjectForQuests()
     sLog.outString(">> Loaded %u GameObjects for quests", count);
 }
 
+void ObjectMgr::LoadSoundEntries()
+{
+    sLog.outString("Loading sounds ...");
+
+    // Getting the maximum ID.
+    QueryResult* result = WorldDatabase.Query("SELECT MAX(ID) FROM sound_entries");
+
+    if (!result)
+    {
+        sLog.outString(">> Loaded 0 sounds. DB table `sound_entries` is empty.");
+        return;
+    }
+    auto fields = result->Fetch();
+    uint32 maxSoundEntry = fields[0].GetUInt32() + 1;
+    delete result;
+
+    // Actually loading the sounds.
+    result = WorldDatabase.Query("SELECT * FROM sound_entries");
+
+    if (!result)
+    {
+        sLog.outString(">> Loaded 0 sounds. DB table `sound_entries` is empty.");
+        return;
+    }
+
+    mSoundEntries.resize(maxSoundEntry, nullptr);
+
+    do
+    {
+        fields = result->Fetch();
+
+        SoundEntriesEntry* sound = new SoundEntriesEntry();
+        uint32 soundId = fields[0].GetUInt32();
+
+        sound->Id = soundId;
+        sound->Name = fields[1].GetCppString();
+
+        mSoundEntries[soundId] = sound;
+
+    } while (result->NextRow());
+
+    delete result;
+
+    sLog.outString();
+    sLog.outString(">> Loaded %u sound entries.", maxSoundEntry);
+}
+
 void ObjectMgr::LoadBroadcastTexts()
 {
     mBroadcastTextLocaleMap.clear(); // for reload case
@@ -7282,7 +7462,7 @@ void ObjectMgr::LoadBroadcastTexts()
 
         if (bct.SoundId)
         {
-            if (!sSoundEntriesStore.LookupEntry(bct.SoundId))
+            if (!GetSoundEntry(bct.SoundId))
             {
                 sLog.outErrorDb("BroadcastText (Id: %u) in table `broadcast_text` has SoundId %u but sound does not exist.", bct.Id, bct.SoundId);
                 bct.SoundId = 0;
@@ -7546,7 +7726,7 @@ bool ObjectMgr::LoadMangosStrings(DatabaseType& db, char const* table, int32 min
             data.LanguageId  = Language(fields[12].GetUInt32());
             data.Emote       = fields[13].GetUInt32();
 
-            if (data.SoundId && !sSoundEntriesStore.LookupEntry(data.SoundId))
+            if (data.SoundId && !GetSoundEntry(data.SoundId))
             {
                 sLog.outErrorDb("Entry %i in table `%s` has soundId %u but sound does not exist.", entry, table, data.SoundId);
                 data.SoundId = 0;
@@ -9027,7 +9207,7 @@ void ObjectMgr::LoadFactionChangeReputations()
         uint32 alliance = fields[0].GetUInt32();
         uint32 horde = fields[1].GetUInt32();
 
-        if (!sFactionStore.LookupEntry(alliance) || !sFactionStore.LookupEntry(horde))
+        if (!GetFactionEntry(alliance) || !GetFactionEntry(horde))
         {
             sLog.outErrorDb("Couple %u/%u erreur. Sort inexistant. Supprime de la DB", alliance, horde);
         }
@@ -9428,7 +9608,7 @@ bool PlayerCondition::Meets(Player const* player, Map const* map, WorldObject co
         }
         case CONDITION_REPUTATION_RANK_MIN:
         {
-            FactionEntry const* faction = sFactionStore.LookupEntry(m_value1);
+            FactionEntry const* faction = sObjectMgr.GetFactionEntry(m_value1);
             return faction && player->GetReputationMgr().GetRank(faction) >= ReputationRank(m_value2);
         }
         case CONDITION_TEAM:
@@ -9585,7 +9765,7 @@ bool PlayerCondition::Meets(Player const* player, Map const* map, WorldObject co
         }
         case CONDITION_REPUTATION_RANK_MAX:
         {
-            FactionEntry const* faction = sFactionStore.LookupEntry(m_value1);
+            FactionEntry const* faction = sObjectMgr.GetFactionEntry(m_value1);
             return faction && player->GetReputationMgr().GetRank(faction) <= ReputationRank(m_value2);
         }
         case CONDITION_SOURCE_AURA:
@@ -9919,7 +10099,7 @@ bool PlayerCondition::IsValid()
         case CONDITION_REPUTATION_RANK_MIN:
         case CONDITION_REPUTATION_RANK_MAX:
         {
-            FactionEntry const* factionEntry = sFactionStore.LookupEntry(m_value1);
+            FactionEntry const* factionEntry = sObjectMgr.GetFactionEntry(m_value1);
             if (!factionEntry)
             {
                 sLog.outErrorDb("Reputation condition (entry %u, type %u) requires to have reputation non existing faction (%u), skipped", m_entry, m_condition, m_value1);

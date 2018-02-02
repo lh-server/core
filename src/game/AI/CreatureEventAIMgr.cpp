@@ -78,7 +78,7 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Texts(bool check_entry_use)
 
             if (temp.SoundId)
             {
-                if (!sSoundEntriesStore.LookupEntry(temp.SoundId))
+                if (!sObjectMgr.GetSoundEntry(temp.SoundId))
                     sLog.outErrorDb("CreatureEventAI:  Entry %i in table `creature_ai_texts` has Sound %u but sound does not exist.", i, temp.SoundId);
             }
 
@@ -557,7 +557,7 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                         break;
                     }
                     case ACTION_T_SET_FACTION:
-                        if (action.set_faction.factionId != 0 && !sFactionStore.LookupEntry(action.set_faction.factionId))
+                        if (action.set_faction.factionId != 0 && !sObjectMgr.GetFactionEntry(action.set_faction.factionId))
                         {
                             sLog.outErrorDb("CreatureEventAI:  Event %u Action %u uses nonexistent FactionId %u.", i, j + 1, action.set_faction.factionId);
                             action.set_faction.factionId = 0;
@@ -588,7 +588,7 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                         }
                         break;
                     case ACTION_T_SOUND:
-                        if (!sSoundEntriesStore.LookupEntry(action.sound.soundId))
+                        if (!sObjectMgr.GetSoundEntry(action.sound.soundId))
                             sLog.outErrorDb("CreatureEventAI:  Event %u Action %u uses nonexistent SoundID %u.", i, j + 1, action.sound.soundId);
                         break;
                     case ACTION_T_EMOTE:
@@ -596,11 +596,11 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                             sLog.outErrorDb("CreatureEventAI: Event %u Action %u param1 (EmoteId: %u) are not valid.", i, j + 1, action.emote.emoteId);
                         break;
                     case ACTION_T_RANDOM_SOUND:
-                        if (!sSoundEntriesStore.LookupEntry(action.random_sound.soundId1))
+                        if (!sObjectMgr.GetSoundEntry(action.random_sound.soundId1))
                             sLog.outErrorDb("CreatureEventAI:  Event %u Action %u param1 uses nonexistent SoundID %u.", i, j + 1, action.random_sound.soundId1);
-                        if (action.random_sound.soundId2 >= 0 && !sSoundEntriesStore.LookupEntry(action.random_sound.soundId2))
+                        if (action.random_sound.soundId2 >= 0 && !sObjectMgr.GetSoundEntry(action.random_sound.soundId2))
                             sLog.outErrorDb("CreatureEventAI:  Event %u Action %u param2 uses nonexistent SoundID %u.", i, j + 1, action.random_sound.soundId2);
-                        if (action.random_sound.soundId3 >= 0 && !sSoundEntriesStore.LookupEntry(action.random_sound.soundId3))
+                        if (action.random_sound.soundId3 >= 0 && !sObjectMgr.GetSoundEntry(action.random_sound.soundId3))
                             sLog.outErrorDb("CreatureEventAI:  Event %u Action %u param3 uses nonexistent SoundID %u.", i, j + 1, action.random_sound.soundId3);
                         break;
                     case ACTION_T_RANDOM_EMOTE:

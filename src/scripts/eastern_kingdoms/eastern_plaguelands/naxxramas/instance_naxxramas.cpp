@@ -886,8 +886,8 @@ void instance_naxxramas::SetData(uint32 uiType, uint32 uiData)
                     pC->DeleteLater();
 
                 // reputation
-                FactionEntry const *factionEntry = sFactionStore.LookupEntry(529); // Argent Dawn
-                if (factionEntry) 
+                FactionEntry const *factionEntry = sObjectMgr.GetFactionEntry(529); // Argent Dawn
+                if (factionEntry)
                 {
                     Map::PlayerList const &liste = GetMap()->GetPlayers();
                     for (Map::PlayerList::const_iterator i = liste.begin(); i != liste.end(); ++i)

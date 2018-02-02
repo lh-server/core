@@ -571,7 +571,7 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
             }
             case SCRIPT_COMMAND_SET_FACTION:
             {
-                if (tmp.faction.factionId && !sFactionStore.LookupEntry(tmp.faction.factionId))
+                if (tmp.faction.factionId && !sObjectMgr.GetFactionEntry(tmp.faction.factionId))
                 {
                     sLog.outErrorDb("Table `%s` has datalong2 = %u in SCRIPT_COMMAND_SET_FACTION for script id %u, but this faction does not exist.", tablename, tmp.faction.factionId, tmp.id);
                     continue;
@@ -1467,7 +1467,7 @@ void ScriptMgr::LoadScriptTexts()
 
             if (pTemp.SoundId)
             {
-                if (!GetSoundEntriesStore()->LookupEntry(pTemp.SoundId))
+                if (!sObjectMgr.GetSoundEntry(pTemp.SoundId))
                     sLog.outErrorDb("Entry %i in table `script_texts` has soundId %u but sound does not exist.", iId, pTemp.SoundId);
             }
 
@@ -1529,7 +1529,7 @@ void ScriptMgr::LoadScriptTextsCustom()
 
             if (pTemp.SoundId)
             {
-                if (!GetSoundEntriesStore()->LookupEntry(pTemp.SoundId))
+                if (!sObjectMgr.GetSoundEntry(pTemp.SoundId))
                     sLog.outErrorDb("Entry %i in table `custom_texts` has soundId %u but sound does not exist.", iId, pTemp.SoundId);
             }
 
@@ -1842,7 +1842,7 @@ void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* pTarget, uint32 
 
     if (SoundId)
     {
-        if (GetSoundEntriesStore()->LookupEntry(SoundId))
+        if (sObjectMgr.GetSoundEntry(SoundId))
         {
             if(Type == CHAT_TYPE_ZONE_YELL)
             {

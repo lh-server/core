@@ -1377,7 +1377,7 @@ void CreatureEventAI::DoScriptText(int32 textEntry, Unit* pSource, Unit* target)
 
     if (SoundId)
     {
-        if (GetSoundEntriesStore()->LookupEntry(SoundId))
+        if (sObjectMgr.GetSoundEntry(SoundId))
         {
             if(Type == CHAT_TYPE_ZONE_YELL)
             {
