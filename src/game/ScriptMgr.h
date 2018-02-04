@@ -325,6 +325,7 @@ struct ScriptInfo
     uint32 id;
     uint32 delay;
     uint32 command;
+    uint32 condition;
 
     union
     {
@@ -580,7 +581,7 @@ struct ScriptInfo
     float z;
     float o;
 
-    ScriptInfo() : id(0), delay(0), command(0), buddy_id(0), buddy_radius(0), buddy_type(0), x(0), y(0), z(0), o(0)
+    ScriptInfo() : id(0), delay(0), command(0), condition(0), buddy_id(0), buddy_radius(0), buddy_type(0), x(0), y(0), z(0), o(0)
     {
         memset(raw.data, 0, sizeof(raw.data));
     }

@@ -1154,38 +1154,33 @@ bool Map::ScriptCommand_TerminateScript(ScriptAction& step, Object* source, Obje
 // SCRIPT_COMMAND_TERMINATE_CONDITION (32)
 bool Map::ScriptCommand_TerminateCondition(ScriptAction& step, Object* source, Object* target)
 {
-    Player* pPlayer = nullptr;
-    WorldObject* pSecond = nullptr;
+    WorldObject* pSource = nullptr;
+    WorldObject* pTarget = nullptr;
 
-    if (target && target->GetTypeId() == TYPEID_PLAYER)
-    {
-        pPlayer = static_cast<Player*>(target);
+    if (source && source->isType(TYPEMASK_WORLDOBJECT))
+        pSource = static_cast<WorldObject*>(source);
 
-        if (source && source->isType(TYPEMASK_WORLDOBJECT))
-            pSecond = static_cast<WorldObject*>(source);
-    }
-    else if (source && source->GetTypeId() == TYPEID_PLAYER)
-    {
-        pPlayer = static_cast<Player*>(source);
+    if (target && target->isType(TYPEMASK_WORLDOBJECT))
+        pTarget = static_cast<WorldObject*>(target);
 
-        if (target && target->isType(TYPEMASK_WORLDOBJECT))
-            pSecond = static_cast<WorldObject*>(target);
-    }
-
-    if (!pPlayer && !pSecond)
-    {
-        sLog.outError("SCRIPT_COMMAND_TERMINATE_CONDITION (script id %u) call for a NULL object, skipping.", step.script->id);
-        return ShouldAbortScript(step);
-    }
-
-    bool terminateResult;
+    bool terminateResult = sObjectMgr.IsConditionSatisfied(step.script->terminateCond.conditionId, pTarget, this, pSource, CONDITION_FROM_DBSCRIPTS);
+    
     if (step.script->terminateCond.flags & SF_TERMINATECONDITION_WHEN_FALSE)
-        terminateResult = !sObjectMgr.IsConditionSatisfied(step.script->terminateCond.conditionId, pPlayer, pPlayer->GetMap(), pSecond, CONDITION_FROM_DBSCRIPTS);
-    else
-        terminateResult = sObjectMgr.IsConditionSatisfied(step.script->terminateCond.conditionId, pPlayer, pPlayer->GetMap(), pSecond, CONDITION_FROM_DBSCRIPTS);
+        terminateResult = !terminateResult;
 
-    if (pPlayer && terminateResult && step.script->terminateCond.failQuest)
+    if (terminateResult && step.script->terminateCond.failQuest)
+    {
+        Player* pPlayer = nullptr;
+
+        if (pSource && (pSource->GetTypeId() == TYPEID_PLAYER))
+            pPlayer = static_cast<Player*>(pSource);
+        else if (pTarget && (pTarget->GetTypeId() == TYPEID_PLAYER))
+            pPlayer = static_cast<Player*>(pTarget);
+        else
+            return terminateResult;
+
         pPlayer->GroupEventFailHappens(step.script->terminateCond.failQuest);
+    }
 
     return terminateResult; // Terminate further steps of this script
 }

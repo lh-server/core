@@ -2436,7 +2436,11 @@ void Map::ScriptsProcess()
         Object* target = nullptr;
 
         bool scriptResultOk = FindScriptTargets(source, target, step) && (step.script->command != SCRIPT_COMMAND_DISABLED);
-        
+
+        if (step.script->condition)
+            if (!sObjectMgr.IsConditionSatisfied(step.script->condition, dynamic_cast<WorldObject*>(target), this, dynamic_cast<WorldObject*>(source), CONDITION_FROM_DBSCRIPTS))
+                scriptResultOk = false;
+
         if (scriptResultOk)
             scriptResultOk = (this->*(m_ScriptCommands[step.script->command]))(step, source, target);
 
