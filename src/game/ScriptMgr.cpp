@@ -76,8 +76,8 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
 
     scripts.clear();                                        // need for reload support
 
-    //                                                  0    1       2         3         4          5          6         7           8             9          10        11        12        13        14    15 16 17 18
-    QueryResult *result = WorldDatabase.PQuery("SELECT id, delay, command, datalong, datalong2, datalong3, datalong4, buddy_id, buddy_radius, buddy_type, data_flags, dataint, dataint2, dataint3, dataint4, x, y, z, o FROM %s", tablename);
+    //                                                  0    1       2         3         4          5          6         7           8             9          10        11        12        13        14    15 16 17 18       19
+    QueryResult *result = WorldDatabase.PQuery("SELECT id, delay, command, datalong, datalong2, datalong3, datalong4, buddy_id, buddy_radius, buddy_type, data_flags, dataint, dataint2, dataint3, dataint4, x, y, z, o, condition_id FROM %s", tablename);
 
     uint32 count = 0;
 
@@ -120,6 +120,13 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
         tmp.y            = fields[16].GetFloat();
         tmp.z            = fields[17].GetFloat();
         tmp.o            = fields[18].GetFloat();
+        tmp.condition    = fields[19].GetUInt32();
+
+        if (tmp.condition && !sConditionStorage.LookupEntry<ConditionEntry>(tmp.condition))
+        {
+            sLog.outErrorDb("Table `%s` has condition = %u for script id %u, but this condition entry does not exist.", tablename, tmp.condition, tmp.id);
+            continue;
+        }
 
         if (tmp.buddy_id)
         {
