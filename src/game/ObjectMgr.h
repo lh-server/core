@@ -1082,7 +1082,7 @@ class ObjectMgr
         LocaleConstant GetLocaleForIndex(int i);
 
         uint16 GetConditionId(ConditionType condition, uint32 value1, uint32 value2);
-        bool IsPlayerMeetToCondition(uint16 conditionId, Player const* pPlayer, Map const* map, WorldObject const* source, ConditionSource conditionSourceType) const;
+        bool IsConditionSatisfied(uint16 conditionId, WorldObject const* target, Map const* map, WorldObject const* source, ConditionSource conditionSourceType) const;
 
         GameTele const* GetGameTele(uint32 id) const
         {

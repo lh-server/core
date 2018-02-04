@@ -11794,7 +11794,7 @@ void Player::PrepareGossipMenu(WorldObject *pSource, uint32 menuId)
         bool hasMenuItem = true;
         bool isGMSkipConditionCheck = false;
 
-        if (itr->second.conditionId && !sObjectMgr.IsPlayerMeetToCondition(itr->second.conditionId, this, GetMap(), pSource, CONDITION_FROM_GOSSIP_OPTION))
+        if (itr->second.conditionId && !sObjectMgr.IsConditionSatisfied(itr->second.conditionId, this, GetMap(), pSource, CONDITION_FROM_GOSSIP_OPTION))
         {
             if (isGameMaster())                             // Let GM always see menu items regardless of conditions
                 isGMSkipConditionCheck = true;
@@ -12153,7 +12153,7 @@ uint32 Player::GetGossipTextId(uint32 menuId, WorldObject const* source)
         // Take the text that has the highest conditionId of all fitting
         // No condition and no text with condition found OR higher and fitting condition found
         if ((!itr->second.conditionId && !lastConditionId) ||
-                (itr->second.conditionId > lastConditionId && sObjectMgr.IsPlayerMeetToCondition(itr->second.conditionId, this, GetMap(), source, CONDITION_FROM_GOSSIP_MENU)))
+                (itr->second.conditionId > lastConditionId && sObjectMgr.IsConditionSatisfied(itr->second.conditionId, this, GetMap(), source, CONDITION_FROM_GOSSIP_MENU)))
         {
             lastConditionId = itr->second.conditionId;
             textId = itr->second.text_id;

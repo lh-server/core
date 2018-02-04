@@ -132,7 +132,7 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
     if (pHolder.Event.event_inverse_phase_mask & (1 << m_Phase))
         return false;
 
-    if (pHolder.Event.condition_id && !sObjectMgr.IsPlayerMeetToCondition(pHolder.Event.condition_id, dynamic_cast<Player*>(pActionInvoker), m_creature->GetMap(), m_creature, CONDITION_FROM_EVENTAI))
+    if (pHolder.Event.condition_id && !sObjectMgr.IsConditionSatisfied(pHolder.Event.condition_id, pActionInvoker, m_creature->GetMap(), m_creature, CONDITION_FROM_EVENTAI))
         return false;
 
     CreatureEventAI_Event const& event = pHolder.Event;

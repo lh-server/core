@@ -1180,9 +1180,9 @@ bool Map::ScriptCommand_TerminateCondition(ScriptAction& step, Object* source, O
 
     bool terminateResult;
     if (step.script->terminateCond.flags & SF_TERMINATECONDITION_WHEN_FALSE)
-        terminateResult = !sObjectMgr.IsPlayerMeetToCondition(step.script->terminateCond.conditionId, pPlayer, pPlayer->GetMap(), pSecond, CONDITION_FROM_DBSCRIPTS);
+        terminateResult = !sObjectMgr.IsConditionSatisfied(step.script->terminateCond.conditionId, pPlayer, pPlayer->GetMap(), pSecond, CONDITION_FROM_DBSCRIPTS);
     else
-        terminateResult = sObjectMgr.IsPlayerMeetToCondition(step.script->terminateCond.conditionId, pPlayer, pPlayer->GetMap(), pSecond, CONDITION_FROM_DBSCRIPTS);
+        terminateResult = sObjectMgr.IsConditionSatisfied(step.script->terminateCond.conditionId, pPlayer, pPlayer->GetMap(), pSecond, CONDITION_FROM_DBSCRIPTS);
 
     if (pPlayer && terminateResult && step.script->terminateCond.failQuest)
         pPlayer->GroupEventFailHappens(step.script->terminateCond.failQuest);
