@@ -25,6 +25,7 @@
 #include "ProgressBar.h"
 #include "World.h"
 #include "Util.h"
+#include "Conditions.h"
 
 static eConfigFloatValues const qualityToRate[MAX_ITEM_QUALITY] =
 {
@@ -135,7 +136,7 @@ void LootStore::LoadLootTable()
 
             if (conditionId)
             {
-                const PlayerCondition* condition = sConditionStorage.LookupEntry<PlayerCondition>(conditionId);
+                const ConditionEntry* condition = sConditionStorage.LookupEntry<ConditionEntry>(conditionId);
                 if (!condition)
                 {
                     sLog.outErrorDb("Table `%s` for entry %u, item %u has condition_id %u that does not exist in `conditions`, ignoring", GetName(), entry, item, conditionId);
@@ -143,7 +144,7 @@ void LootStore::LoadLootTable()
                     continue;
                 }
 
-                if (mincountOrRef < 0 && !PlayerCondition::CanBeUsedWithoutPlayer(conditionId))
+                if (mincountOrRef < 0 && !ConditionEntry::CanBeUsedWithoutPlayer(conditionId))
                 {
                     sLog.outErrorDb("Table '%s' entry %u mincountOrRef %i < 0 and has condition %u that requires a player and is not supported, skipped", GetName(), entry, mincountOrRef, conditionId);
                     sLog.out(LOG_DBERRFIX, "DELETE FROM %s WHERE entry=%u AND item=%u;", GetName(), entry, item);
@@ -411,7 +412,7 @@ bool LootStoreItem::AllowedForTeam(Loot const& loot) const
 {
     if (conditionId)
     {
-        PlayerCondition const* condition = sConditionStorage.LookupEntry<PlayerCondition>(conditionId);
+        ConditionEntry const* condition = sConditionStorage.LookupEntry<ConditionEntry>(conditionId);
         if (!condition)
             return false;
 
@@ -421,7 +422,7 @@ bool LootStoreItem::AllowedForTeam(Loot const& loot) const
             return false;
 
         // Check non-player dependant conditions
-        if (PlayerCondition::CanBeUsedWithoutPlayer(conditionId))
+        if (ConditionEntry::CanBeUsedWithoutPlayer(conditionId))
             if (!condition->Meets(nullptr, nullptr, loot.GetLootTarget(), CONDITION_FROM_LOOT))
                 return false;
     }

@@ -27,6 +27,7 @@
 #include "GossipDef.h"
 #include "SpellAuras.h"
 #include "ScriptLoader.h"
+#include "Conditions.h"
 
 typedef std::vector<Script*> ScriptVector;
 int num_sc_scripts;
@@ -702,7 +703,7 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
             }
             case SCRIPT_COMMAND_TERMINATE_CONDITION:
             {
-                if (!sConditionStorage.LookupEntry<PlayerCondition>(tmp.terminateCond.conditionId))
+                if (!sConditionStorage.LookupEntry<ConditionEntry>(tmp.terminateCond.conditionId))
                 {
                     sLog.outErrorDb("Table `%s` has datalong = %u in SCRIPT_COMMAND_TERMINATE_CONDITION for script id %u, but this condition_id does not exist.", tablename, tmp.terminateCond.conditionId, tmp.id);
                     continue;

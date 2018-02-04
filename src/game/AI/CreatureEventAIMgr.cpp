@@ -29,6 +29,7 @@
 #include "Policies/SingletonImp.h"
 #include "ObjectGuid.h"
 #include "GridDefines.h"
+#include "Conditions.h"
 
 INSTANTIATE_SINGLETON_1(CreatureEventAIMgr);
 
@@ -310,7 +311,7 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
 
             if (temp.condition_id)
             {
-                const PlayerCondition* condition = sConditionStorage.LookupEntry<PlayerCondition>(temp.condition_id);
+                const ConditionEntry* condition = sConditionStorage.LookupEntry<ConditionEntry>(temp.condition_id);
                 if (!condition)
                 {
                     sLog.outErrorDb("CreatureEventAI: Creature %u has condition_id %u that does not exist in `conditions`, ignoring", temp.creature_id, temp.condition_id);
