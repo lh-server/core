@@ -190,6 +190,9 @@ enum eScriptCommand
                                                             // datalong = field
                                                             // datalong2 = data
                                                             // datalong3 = eSetInstData64Options
+    SCRIPT_COMMAND_START_SCRIPT             = 39,           // source = Map
+                                                            // datalong1-4 = event_script id
+                                                            // dataint1-4 = chance (total cant be above 100)
     SCRIPT_COMMAND_MAX,
 
     SCRIPT_COMMAND_DISABLED                 = 9999          // Script action was disabled during loading.
@@ -554,17 +557,24 @@ struct ScriptInfo
 
         struct                                              // SCRIPT_COMMAND_SET_INST_DATA (37)
         {
-            uint32 field;
-            uint32 data;
-            uint32 type;
+            uint32 field;                                   // datalong
+            uint32 data;                                    // datalong2
+            uint32 type;                                    // datalong3
         } setData;
 
         struct                                              // SCRIPT_COMMAND_SET_INST_DATA64 (38)
         {
-            uint32 field;
-            uint32 data;
-            uint32 type;
+            uint32 field;                                   // datalong
+            uint32 data;                                    // datalong2
+            uint32 type;                                    // datalong3
         } setData64;
+
+        struct                                              // SCRIPT_COMMAND_START_SCRIPT (39)
+        {
+            uint32 scriptId[4];                             // datalong to datalong4
+            uint32 unused;                                  // data_flags
+            int32 chance[4];                                // dataint to dataint4
+        } startScript;
 
         struct
         {

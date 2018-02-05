@@ -766,6 +766,41 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
                 }
                 break;
             }
+            case SCRIPT_COMMAND_START_SCRIPT:
+            {
+                if (100 < (tmp.startScript.chance[0] + tmp.startScript.chance[1] + tmp.startScript.chance[2] + tmp.startScript.chance[3]))
+                {
+                    sLog.outErrorDb("Table `%s` has a total chance exceeding 100%% in SCRIPT_COMMAND_START_SCRIPT for script id %u.", tablename, tmp.id);
+                    continue;
+                }
+                bool abort = false;
+                for (uint8 i = 0; i < 4; i++)
+                {
+                    if (tmp.startScript.chance[i] < 0)
+                    {
+                        abort = true;
+                        sLog.outErrorDb("Table `%s` has dataint%u with negative chance in SCRIPT_COMMAND_START_SCRIPT for script id %u.", tablename, i, tmp.id);
+                        break;
+                    }
+                    else if (!tmp.startScript.scriptId[i] && (tmp.startScript.chance[i] > 0))
+                    {
+                        abort = true;
+                        sLog.outErrorDb("Table `%s` has dataint%u=%i but no provided script id in SCRIPT_COMMAND_START_SCRIPT for script id %u.", tablename, i, tmp.startScript.chance[i], tmp.id);
+                        break;
+                    }
+                    else if (tmp.startScript.scriptId[i] && !tmp.startScript.chance[i])
+                    {
+                        abort = true;
+                        sLog.outErrorDb("Table `%s` has datalong%u=%u with 0%% chance in SCRIPT_COMMAND_START_SCRIPT for script id %u.", tablename, i, tmp.startScript.scriptId[i], tmp.id);
+                        break;
+                    }
+                }
+
+                if (abort)
+                    continue;
+
+                break;
+            }
         }
 
         if (scripts.find(tmp.id) == scripts.end())
@@ -1698,7 +1733,7 @@ void ScriptMgr::LoadEscortData()
 
 void ScriptMgr::CollectPossibleEventIds(std::set<uint32>& eventIds)
 {
-    // Load all possible script entries from gameobject
+    // Load all possible script entries from gameobjects.
     for (auto itr = sGOStorage.begin<GameObjectInfo>(); itr < sGOStorage.end<GameObjectInfo>(); ++itr)
     {
         switch (itr->type)
@@ -1727,7 +1762,7 @@ void ScriptMgr::CollectPossibleEventIds(std::set<uint32>& eventIds)
         }
     }
 
-    // Load all possible script entries from spells
+    // Load all possible script entries from spells.
     for (uint32 i = 1; i < sSpellMgr.GetMaxSpellId(); ++i)
     {
         SpellEntry* spell = ((SpellEntry*)sSpellMgr.GetSpellEntry(i));
@@ -1746,48 +1781,62 @@ void ScriptMgr::CollectPossibleEventIds(std::set<uint32>& eventIds)
 
     // Load all possible script entries from EventAI.
     // Has to be done with a query because it's loaded later.
-    QueryResult* result = WorldDatabase.Query("SELECT action1_param1 FROM creature_ai_scripts WHERE action1_type=50");
-
+    QueryResult* result;
     Field* fields;
-
-    if (result)
+    for (uint8 i = 1; i <= 3; i++)
     {
-        do
-        {
-            fields = result->Fetch();
-            uint32 eventId = fields[0].GetUInt32();
-            if (eventId)
-             eventIds.insert(eventId);
-        } while (result->NextRow());
-        delete result;
-    }
+        result = WorldDatabase.PQuery("SELECT action%u_param1 FROM creature_ai_scripts WHERE action%u_type=50", i, i);
 
-    result = WorldDatabase.Query("SELECT action2_param1 FROM creature_ai_scripts WHERE action2_type=50");
+        if (result)
+        {
+            do
+            {
+                fields = result->Fetch();
+                uint32 eventId = fields[0].GetUInt32();
+                if (eventId)
+                    eventIds.insert(eventId);
+            } while (result->NextRow());
+            delete result;
+        }
+    }
     
-    if (result)
+    // Load all possible script entries from SCRIPT_COMMAND_START_SCRIPT.
+    const char* script_tables[8] =
     {
-        do
-        {
-            fields = result->Fetch();
-            uint32 eventId = fields[0].GetUInt32();
-            if (eventId)
-                eventIds.insert(eventId);
-        } while (result->NextRow());
-        delete result;
-    }
+        "creature_movement_scripts",
+        "creature_spells_scripts",
+        "event_scripts",
+        "gossip_scripts",
+        "gameobject_scripts",
+        "spell_scripts",
+        "quest_end_scripts",
+        "quest_start_scripts"
+    };
 
-    result = WorldDatabase.Query("SELECT action3_param1 FROM creature_ai_scripts WHERE action3_type=50");
-
-    if (result)
+    for (uint8 i = 0; i < 8; i++)
     {
-        do
+        result = WorldDatabase.PQuery("SELECT datalong, datalong2, datalong3, datalong4 FROM %s WHERE command=39", script_tables[i]);
+
+        if (result)
         {
-            fields = result->Fetch();
-            uint32 eventId = fields[0].GetUInt32();
-            if (eventId)
-                eventIds.insert(eventId);
-        } while (result->NextRow());
-        delete result;
+            do
+            {
+                fields = result->Fetch();
+                uint32 event1 = fields[0].GetUInt32();
+                if (event1)
+                    eventIds.insert(event1);
+                uint32 event2 = fields[1].GetUInt32();
+                if (event2)
+                    eventIds.insert(event2);
+                uint32 event3 = fields[2].GetUInt32();
+                if (event3)
+                    eventIds.insert(event3);
+                uint32 event4 = fields[3].GetUInt32();
+                if (event4)
+                    eventIds.insert(event4);
+            } while (result->NextRow());
+            delete result;
+        }
     }
 }
 
