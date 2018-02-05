@@ -1368,3 +1368,36 @@ bool Map::ScriptCommand_SetData64(ScriptAction& step, Object* source, Object* ta
 
     return false;
 }
+
+// SCRIPT_COMMAND_START_SCRIPT (39)
+bool Map::ScriptCommand_StartScript(ScriptAction& step, Object* source, Object* target)
+{
+    const uint32 roll = urand(1, 100);
+    uint32 sum = 0;
+    uint32 chosenId = 0;
+
+    for (int i = 0; i < 4; i++)
+    {
+        const uint32 currentId = step.script->startScript.scriptId[i];
+
+        if (!currentId)
+            continue;
+
+        const uint32 currentChance = step.script->startScript.chance[i];
+
+        if ((roll > sum) && (roll <= (sum + currentChance)))
+        {
+            chosenId = currentId;
+            break;
+        }
+
+        sum += currentChance;
+    }
+
+    if (chosenId)
+        ScriptsStart(sEventScripts, chosenId, source, target);
+    else
+        return ShouldAbortScript(step);
+
+    return false;
+}
