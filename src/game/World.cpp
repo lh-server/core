@@ -1568,9 +1568,6 @@ void World::SetInitialWorldSettings()
     sLog.outString("Checking all script texts...");         // must be after Load*Scripts calls
     sScriptMgr.CheckAllScriptTexts();
 
-    sLog.outString("Loading CreatureEventAI Texts...");
-    sEventAIMgr.LoadCreatureEventAI_Texts(false);           // false, will checked in LoadCreatureEventAI_Scripts
-
     sLog.outString("Loading CreatureEventAI Summons...");
     sEventAIMgr.LoadCreatureEventAI_Summons(false);         // false, will checked in LoadCreatureEventAI_Scripts
 

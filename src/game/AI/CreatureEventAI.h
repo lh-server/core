@@ -145,9 +145,6 @@ enum SpawnedEventMode
     SPAWNED_EVENT_ZONE  = 2
 };
 
-// Text Maps
-typedef UNORDERED_MAP<int32, StringTextData> CreatureEventAI_TextMap;
-
 struct CreatureEventAI_Action
 {
     EventAI_ActionType type: 16;
@@ -619,8 +616,6 @@ class MANGOS_DLL_SPEC CreatureEventAI : public CreatureAI
         inline uint32 GetRandActionParam(uint32 rnd, uint32 param1, uint32 param2, uint32 param3);
         inline int32 GetRandActionParam(uint32 rnd, int32 param1, int32 param2, int32 param3);
         inline Unit* GetTargetByType(uint32 Target, Unit* pActionInvoker) const;
-
-        void DoScriptText(int32 textEntry, Unit* pSource, Unit* target);
 
         bool SpawnedEventConditionsCheck(CreatureEventAI_Event const& event);
 
