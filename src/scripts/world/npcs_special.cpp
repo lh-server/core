@@ -1892,7 +1892,7 @@ struct npc_pats_firework_guyAI : ScriptedAI
                 pSummoner->CastedCreatureOrGO(Fireworks[m_uiIndex].m_bIsCluster ? GO_CLUSTER_LAUNCHER : GO_FIREWORK_LAUNCHER, ObjectGuid(), 0);
         }
 
-        if (GetClosestGameObjectWithEntry(m_creature, GO_OMEN_CLUSTER_LAUNCHER, CONTACT_DISTANCE))
+        if (GetClosestGameObjectWithEntry(m_creature, GO_OMEN_CLUSTER_LAUNCHER, INTERACTION_DISTANCE))
             boss_omenAI::OnFireworkLaunch(m_creature);
 
         m_bDone = true;
