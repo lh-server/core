@@ -7774,8 +7774,6 @@ const char *ObjectMgr::GetMangosString(int32 entry, int locale_idx) const
 
     if (entry > 0)
         sLog.outErrorDb("Entry %i not found in `mangos_string` table.", entry);
-    else if (entry > MAX_CREATURE_AI_TEXT_STRING_ID)
-        sLog.outErrorDb("Entry %i not found in `creature_ai_texts` table.", entry);
     else
         sLog.outErrorDb("Mangos string entry %i not found in DB.", entry);
     return "<error>";
