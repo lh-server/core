@@ -1328,9 +1328,9 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         void NearTeleportTo(float x, float y, float z, float orientation, uint32 teleportOptions = TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET);
         void NearLandTo(float x, float y, float z, float orientation);
         void TeleportPositionRelocation(float x, float y, float z, float o);
-
-        void MonsterMoveWithSpeed(float x, float y, float z, float speed, bool generatePath = false, bool forceDestination = false);
+        void MonsterMoveWithSpeed(float x, float y, float z, float o, float speed, uint32 options);
         void MonsterMove(float x, float y, float z); // Utilise vitesse de course
+
         // recommend use MonsterMove/MonsterMoveWithSpeed for most case that correctly work with movegens
         // if used additional args in ... part then floats must explicitly casted to double
         void SendHeartBeat(bool includingSelf = true);

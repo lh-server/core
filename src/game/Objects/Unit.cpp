@@ -10248,16 +10248,14 @@ void Unit::TeleportPositionRelocation(float x, float y, float z, float orientati
     }
 }
 
-void Unit::MonsterMoveWithSpeed(float x, float y, float z, float speed, bool generatePath, bool forceDestination)
+void Unit::MonsterMoveWithSpeed(float x, float y, float z, float o, float speed, uint32 options)
 {
-    uint32 options = 0;
-    if (generatePath)
-        options |= MOVE_PATHFINDING;
-    if (forceDestination)
-        options |= MOVE_FORCE_DESTINATION;
     Movement::MoveSplineInit init(*this, "MonsterMoveWithSpeed");
     init.MoveTo(x, y, z, options);
-    init.SetVelocity(speed);
+    if (speed > 0.0f)
+        init.SetVelocity(speed);
+    if (o > -7.0f)
+        init.SetFacing(o);
     init.Launch();
 }
 
@@ -11141,7 +11139,7 @@ void Unit::UpdateSplineMovement(uint32 t_diff)
 
 void Unit::MonsterMove(float x, float y, float z)
 {
-    MonsterMoveWithSpeed(x, y, z, GetSpeed(MOVE_RUN));
+    MonsterMoveWithSpeed(x, y, z, -10.0f, GetSpeed(MOVE_RUN), 0u);
 }
 
 
