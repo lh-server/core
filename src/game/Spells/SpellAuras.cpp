@@ -2784,11 +2784,10 @@ void Aura::HandleFarSight(bool apply, bool /*Real*/)
     if (!caster || caster->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    Camera& camera = ((Player*)caster)->GetCamera();
     if (apply)
-        camera.SetView(GetTarget());
+        caster->ToPlayer()->SetLongSight(this);
     else
-        camera.ResetView();
+        caster->ToPlayer()->SetLongSight();
 }
 
 void Aura::HandleAuraTrackCreatures(bool apply, bool /*Real*/)
