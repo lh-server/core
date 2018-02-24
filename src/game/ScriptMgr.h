@@ -207,7 +207,8 @@ static constexpr uint32 MAX_EMOTE_ID = 4;                   // used for SCRIPT_C
 // Flags used by SCRIPT_COMMAND_MOVE_TO
 enum eMoveToFlags
 {
-    SF_MOVETO_FORCED = 0x1,                                // No check if creature can move.
+    SF_MOVETO_FORCED        = 0x1,                          // No check if creature can move.
+    SF_MOVETO_POINT_MOVEGEN = 0x2,                          // Changes movement generator to point movement.
 };
 
 // Possible datalong3 values for SCRIPT_COMMAND_MOVE_TO
