@@ -193,6 +193,9 @@ enum eScriptCommand
     SCRIPT_COMMAND_START_SCRIPT             = 39,           // source = Map
                                                             // datalong1-4 = event_script id
                                                             // dataint1-4 = chance (total cant be above 100)
+    SCRIPT_COMMAND_REMOVE_ITEM              = 40,           // source = Player (from provided source or target)
+                                                            // datalong = item_entry
+                                                            // datalong2 = amount
     SCRIPT_COMMAND_MAX,
 
     SCRIPT_COMMAND_DISABLED                 = 9999          // Script action was disabled during loading.
@@ -575,6 +578,12 @@ struct ScriptInfo
             uint32 unused;                                  // data_flags
             int32 chance[4];                                // dataint to dataint4
         } startScript;
+
+        struct                                              // SCRIPT_COMMAND_REMOVE_ITEM (40)
+        {
+            uint32 itemEntry;                               // datalong
+            uint32 amount;                                  // datalong2
+        } removeItem;
 
         struct
         {

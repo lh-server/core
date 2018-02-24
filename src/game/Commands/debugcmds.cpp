@@ -409,6 +409,27 @@ bool ChatHandler::HandleDebugPlayScriptText(char* args)
     return true;
 }
 
+bool ChatHandler::HandleDebugConditionCommand(char* args)
+{
+    int32 conditionId;
+
+    if (!ExtractInt32(&args, conditionId))
+        return false;
+
+    Unit* pSource = getSelectedUnit();
+    Unit* pTarget = m_session->GetPlayer();
+
+    if (pSource && pTarget)
+    {
+        if (sObjectMgr.IsConditionSatisfied(conditionId, pTarget, pSource->GetMap(), pSource, CONDITION_FROM_DBSCRIPTS))
+            SendSysMessage("Condition is satisfied.");
+        else
+            SendSysMessage("Condition is not satisfied.");
+    }
+
+    return true;
+}
+
 //Send notification in channel
 bool ChatHandler::HandleDebugSendChannelNotifyCommand(char* args)
 {

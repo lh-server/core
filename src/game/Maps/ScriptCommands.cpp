@@ -1401,3 +1401,26 @@ bool Map::ScriptCommand_StartScript(ScriptAction& step, Object* source, Object* 
 
     return false;
 }
+
+// SCRIPT_COMMAND_REMOVE_ITEM (40)
+bool Map::ScriptCommand_RemoveItem(ScriptAction& step, Object* source, Object* target)
+{
+    if (!target && !source)
+    {
+        sLog.outError("SCRIPT_COMMAND_REMOVE_ITEM (script id %u) call for a NULL object, skipping.", step.script->id);
+        return ShouldAbortScript(step);
+    }
+
+    // only Player
+    if ((!target || target->GetTypeId() != TYPEID_PLAYER) && (!source || source->GetTypeId() != TYPEID_PLAYER))
+    {
+        sLog.outError("SCRIPT_COMMAND_REMOVE_ITEM (script id %u) call for a non-player object (TypeIdSource: %u)(TypeIdTarget: %u), skipping.", step.script->id, source ? source->GetTypeId() : 0, target ? target->GetTypeId() : 0);
+        return ShouldAbortScript(step);
+    }
+
+    Player* pPlayer = target && target->GetTypeId() == TYPEID_PLAYER ? static_cast<Player*>(target) : static_cast<Player*>(source);
+
+    pPlayer->DestroyItemCount(step.script->createItem.itemEntry, step.script->createItem.amount, true);
+
+    return false;
+}

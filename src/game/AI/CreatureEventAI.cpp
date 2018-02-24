@@ -605,13 +605,25 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
             break;
         }
         case ACTION_T_SET_UNIT_FLAG:
+        {
+            // not allow modify important for integrity object fields
+            if (action.set_unit_field.field < OBJECT_END || action.set_unit_field.field >= UNIT_END)
+                return;
+
             if (Unit* target = GetTargetByType(action.unit_flag.target, pActionInvoker))
-                target->SetFlag(UNIT_FIELD_FLAGS, action.unit_flag.value);
+                target->SetFlag(action.unit_flag.field, action.unit_flag.value);
             break;
+        }
         case ACTION_T_REMOVE_UNIT_FLAG:
+        {
+            // not allow modify important for integrity object fields
+            if (action.set_unit_field.field < OBJECT_END || action.set_unit_field.field >= UNIT_END)
+                return;
+
             if (Unit* target = GetTargetByType(action.unit_flag.target, pActionInvoker))
-                target->RemoveFlag(UNIT_FIELD_FLAGS, action.unit_flag.value);
+                target->RemoveFlag(action.unit_flag.field, action.unit_flag.value);
             break;
+        }
         case ACTION_T_AUTO_ATTACK:
             m_MeleeEnabled = action.auto_attack.state != 0;
             break;

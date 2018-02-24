@@ -45,7 +45,7 @@ CreatureAI* GetAI_guard_contested(Creature* pCreature)
 
 CreatureAI* GetAI_guard_darnassus(Creature* pCreature)
 {
-    return new guardAI(pCreature);
+    return new guardAI(pCreature, true);
 }
 
 CreatureAI* GetAI_guard_dunmorogh(Creature* pCreature)
@@ -65,7 +65,7 @@ CreatureAI* GetAI_guard_elwynnforest(Creature* pCreature)
 
 CreatureAI* GetAI_guard_ironforge(Creature* pCreature)
 {
-    return new guardAI(pCreature);
+    return new guardAI(pCreature, true);
 }
 
 CreatureAI* GetAI_guard_mulgore(Creature* pCreature)
@@ -95,12 +95,12 @@ CreatureAI* GetAI_guard_tirisfal(Creature* pCreature)
 
 CreatureAI* GetAI_guard_undercity(Creature* pCreature)
 {
-    return new guardAI(pCreature);
+    return new guardAI(pCreature, true);
 }
 
 CreatureAI* GetAI_guard_bluffwatcher(Creature* pCreature)
 {
-    return new guardAI(pCreature);
+    return new guardAI(pCreature, true);
 }
 
 void AddSC_guards()
