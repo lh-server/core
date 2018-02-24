@@ -591,6 +591,9 @@ Player::Player(WorldSession *session) : Unit(),
     xy_speed = 0.0f;
 
     m_justBoarded = false;
+
+    m_longSightSpell = 0;
+    m_longSightRange = 0.0f;
 }
 
 Player::~Player()
@@ -17967,6 +17970,51 @@ template void Player::UpdateVisibilityOf(WorldObject const* viewPoint, Corpse*  
 template void Player::UpdateVisibilityOf(WorldObject const* viewPoint, GameObject*    target, UpdateData& data, std::set<WorldObject*>& visibleNow);
 template void Player::UpdateVisibilityOf(WorldObject const* viewPoint, DynamicObject* target, UpdateData& data, std::set<WorldObject*>& visibleNow);
 template void Player::UpdateVisibilityOf(WorldObject const* viewPoint, WorldObject*   target, UpdateData& data, std::set<WorldObject*>& visibleNow);
+
+void Player::SetLongSight(const Aura* aura)
+{
+    if (aura)
+    {
+        // already an active long sight spell
+        if (m_longSightSpell)
+            return;
+        m_longSightSpell = aura->GetSpellProto()->Id;
+        // Should the viewpoint be placed at a fixed range or at visibility distance ?
+        // In absence of evidence, let's move the camera at visibility distance in front of the player
+        m_longSightRange = GetMap()->GetVisibilityDistance();
+        DynamicObject* dynObj = new DynamicObject;
+        if (!dynObj->Create(GetMap()->GenerateLocalLowGuid(HIGHGUID_DYNAMICOBJECT), this, m_longSightSpell,
+            aura->GetEffIndex(), GetPositionX(), GetPositionY(), GetPositionZ(), 0, 0, DYNAMIC_OBJECT_FARSIGHT_FOCUS))
+        {
+            m_longSightSpell = 0;
+            m_longSightRange = 0.0f;
+            delete dynObj;
+            return;
+        }
+        AddDynObject(dynObj);
+        // Needed so the dyn object is properly removed
+        SetChannelObjectGuid(dynObj->GetObjectGuid());
+        GetMap()->Add(dynObj);
+        UpdateLongSight();
+        GetCamera().SetView(dynObj, false);
+    }
+    else
+    {
+        m_longSightSpell = 0;
+        m_longSightRange = 0.0f;
+        GetCamera().ResetView(false);
+    }
+}
+
+void Player::UpdateLongSight()
+{
+    if (!m_longSightSpell)
+        return;
+    if (DynamicObject* dynObj = GetDynObject(m_longSightSpell))
+        dynObj->Relocate(GetPositionX() + m_longSightRange * cos(GetOrientation()),
+                         GetPositionY() + m_longSightRange * sin(GetOrientation()),
+                         GetPositionZ());
+}
 
 void Player::InitPrimaryProfessions()
 {
