@@ -607,7 +607,7 @@ void CreatureEventAI::ProcessAction(CreatureEventAI_Action const& action, uint32
         case ACTION_T_SET_UNIT_FLAG:
         {
             // not allow modify important for integrity object fields
-            if (action.set_unit_field.field < OBJECT_END || action.set_unit_field.field >= UNIT_END)
+            if (action.unit_flag.field < OBJECT_END || action.unit_flag.field >= UNIT_END)
                 return;
 
             if (Unit* target = GetTargetByType(action.unit_flag.target, pActionInvoker))

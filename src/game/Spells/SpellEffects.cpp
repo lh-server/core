@@ -4840,7 +4840,7 @@ void Spell::EffectScriptEffect(SpellEffectIndex eff_idx)
                             return;
                         }
                     }
-                    return;
+                    break;
                 }
                 case 26678:                                 // Bag of Candies
                 {
