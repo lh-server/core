@@ -159,10 +159,18 @@ bool ConditionEntry::Meets(WorldObject const* target, Map const* map, WorldObjec
         {
             return static_cast<Player const*>(target)->CanTakeQuest(sObjectMgr.GetQuestTemplate(m_value1), false);
         }
-        case CONDITION_RESERVED_1:
-        case CONDITION_RESERVED_2:
-        case CONDITION_RESERVED_3:
-            return false;
+        case CONDITION_NEARBY_CREATURE:
+        {
+            return (bool)(source->FindNearestCreature(m_value1, m_value2));
+        }
+        case CONDITION_NEARBY_GAMEOBJECT:
+        {
+            return (bool)(source->FindNearestGameObject(m_value1, m_value2));
+        }
+        case CONDITION_HAS_FLAG:
+        {
+            return source->HasFlag(m_value1, m_value2);
+        }
         case CONDITION_QUEST_NONE:
         {
             Player const* pPlayer = static_cast<Player const*>(target);
@@ -425,6 +433,9 @@ bool ConditionEntry::CheckParamRequirements(WorldObject const* target, Map const
                 return false;
             }
             break;
+        case CONDITION_NEARBY_CREATURE:
+        case CONDITION_NEARBY_GAMEOBJECT:
+        case CONDITION_HAS_FLAG:
         case CONDITION_SOURCE_AURA:
         case CONDITION_LAST_WAYPOINT:
         case CONDITION_SOURCE_GENDER:
@@ -758,13 +769,47 @@ bool ConditionEntry::IsValid()
         }
         case CONDITION_INSTANCE_SCRIPT:
             break;
-        case CONDITION_RESERVED_1:
-        case CONDITION_RESERVED_2:
-        case CONDITION_RESERVED_3:
+        case CONDITION_NEARBY_CREATURE:
         {
-            sLog.outErrorDb("Condition (%u) reserved for later versions, skipped", m_condition);
-            return false;
+            if (!sObjectMgr.GetCreatureTemplate(m_value1))
+            {
+                if (!sObjectMgr.IsExistingCreatureId(m_value1))
+                {
+                    sLog.outErrorDb("Nearby creature condition (entry %u, type %u) specifies non-existing creature (%u), skipped", m_entry, m_condition, m_value1);
+                    return false;
+                }
+                else
+                {
+                    m_condition = CONDITION_ALWAYS_FALSE;
+                    return true;
+                }
+            }
+
+            if (!m_value2)
+                sLog.outErrorDb("Nearby creature condition (entry %u, type %u) used without search radius (%u)!", m_entry, m_condition, m_value2);
+            break;
         }
+        case CONDITION_NEARBY_GAMEOBJECT:
+        {
+            if (!sObjectMgr.GetGameObjectInfo(m_value1))
+            {
+                if (!sObjectMgr.IsExistingGameObjectId(m_value1))
+                {
+                    sLog.outErrorDb("Nearby gameobject condition (entry %u, type %u) specifies non-existing gameobject (%u), skipped", m_entry, m_condition, m_value1);
+                    return false;
+                }
+                else
+                {
+                    m_condition = CONDITION_ALWAYS_FALSE;
+                    return true;
+                }
+            }
+
+            if (!m_value2)
+                sLog.outErrorDb("Nearby gameobject condition (entry %u, type %u) used without search radius (%u)!", m_entry, m_condition, m_value2);
+            break;
+        }
+        case CONDITION_HAS_FLAG:
         case CONDITION_ACTIVE_HOLIDAY:
         case CONDITION_NOT_ACTIVE_HOLIDAY:
             // no way check holidays in pre-3.x
@@ -908,6 +953,9 @@ bool ConditionEntry::CanBeUsedWithoutPlayer(uint16 entry)
         case CONDITION_AREAID:
         case CONDITION_AREA_FLAG:
         case CONDITION_INSTANCE_SCRIPT:
+        case CONDITION_NEARBY_CREATURE:
+        case CONDITION_NEARBY_GAMEOBJECT:
+        case CONDITION_HAS_FLAG:
         case CONDITION_SOURCE_AURA:
         case CONDITION_LAST_WAYPOINT:
         case CONDITION_SOURCE_GENDER:

@@ -49,8 +49,8 @@ enum ConditionType
     CONDITION_SPELL                 = 17,                   // spell_id     0, 1 (0: has spell, 1: hasn't spell)
     CONDITION_INSTANCE_SCRIPT       = 18,                   // map_id       instance_condition_id (instance script specific enum)
     CONDITION_QUESTAVAILABLE        = 19,                   // quest_id     0       for case when loot/gossip possible only if player can start quest
-    CONDITION_RESERVED_1            = 20,                   // reserved for 3.x and later
-    CONDITION_RESERVED_2            = 21,                   // reserved for 3.x and later
+    CONDITION_NEARBY_CREATURE       = 20,                   // creature_id  search_radius
+    CONDITION_NEARBY_GAMEOBJECT     = 21,                   // gobject_id   search_radius
     CONDITION_QUEST_NONE            = 22,                   // quest_id     0 (quest did not take and not rewarded)
     CONDITION_ITEM_WITH_BANK        = 23,                   // item_id      count   check present req. amount items in inventory or bank
     CONDITION_NOITEM_WITH_BANK      = 24,                   // item_id      count   check not present req. amount items in inventory or bank
@@ -65,7 +65,7 @@ enum ConditionType
     // True if player has skill skill_id and skill less than (and not equal) skill_value (for skill_value > 1)
     // If skill_value == 1, then true if player has not skill skill_id
     CONDITION_REPUTATION_RANK_MAX   = 30,                   // faction_id   max_rank
-    CONDITION_RESERVED_3            = 31,                   // reserved for 3.x and later
+    CONDITION_HAS_FLAG              = 31,                   // field_id     flag
     CONDITION_SOURCE_AURA           = 32,                   // spell_id     effindex (returns true if the source of the condition check has aura of spell_id, effIndex)
     CONDITION_LAST_WAYPOINT         = 33,                   // waypointId   0 = exact, 1: wp <= waypointId, 2: wp > waypointId  Use to check what waypoint was last reached
     CONDITION_SOURCE_GENDER         = 34,                   // 0=male, 1=female, 2=none (see enum Gender)
