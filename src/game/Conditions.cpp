@@ -39,104 +39,209 @@ char const* conditionSourceToStr[] =
     "DBScript engine"
 };
 
+// Stores what params need to be provided to each condition type.
+// (source, target, map)
+uint8 const ConditionTargetsInternal[] =
+{
+    CONDITION_REQ_NONE,               // -3
+    CONDITION_REQ_NONE,               // -2
+    CONDITION_REQ_NONE,               // -1
+    CONDITION_REQ_NONE,               //  0
+    CONDITION_REQ_TARGET_UNIT,        //  1
+    CONDITION_REQ_TARGET_PLAYER,      //  2
+    CONDITION_REQ_TARGET_PLAYER,      //  3
+    CONDITION_REQ_ANY_WORLDOBJECT,    //  4
+    CONDITION_REQ_TARGET_PLAYER,      //  5
+    CONDITION_REQ_TARGET_PLAYER,      //  6
+    CONDITION_REQ_TARGET_PLAYER,      //  7
+    CONDITION_REQ_TARGET_PLAYER,      //  8
+    CONDITION_REQ_TARGET_PLAYER,      //  9
+    CONDITION_REQ_TARGET_PLAYER,      //  10
+    CONDITION_REQ_NONE,               //  11
+    CONDITION_REQ_NONE,               //  12
+    CONDITION_REQ_ANY_WORLDOBJECT,    //  13
+    CONDITION_REQ_TARGET_PLAYER,      //  14
+    CONDITION_REQ_TARGET_UNIT,        //  15
+    CONDITION_REQ_SOURCE_WORLDOBJECT, //  16
+    CONDITION_REQ_TARGET_PLAYER,      //  17
+    CONDITION_REQ_MAP_OR_WORLDOBJECT, //  18
+    CONDITION_REQ_TARGET_PLAYER,      //  19
+    CONDITION_REQ_TARGET_WORLDOBJECT, //  20
+    CONDITION_REQ_TARGET_WORLDOBJECT, //  21
+    CONDITION_REQ_TARGET_PLAYER,      //  22
+    CONDITION_REQ_TARGET_PLAYER,      //  23
+    CONDITION_REQ_NONE,               //  24
+    CONDITION_REQ_NONE,               //  25
+    CONDITION_REQ_NONE,               //  26
+    CONDITION_REQ_TARGET_WORLDOBJECT, //  27
+    CONDITION_REQ_TARGET_PLAYER,      //  28
+    CONDITION_REQ_TARGET_PLAYER,      //  29
+    CONDITION_REQ_TARGET_PLAYER,      //  30
+    CONDITION_REQ_SOURCE_WORLDOBJECT, //  31
+    CONDITION_REQ_SOURCE_CREATURE,    //  32 
+};
+
+// Starts from 4th element so that -3 will return first element.
+uint8 const* ConditionTargets = &ConditionTargetsInternal[3];
+
 // Checks if player meets the condition
 bool ConditionEntry::Meets(WorldObject const* target, Map const* map, WorldObject const* source, ConditionSource conditionSourceType) const
 {
     DEBUG_LOG("Condition-System: Check condition %u, type %i - called from %s with params target: %s, map %i, source %s",
               m_entry, m_condition, conditionSourceToStr[conditionSourceType], target ? target->GetGuidStr().c_str() : "<NULL>", map ? map->GetId() : -1, source ? source->GetGuidStr().c_str() : "<NULL>");
 
-    if (!CheckParamRequirements(target, map, source, conditionSourceType))
-        return false;
+    if (m_flags & CONDITION_FLAG_SWAP_TARGETS)
+        std::swap(source, target);
 
+    if (!CheckParamRequirements(target, map, source))
+    {
+        sLog.outErrorDb("CONDITION %u type %u used with bad parameters, called from %s, used with target: %s, map %i, source %s",
+            m_entry, m_condition, conditionSourceToStr[conditionSourceType], target ? target->GetGuidStr().c_str() : "NULL", map ? map->GetId() : -1, source ? source->GetGuidStr().c_str() : "NULL");
+        return false;
+    } 
+
+    bool result = Evaluate(target, map, source, conditionSourceType);
+
+    if (m_flags & CONDITION_FLAG_REVERSE_RESULT)
+        result = !result;
+
+    return result;
+}
+
+// Actual evaluation of the condition done here.
+bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, WorldObject const* source, ConditionSource conditionSourceType) const
+{
     switch (m_condition)
     {
         case CONDITION_NOT:
+        {
             // Checked on load
             return !sConditionStorage.LookupEntry<ConditionEntry>(m_value1)->Meets(target, map, source, conditionSourceType);
+        }
         case CONDITION_OR:
+        {
             // Checked on load
             return sConditionStorage.LookupEntry<ConditionEntry>(m_value1)->Meets(target, map, source, conditionSourceType) || sConditionStorage.LookupEntry<ConditionEntry>(m_value2)->Meets(target, map, source, conditionSourceType);
+        }
         case CONDITION_AND:
+        {
             // Checked on load
             return sConditionStorage.LookupEntry<ConditionEntry>(m_value1)->Meets(target, map, source, conditionSourceType) && sConditionStorage.LookupEntry<ConditionEntry>(m_value2)->Meets(target, map, source, conditionSourceType);
+        }
         case CONDITION_NONE:
+        {
             return true;                                    // empty condition, always met
+        }
         case CONDITION_AURA:
-            return static_cast<Unit const*>(target)->HasAura(m_value1, SpellEffectIndex(m_value2));
+        {
+            return target->ToUnit()->HasAura(m_value1, SpellEffectIndex(m_value2));
+        }
         case CONDITION_ITEM:
-            return static_cast<Player const*>(target)->HasItemCount(m_value1, m_value2);
+        {
+            return target->ToPlayer()->HasItemCount(m_value1, m_value2);
+        }
         case CONDITION_ITEM_EQUIPPED:
-            return static_cast<Player const*>(target)->HasItemWithIdEquipped(m_value1, 1);
+        {
+            return target->ToPlayer()->HasItemWithIdEquipped(m_value1, 1);
+        }
         case CONDITION_AREAID:
         {
             uint32 zone, area;
             WorldObject const* searcher = source ? source : target;
             searcher->GetZoneAndAreaId(zone, area);
-            return (zone == m_value1 || area == m_value1) == (m_value2 == 0);
+            return ((zone == m_value1 || area == m_value1) == (m_value2 == 0));
         }
         case CONDITION_REPUTATION_RANK_MIN:
         {
             FactionEntry const* faction = sObjectMgr.GetFactionEntry(m_value1);
-            return faction && static_cast<Player const*>(target)->GetReputationMgr().GetRank(faction) >= ReputationRank(m_value2);
+            return (target->ToPlayer()->GetReputationMgr().GetRank(faction) >= ReputationRank(m_value2));
         }
         case CONDITION_TEAM:
-            return uint32(static_cast<Player const*>(target)->GetTeam()) == m_value1;
+        {
+            return (uint32(target->ToPlayer()->GetTeam()) == m_value1);
+        }
         case CONDITION_SKILL:
         {
-            Player const* pPlayer = static_cast<Player const*>(target);
-            return pPlayer->HasSkill(m_value1) && pPlayer->GetBaseSkillValue(m_value1) >= m_value2;
+            Player const* pPlayer = target->ToPlayer();
+            return (pPlayer->HasSkill(m_value1) && pPlayer->GetBaseSkillValue(m_value1) >= m_value2);
         }
         case CONDITION_QUESTREWARDED:
-            return static_cast<Player const*>(target)->GetQuestRewardStatus(m_value1);
+        {
+            return target->ToPlayer()->GetQuestRewardStatus(m_value1);
+        }
         case CONDITION_QUESTTAKEN:
-            return static_cast<Player const*>(target)->IsCurrentQuest(m_value1, m_value2);
+        {
+            return target->ToPlayer()->IsCurrentQuest(m_value1, m_value2);
+        }
         case CONDITION_AD_COMMISSION_AURA:
         {
-            Unit::SpellAuraHolderMap const& auras = static_cast<Player const*>(target)->GetSpellAuraHolderMap();
+            Unit::SpellAuraHolderMap const& auras = target->ToPlayer()->GetSpellAuraHolderMap();
             for (Unit::SpellAuraHolderMap::const_iterator itr = auras.begin(); itr != auras.end(); ++itr)
                 if ((itr->second->GetSpellProto()->Attributes & SPELL_ATTR_CASTABLE_WHILE_MOUNTED || itr->second->GetSpellProto()->Attributes & SPELL_ATTR_IS_ABILITY) && itr->second->GetSpellProto()->SpellVisual == 3580)
                     return true;
             return false;
         }
-        case CONDITION_NO_AURA:
-            return !static_cast<Unit const*>(target)->HasAura(m_value1, SpellEffectIndex(m_value2));
+        case CONDITION_WAR_EFFORT_STAGE:
+        {
+            uint32 stage = sObjectMgr.GetSavedVariable(VAR_WE_STAGE, 0);
+            switch (m_value2)
+            {
+                case 0:
+                    return stage >= m_value1;
+                case 1:
+                    return stage == m_value1;
+                case 2:
+                    return stage <= m_value1;
+            }
+            return false;
+        }
         case CONDITION_ACTIVE_GAME_EVENT:
+        {
             return sGameEventMgr.IsActiveEvent(m_value1);
+        }
         case CONDITION_AREA_FLAG:
         {
             WorldObject const* searcher = source ? source : target;
             if (const auto *pAreaEntry = AreaEntry::GetById(searcher->GetAreaId()))
                 if ((!m_value1 || (pAreaEntry->Flags & m_value1)) && (!m_value2 || !(pAreaEntry->Flags & m_value2)))
                     return true;
-
             return false;
         }
         case CONDITION_RACE_CLASS:
         {
-            Player const* pPlayer = static_cast<Player const*>(target);
+            Player const* pPlayer = target->ToPlayer();
             if ((!m_value1 || (pPlayer->getRaceMask() & m_value1)) && (!m_value2 || (pPlayer->getClassMask() & m_value2)))
                 return true;
             return false;
         }
         case CONDITION_LEVEL:
         {
-            Player const* pPlayer = static_cast<Player const*>(target);
+            Unit const* pTarget = target->ToUnit();
             switch (m_value2)
             {
                 case 0:
-                    return pPlayer->getLevel() == m_value1;
+                    return pTarget->getLevel() == m_value1;
                 case 1:
-                    return pPlayer->getLevel() >= m_value1;
+                    return pTarget->getLevel() >= m_value1;
                 case 2:
-                    return pPlayer->getLevel() <= m_value1;
+                    return pTarget->getLevel() <= m_value1;
             }
             return false;
         }
-        case CONDITION_NOITEM:
-            return !static_cast<Player const*>(target)->HasItemCount(m_value1, m_value2);
+        case CONDITION_SOURCE_ENTRY:
+        {
+            switch (m_value2)
+            {
+                case 0:
+                    return source->GetEntry() != m_value1;
+                case 1:
+                    return source->GetEntry() == m_value1;
+            }
+            return false;
+        }
         case CONDITION_SPELL:
         {
-            Player const* pPlayer = static_cast<Player const*>(target);
+            Player const* pPlayer = target->ToPlayer();
             switch (m_value2)
             {
                 case 0:
@@ -148,7 +253,7 @@ bool ConditionEntry::Meets(WorldObject const* target, Map const* map, WorldObjec
         }
         case CONDITION_INSTANCE_SCRIPT:
         {
-            Player const* pPlayer = (target && (target->GetTypeId() == TYPEID_PLAYER)) ? static_cast<Player const*>(target) : nullptr;
+            Player const* pPlayer = target  ? target->ToPlayer() : nullptr;
             if (!map)
                 map = pPlayer ? pPlayer->GetMap() : source->GetMap();
 
@@ -158,40 +263,93 @@ bool ConditionEntry::Meets(WorldObject const* target, Map const* map, WorldObjec
         }
         case CONDITION_QUESTAVAILABLE:
         {
-            return static_cast<Player const*>(target)->CanTakeQuest(sObjectMgr.GetQuestTemplate(m_value1), false);
+            return target->ToPlayer()->CanTakeQuest(sObjectMgr.GetQuestTemplate(m_value1), false);
         }
         case CONDITION_NEARBY_CREATURE:
         {
-            return (bool)(source->FindNearestCreature(m_value1, m_value2));
+            return (bool)(target->FindNearestCreature(m_value1, m_value2));
         }
         case CONDITION_NEARBY_GAMEOBJECT:
         {
-            return (bool)(source->FindNearestGameObject(m_value1, m_value2));
-        }
-        case CONDITION_HAS_FLAG:
-        {
-            return source->HasFlag(m_value1, m_value2);
+            return (bool)(target->FindNearestGameObject(m_value1, m_value2));
         }
         case CONDITION_QUEST_NONE:
         {
-            Player const* pPlayer = static_cast<Player const*>(target);
+            Player const* pPlayer = target->ToPlayer();
             if (!pPlayer->IsCurrentQuest(m_value1) && !pPlayer->GetQuestRewardStatus(m_value1))
                 return true;
             return false;
         }
         case CONDITION_ITEM_WITH_BANK:
-            return static_cast<Player const*>(target)->HasItemCount(m_value1, m_value2, true);
-        case CONDITION_NOITEM_WITH_BANK:
-            return !static_cast<Player const*>(target)->HasItemCount(m_value1, m_value2, true);
-        case CONDITION_NOT_ACTIVE_GAME_EVENT:
-            return !sGameEventMgr.IsActiveEvent(m_value1);
+        {
+            return target->ToPlayer()->HasItemCount(m_value1, m_value2, true);
+        }
+        case CONDITION_WOW_PATCH:
+        {
+            switch (m_value2)
+            {
+                case 0:
+                    return sWorld.GetWowPatch() == m_value1;
+                case 1:
+                    return sWorld.GetWowPatch() >= m_value1;
+                case 2:
+                    return sWorld.GetWowPatch() <= m_value1;
+            }
+            return false;
+        }
+        case CONDITION_DEAD_OR_AWAY:
+        {
+            Player const* pPlayer = (target && (target->GetTypeId() == TYPEID_PLAYER)) ? static_cast<Player const*>(target) : nullptr;
+            switch (m_value1)
+            {
+                case 0:                                     // Player dead or out of range
+                    return !pPlayer || !pPlayer->isAlive() || (m_value2 && source && !source->IsWithinDistInMap(pPlayer, m_value2));
+                case 1:                                     // All players in Group dead or out of range
+                    if (!pPlayer)
+                        return true;
+                    if (Group* grp = ((Player*)pPlayer)->GetGroup())
+                    {
+                        for (GroupReference* itr = grp->GetFirstMember(); itr != NULL; itr = itr->next())
+                        {
+                            Player* pl = itr->getSource();
+                            if (pl && pl->isAlive() && !pl->isGameMaster() && (!m_value2 || !source || source->IsWithinDistInMap(pl, m_value2)))
+                                return false;
+                        }
+                        return true;
+                    }
+                    else
+                        return !pPlayer->isAlive() || (m_value2 && source && !source->IsWithinDistInMap(pPlayer, m_value2));
+                case 2:                                     // All players in instance dead or out of range
+                    if (!map && (target || source))
+                        map = source ? source->GetMap() : target->GetMap();
+                    if (!map || !map->Instanceable())
+                    {
+                        sLog.outErrorDb("CONDITION_DEAD_OR_AWAY %u (Player in instance case) - called from %s without map param or from non-instanceable map %i", m_entry, conditionSourceToStr[conditionSourceType], map ? map->GetId() : -1);
+                        return false;
+                    }
+                    for (Map::PlayerList::const_iterator itr = map->GetPlayers().begin(); itr != map->GetPlayers().end(); ++itr)
+                    {
+                        Player const* plr = itr->getSource();
+                        if (plr && plr->isAlive() && !plr->isGameMaster() && (!m_value2 || !source || source->IsWithinDistInMap(plr, m_value2)))
+                            return false;
+                    }
+                    return true;
+                case 3:                                     // Creature source is dead
+                    return !source || source->GetTypeId() != TYPEID_UNIT || !((Unit*)source)->isAlive();
+            }
+            break;
+        }
         case CONDITION_ACTIVE_HOLIDAY:
+        {
             return sGameEventMgr.IsActiveHoliday(HolidayIds(m_value1));
-        case CONDITION_NOT_ACTIVE_HOLIDAY:
-            return !sGameEventMgr.IsActiveHoliday(HolidayIds(m_value1));
+        }
+        case CONDITION_TARGET_GENDER:
+        {
+            return target->getGender() == m_value1;
+        }
         case CONDITION_LEARNABLE_ABILITY:
         {
-            Player const* pPlayer = static_cast<Player const*>(target);
+            Player const* pPlayer = target->ToPlayer();
             // Already know the spell
             if (pPlayer->HasSpell(m_value1))
                 return false;
@@ -244,7 +402,7 @@ bool ConditionEntry::Meets(WorldObject const* target, Map const* map, WorldObjec
         }
         case CONDITION_SKILL_BELOW:
         {
-            Player const* pPlayer = static_cast<Player const*>(target);
+            Player const* pPlayer = target->ToPlayer();
             if (m_value2 == 1)
                 return !pPlayer->HasSkill(m_value1);
             else
@@ -253,24 +411,20 @@ bool ConditionEntry::Meets(WorldObject const* target, Map const* map, WorldObjec
         case CONDITION_REPUTATION_RANK_MAX:
         {
             FactionEntry const* faction = sObjectMgr.GetFactionEntry(m_value1);
-            return faction && static_cast<Player const*>(target)->GetReputationMgr().GetRank(faction) <= ReputationRank(m_value2);
+            return (target->ToPlayer()->GetReputationMgr().GetRank(faction) <= ReputationRank(m_value2));
         }
-        case CONDITION_SOURCE_AURA:
+        case CONDITION_HAS_FLAG:
         {
-            if (!source->isType(TYPEMASK_UNIT))
+            if (m_value1 <= OBJECT_FIELD_ENTRY || m_value1 >= source->GetValuesCount())
             {
-                sLog.outErrorDb("CONDITION_SOURCE_AURA (entry %u) is used for non unit source (source %s) by %s", m_entry, source->GetGuidStr().c_str(), target->GetGuidStr().c_str());
+                sLog.outError("CONDITION_HAS_FLAG call for wrong field %u (max count: %u) in object (TypeId: %u).",
+                    m_value1, source->GetValuesCount(), source->GetTypeId());
                 return false;
             }
-            return static_cast<Unit const*>(source)->HasAura(m_value1, SpellEffectIndex(m_value2));
+            return source->HasFlag(m_value1, m_value2);
         }
         case CONDITION_LAST_WAYPOINT:
         {
-            if (source->GetTypeId() != TYPEID_UNIT)
-            {
-                sLog.outErrorDb("CONDITION_LAST_WAYPOINT (entry %u) is used for non creature source (source %s) by %s", m_entry, source->GetGuidStr().c_str(), target->GetGuidStr().c_str());
-                return false;
-            }
             uint32 lastReachedWp = ((Creature*)source)->GetMotionMaster()->getLastReachedWaypoint();
             switch (m_value2)
             {
@@ -283,205 +437,67 @@ bool ConditionEntry::Meets(WorldObject const* target, Map const* map, WorldObjec
             }
             return false;
         }
-        case CONDITION_SOURCE_GENDER:
-            return source->getGender() == m_value1;
-        case CONDITION_TARGET_GENDER:
-            return static_cast<Player const*>(target)->getGender() == m_value1;
-        case CONDITION_DEAD_OR_AWAY:
-        {
-            Player const* pPlayer = (target && (target->GetTypeId() == TYPEID_PLAYER)) ? static_cast<Player const*>(target) : nullptr;
-            switch (m_value1)
-            {
-                case 0:                                     // Player dead or out of range
-                    return !pPlayer || !pPlayer->isAlive() || (m_value2 && source && !source->IsWithinDistInMap(pPlayer, m_value2));
-                case 1:                                     // All players in Group dead or out of range
-                    if (!pPlayer)
-                        return true;
-                    if (Group* grp = ((Player*)pPlayer)->GetGroup())
-                    {
-                        for (GroupReference* itr = grp->GetFirstMember(); itr != NULL; itr = itr->next())
-                        {
-                            Player* pl = itr->getSource();
-                            if (pl && pl->isAlive() && !pl->isGameMaster() && (!m_value2 || !source || source->IsWithinDistInMap(pl, m_value2)))
-                                return false;
-                        }
-                        return true;
-                    }
-                    else
-                        return !pPlayer->isAlive() || (m_value2 && source && !source->IsWithinDistInMap(pPlayer, m_value2));
-                case 2:                                     // All players in instance dead or out of range
-                    for (Map::PlayerList::const_iterator itr = map->GetPlayers().begin(); itr != map->GetPlayers().end(); ++itr)
-                    {
-                        Player const* plr = itr->getSource();
-                        if (plr && plr->isAlive() && !plr->isGameMaster() && (!m_value2 || !source || source->IsWithinDistInMap(plr, m_value2)))
-                            return false;
-                    }
-                    return true;
-                case 3:                                     // Creature source is dead
-                    return !source || source->GetTypeId() != TYPEID_UNIT || !((Unit*)source)->isAlive();
-            }
-        }
-        case CONDITION_WOW_PATCH:
-        {
-            switch (m_value2)
-            {
-                case 0:
-                    return sWorld.GetWowPatch() == m_value1;
-                case 1:
-                    return sWorld.GetWowPatch() >= m_value1;
-                case 2:
-                    return sWorld.GetWowPatch() <= m_value1;
-            }
-            return false;
-        }
-        case CONDITION_SOURCE_ENTRY:
-        {
-            switch (m_value2)
-            {
-                case 0:
-                    return source->GetEntry() != m_value1;
-                case 1:
-                    return source->GetEntry() == m_value1;
-            }
-
-            return false;
-        }
-        case CONDITION_WAR_EFFORT_STAGE:
-        {
-            uint32 stage = sObjectMgr.GetSavedVariable(VAR_WE_STAGE, 0);
-            switch (m_value2)
-            {
-                case 0:
-                    return stage >= m_value1;
-                case 1:
-                    return stage == m_value1;
-                case 2:
-                    return stage <= m_value1;
-            }
-
-            return false;
-        }
-        default:
-            return false;
     }
+    return false;
 }
 
 // Which params must be provided to a Condition
-bool ConditionEntry::CheckParamRequirements(WorldObject const* target, Map const* map, WorldObject const* source, ConditionSource conditionSourceType) const
+bool ConditionEntry::CheckParamRequirements(WorldObject const* target, Map const* map, WorldObject const* source) const
 {
-    switch (m_condition)
+    switch (ConditionTargets[m_condition])
     {
-        // Don't need anything.
-        case CONDITION_NOT:
-        case CONDITION_AND:
-        case CONDITION_OR:
-        case CONDITION_NONE:
-        case CONDITION_ACTIVE_GAME_EVENT:
-        case CONDITION_NOT_ACTIVE_GAME_EVENT:
-        case CONDITION_ACTIVE_HOLIDAY:
-        case CONDITION_NOT_ACTIVE_HOLIDAY:
-        case CONDITION_WOW_PATCH:
-        case CONDITION_ALWAYS_FALSE:
-            break;
-        // Need a Unit.
-        case CONDITION_AURA:
-        case CONDITION_NO_AURA:
-        {
-            if (!target || !target->isType(TYPEMASK_UNIT))
-                return false;
-            break;
-        }
-        // Need a Player.
-        case CONDITION_ITEM:
-        case CONDITION_ITEM_EQUIPPED:
-        case CONDITION_REPUTATION_RANK_MIN:
-        case CONDITION_TEAM:
-        case CONDITION_SKILL:
-        case CONDITION_QUESTREWARDED:
-        case CONDITION_QUESTTAKEN:
-        case CONDITION_AD_COMMISSION_AURA:
-        case CONDITION_RACE_CLASS:
-        case CONDITION_LEVEL:
-        case CONDITION_NOITEM:
-        case CONDITION_SPELL:
-        case CONDITION_QUESTAVAILABLE:
-        case CONDITION_QUEST_NONE:
-        case CONDITION_ITEM_WITH_BANK:
-        case CONDITION_NOITEM_WITH_BANK:
-        case CONDITION_LEARNABLE_ABILITY:
-        case CONDITION_SKILL_BELOW:
-        case CONDITION_REPUTATION_RANK_MAX:
-        case CONDITION_TARGET_GENDER:
-        {
-            if (!target || (target->GetTypeId() != TYPEID_PLAYER))
-                return false;
-            break;
-        }
-        case CONDITION_AREAID:
-        case CONDITION_AREA_FLAG:
-            if (!target && !source)
-            {
-                sLog.outErrorDb("CONDITION %u type %u used with bad parameters, called from %s, used with target: %s, map %i, source %s",
-                                m_entry, m_condition, conditionSourceToStr[conditionSourceType], target ? target->GetGuidStr().c_str() : "NULL", map ? map->GetId() : -1, source ? source->GetGuidStr().c_str() : "NULL");
-                return false;
-            }
-            break;
-        case CONDITION_INSTANCE_SCRIPT:
-            if (!target && !source && !map)
-            {
-                sLog.outErrorDb("CONDITION %u type %u used with bad parameters, called from %s, used with target: %s, map %i, source %s",
-                                m_entry, m_condition, conditionSourceToStr[conditionSourceType], target ? target->GetGuidStr().c_str() : "NULL", map ? map->GetId() : -1, source ? source->GetGuidStr().c_str() : "NULL");
-                return false;
-            }
-            break;
-        case CONDITION_NEARBY_CREATURE:
-        case CONDITION_NEARBY_GAMEOBJECT:
-        case CONDITION_HAS_FLAG:
-        case CONDITION_SOURCE_AURA:
-        case CONDITION_LAST_WAYPOINT:
-        case CONDITION_SOURCE_GENDER:
-            if (!source)
-            {
-                sLog.outErrorDb("CONDITION %u type %u used with bad parameters, called from %s, used with target: %s, map %i, source %s",
-                                m_entry, m_condition, conditionSourceToStr[conditionSourceType], target ? target->GetGuidStr().c_str() : "NULL", map ? map->GetId() : -1, source ? source->GetGuidStr().c_str() : "NULL");
-                return false;
-            }
-            break;
-        case CONDITION_DEAD_OR_AWAY:
-            switch (m_value1)
-            {
-                case 0:                                     // Player dead or out of range
-                case 1:                                     // All players in Group dead or out of range
-                case 2:                                     // All players in instance dead or out of range
-                    if (m_value2 && !source)
-                    {
-                        sLog.outErrorDb("CONDITION_DEAD_OR_AWAY %u - called from %s without source, but source expected for range check", m_entry, conditionSourceToStr[conditionSourceType]);
-                        return false;
-                    }
-                    if (m_value1 != 2)
-                        return true;
-                    // Case 2 (Instance map only)
-                    if (!map && (target || source))
-                        map = source ? source->GetMap() : target->GetMap();
-                    if (!map || !map->Instanceable())
-                    {
-                        sLog.outErrorDb("CONDITION_DEAD_OR_AWAY %u (Player in instance case) - called from %s without map param or from non-instanceable map %i", m_entry,  conditionSourceToStr[conditionSourceType], map ? map->GetId() : -1);
-                        return false;
-                    }
-                    return true;
-                case 3:                                     // Creature source is dead
-                    return true;
-            }
-            break;
-        default:
-            if (!target)
-            {
-                sLog.outErrorDb("CONDITION %u type %u used with bad parameters, called from %s, used with target: %s, map %i, source %s",
-                                m_entry, m_condition, conditionSourceToStr[conditionSourceType], target ? target->GetGuidStr().c_str() : "NULL", map ? map->GetId() : -1, source ? source->GetGuidStr().c_str() : "NULL");
-                return false;
-            }
-            break;
+        case CONDITION_REQ_NONE:
+            return true;
+        case CONDITION_REQ_TARGET_WORLDOBJECT:
+            if (target)
+                return true;
+            return false;
+        case CONDITION_REQ_TARGET_GAMEOBJECT:
+            if (target && target->IsGameObject())
+                return true;
+            return false;
+        case CONDITION_REQ_TARGET_UNIT:
+            if (target && target->IsUnit())
+                return true;
+            return false;
+        case CONDITION_REQ_TARGET_CREATURE:
+            if (target && target->IsCreature())
+                return true;
+            return false;
+        case CONDITION_REQ_TARGET_PLAYER:
+            if (target && target->IsPlayer())
+                return true;
+            return false;
+        case CONDITION_REQ_SOURCE_WORLDOBJECT:
+            if (source)
+                return true;
+            return false;
+        case CONDITION_REQ_SOURCE_GAMEOBJECT:
+            if (source && source->IsGameObject())
+                return true;
+            return false;
+        case CONDITION_REQ_SOURCE_UNIT:
+            if (source && source->IsUnit())
+                return true;
+            return false;
+        case CONDITION_REQ_SOURCE_CREATURE:
+            if (source && source->IsCreature())
+                return true;
+            return false;
+        case CONDITION_REQ_SOURCE_PLAYER:
+            if (source && source->IsPlayer())
+                return true;
+            return false;
+        case CONDITION_REQ_ANY_WORLDOBJECT:
+            if (source || target)
+                return true;
+            return false;
+        case CONDITION_REQ_MAP_OR_WORLDOBJECT:
+            if (map || source || target)
+                return true;
+            return false;
     }
+    
     return true;
 }
 
@@ -533,7 +549,6 @@ bool ConditionEntry::IsValid()
             break;
         }
         case CONDITION_AURA:
-        case CONDITION_SOURCE_AURA:
         {
             if (!sSpellMgr.GetSpellEntry(m_value1))
             {
@@ -548,9 +563,7 @@ bool ConditionEntry::IsValid()
             break;
         }
         case CONDITION_ITEM:
-        case CONDITION_NOITEM:
         case CONDITION_ITEM_WITH_BANK:
-        case CONDITION_NOITEM_WITH_BANK:
         {
             ItemPrototype const* proto = ObjectMgr::GetItemPrototype(m_value1);
             if (!proto)
@@ -562,7 +575,8 @@ bool ConditionEntry::IsValid()
                 }
                 else
                 {
-                    m_condition = CONDITION_ALWAYS_FALSE;
+                    m_condition = CONDITION_NONE;
+                    m_flags = CONDITION_FLAG_REVERSE_RESULT;
                     return true;
                 }
             }
@@ -586,7 +600,8 @@ bool ConditionEntry::IsValid()
                 }
                 else
                 {
-                    m_condition = CONDITION_ALWAYS_FALSE;
+                    m_condition = CONDITION_NONE;
+                    m_flags = CONDITION_FLAG_REVERSE_RESULT;
                     return true;
                 }
             }
@@ -665,7 +680,8 @@ bool ConditionEntry::IsValid()
                 }
                 else
                 {
-                    m_condition = CONDITION_ALWAYS_FALSE;
+                    m_condition = CONDITION_NONE;
+                    m_flags = CONDITION_FLAG_REVERSE_RESULT;
                     return true;
                 }
             }
@@ -682,22 +698,7 @@ bool ConditionEntry::IsValid()
                 sLog.outErrorDb("Quest condition (entry %u, type %u) has useless data in value2 (%u)!", m_entry, m_condition, m_value2);
             break;
         }
-        case CONDITION_NO_AURA:
-        {
-            if (!sSpellMgr.GetSpellEntry(m_value1))
-            {
-                sLog.outErrorDb("Aura condition (entry %u, type %u) requires to have non existing spell (Id: %d), skipped", m_entry, m_condition, m_value1);
-                return false;
-            }
-            if (m_value2 > MAX_EFFECT_INDEX)
-            {
-                sLog.outErrorDb("Aura condition (entry %u, type %u) requires to have non existing effect index (%u) (must be 0..%u), skipped", m_entry, m_condition, m_value2, MAX_EFFECT_INDEX - 1);
-                return false;
-            }
-            break;
-        }
         case CONDITION_ACTIVE_GAME_EVENT:
-        case CONDITION_NOT_ACTIVE_GAME_EVENT:
         {
             if (!sGameEventMgr.IsValidEvent(m_value1))
             {
@@ -781,7 +782,8 @@ bool ConditionEntry::IsValid()
                 }
                 else
                 {
-                    m_condition = CONDITION_ALWAYS_FALSE;
+                    m_condition = CONDITION_NONE;
+                    m_flags = CONDITION_FLAG_REVERSE_RESULT;
                     return true;
                 }
             }
@@ -801,7 +803,8 @@ bool ConditionEntry::IsValid()
                 }
                 else
                 {
-                    m_condition = CONDITION_ALWAYS_FALSE;
+                    m_condition = CONDITION_NONE;
+                    m_flags = CONDITION_FLAG_REVERSE_RESULT;
                     return true;
                 }
             }
@@ -812,7 +815,6 @@ bool ConditionEntry::IsValid()
         }
         case CONDITION_HAS_FLAG:
         case CONDITION_ACTIVE_HOLIDAY:
-        case CONDITION_NOT_ACTIVE_HOLIDAY:
             // no way check holidays in pre-3.x
             break;
         case CONDITION_LEARNABLE_ABILITY:
@@ -837,7 +839,8 @@ bool ConditionEntry::IsValid()
                     }
                     else
                     {
-                        m_condition = CONDITION_ALWAYS_FALSE;
+                        m_condition = CONDITION_NONE;
+                        m_flags = CONDITION_FLAG_REVERSE_RESULT;
                         return true;
                     }
                 }
@@ -854,7 +857,6 @@ bool ConditionEntry::IsValid()
             }
             break;
         }
-        case CONDITION_SOURCE_GENDER:
         case CONDITION_TARGET_GENDER:
         {
             if (m_value1 >= GENDER_NONE)
@@ -898,7 +900,8 @@ bool ConditionEntry::IsValid()
                 }
                 else
                 {
-                    m_condition = CONDITION_ALWAYS_FALSE;
+                    m_condition = CONDITION_NONE;
+                    m_flags = CONDITION_FLAG_REVERSE_RESULT;
                     return true;
                 }
             }
@@ -946,25 +949,9 @@ bool ConditionEntry::CanBeUsedWithoutPlayer(uint16 entry)
         case CONDITION_AND:
         case CONDITION_OR:
             return CanBeUsedWithoutPlayer(condition->m_value1) && CanBeUsedWithoutPlayer(condition->m_value2);
-        case CONDITION_NONE:
-        case CONDITION_ACTIVE_GAME_EVENT:
-        case CONDITION_NOT_ACTIVE_GAME_EVENT:
-        case CONDITION_ACTIVE_HOLIDAY:
-        case CONDITION_NOT_ACTIVE_HOLIDAY:
-        case CONDITION_AREAID:
-        case CONDITION_AREA_FLAG:
-        case CONDITION_INSTANCE_SCRIPT:
-        case CONDITION_NEARBY_CREATURE:
-        case CONDITION_NEARBY_GAMEOBJECT:
-        case CONDITION_HAS_FLAG:
-        case CONDITION_SOURCE_AURA:
-        case CONDITION_LAST_WAYPOINT:
-        case CONDITION_SOURCE_GENDER:
-        case CONDITION_WOW_PATCH:
-        case CONDITION_SOURCE_ENTRY:
-        case CONDITION_WAR_EFFORT_STAGE:
-            return true;
         default:
-            return false;
+            if (ConditionTargets[condition->m_condition] != CONDITION_REQ_TARGET_PLAYER)
+                return true;
     }
+    return false;
 }
