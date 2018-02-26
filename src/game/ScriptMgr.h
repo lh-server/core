@@ -196,6 +196,8 @@ enum eScriptCommand
     SCRIPT_COMMAND_REMOVE_ITEM              = 40,           // source = Player (from provided source or target)
                                                             // datalong = item_entry
                                                             // datalong2 = amount
+    SCRIPT_COMMAND_REMOVE_OBJECT            = 41,           // source = GameObject
+                                                            // target = Unit
     SCRIPT_COMMAND_MAX,
 
     SCRIPT_COMMAND_DISABLED                 = 9999          // Script action was disabled during loading.
@@ -585,6 +587,8 @@ struct ScriptInfo
             uint32 itemEntry;                               // datalong
             uint32 amount;                                  // datalong2
         } removeItem;
+
+                                                            // SCRIPT_COMMAND_REMOVE_OBJECT (41)
 
         struct
         {

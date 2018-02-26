@@ -357,6 +357,12 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
             pHolder.UpdateRepeatTimer(m_creature, event.buffed.repeatMin, event.buffed.repeatMax);
             break;
         }
+        case EVENT_T_MOVEMENT_INFORM:
+        {
+            //Repeat Timers
+            pHolder.UpdateRepeatTimer(m_creature, event.move_inform.repeatMin, event.move_inform.repeatMax);
+            break;
+        }
         default:
             sLog.outErrorDb("CreatureEventAI: Creature %u using Event %u has invalid Event Type(%u), missing from ProcessEvent() Switch.", m_creature->GetEntry(), pHolder.Event.event_id, pHolder.Event.event_type);
             break;
@@ -1173,6 +1179,17 @@ void CreatureEventAI::SpellHit(Unit* pUnit, const SpellEntry* pSpell)
             if (!(*i).Event.spell_hit.spellId || pSpell->Id == (*i).Event.spell_hit.spellId)
                 if (GetSchoolMask(pSpell->School) & (*i).Event.spell_hit.schoolMask)
                     ProcessEvent(*i, pUnit);
+}
+
+void CreatureEventAI::MovementInform(uint32 type, uint32 id)
+{
+    if (m_bEmptyList)
+        return;
+
+    for (CreatureEventAIList::iterator i = m_CreatureEventAIList.begin(); i != m_CreatureEventAIList.end(); ++i)
+        if ((*i).Event.event_type == EVENT_T_MOVEMENT_INFORM)
+            if ((*i).Event.move_inform.motionType == type && (*i).Event.move_inform.pointId == id)
+                ProcessEvent(*i);
 }
 
 void CreatureEventAI::UpdateAI(const uint32 diff)
