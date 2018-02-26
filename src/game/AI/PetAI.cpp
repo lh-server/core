@@ -163,7 +163,7 @@ void PetAI::UpdateAI(const uint32 diff)
 
             if (nextTarget)
                 AttackStart(nextTarget);
-            else
+            else if (!m_creature->HasReactState(REACT_PASSIVE))
             {
                 if (m_creature->isInCombat())
                     m_creature->CombatStop();
