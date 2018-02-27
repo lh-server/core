@@ -1535,6 +1535,17 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
                     }
                     return;
                 }
+                case 16032: // Merging Oozes
+                {
+                    if (unitTarget && m_caster && unitTarget->IsCreature() && m_caster->IsCreature())
+                    {
+                        // Summon Gargantuan Ooze
+                        m_caster->SummonCreature(9621, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 420000);
+                        ((Creature*)m_caster)->DespawnOrUnsummon();
+                        ((Creature*)unitTarget)->DespawnOrUnsummon();
+                    }
+                    return;
+                }
             }
 
             //All IconID Check in there
