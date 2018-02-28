@@ -24,6 +24,7 @@
 #include "SpellAuras.h"
 #include "InstanceData.h"
 #include "HardcodedEvents.h"
+#include "World.h"
 
 char const* conditionSourceToStr[] =
 {
