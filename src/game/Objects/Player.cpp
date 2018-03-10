@@ -1797,18 +1797,20 @@ bool Player::SwitchInstance(uint32 newInstanceId)
 
     Map* oldmap = GetMap();
 
-    // Leave transport
-    if (m_transport)
+    // Leave transport if absent from new instance
+    // normally it should have switched before the player
+    if (m_transport && m_transport->GetInstanceId() != newInstanceId)
     {
         m_transport->RemovePassenger(this);
         m_movementInfo.ClearTransportData();
+        m_movementInfo.RemoveMovementFlag(MOVEFLAG_ONTRANSPORT);
     }
     // Stop duel
     if (duel)
         if (GameObject* obj = GetMap()->GetGameObject(GetGuidValue(PLAYER_DUEL_ARBITER)))
             DuelComplete(DUEL_FLED);
     // Fix movement flags
-    m_movementInfo.RemoveMovementFlag(MOVEFLAG_MASK_MOVING_OR_TURN | MOVEFLAG_ONTRANSPORT);
+    m_movementInfo.RemoveMovementFlag(MOVEFLAG_MASK_MOVING_OR_TURN);
 
     SetSelectionGuid(ObjectGuid());
     CombatStop();
