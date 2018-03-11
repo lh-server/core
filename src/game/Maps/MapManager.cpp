@@ -808,7 +808,7 @@ uint32 MapManager::GetContinentInstanceId(uint32 mapId, float x, float y, bool* 
                     -4365.006836f, -1602.575439f, // the Barrens
                     -4515.219727f, -1681.356079f,
                     -4703.36035f , -2166.91016f, // Thousand Needles
-                    -4849.61377  , -2176.16284,  // Razorfen Downs outsides
+                    -4849.61377f  , -2176.16284f,  // Razorfen Downs outsides
                     -4863.11377f , -2185.06274f,
                     -5043.4502f  , -2431.94971f,
                     -5248.286621f, -3034.536377f,
