@@ -247,7 +247,7 @@ void WorldSession::HandleMoveTeleportAckOpcode(WorldPacket& recv_data)
     plMover->TeleportPositionRelocation(dest.coord_x, dest.coord_y, dest.coord_z, dest.orientation);
 
     // resummon pet, if the destination is in another continent instance, let Player::SwitchInstance do it
-    // because the client will request the name for the old pet guid and receive the answer after the pet change
+    // because the client will request the name for the old pet guid and receive no answer
     // result would be a pet named "unknown"
     if (plMover->GetTemporaryUnsummonedPetNumber())
         if (sWorld.getConfig(CONFIG_BOOL_CONTINENTS_INSTANCIATE) && plMover->GetMap()->IsContinent())
