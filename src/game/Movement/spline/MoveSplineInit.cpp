@@ -174,7 +174,11 @@ int32 MoveSplineInit::Launch()
     // Do not forget to restore velocity after movement !
     if (args.velocity > 4 * realSpeedRun && !args.flags.done)
         mvtData.SetUnitSpeed(SMSG_SPLINE_SET_RUN_SPEED, unit.GetObjectGuid(), realSpeedRun);
-
+    // Restore correct walk mode for players
+    // Won't be able to properly restore in case of 2 consecutive splines
+    // Whatever it was before or during the spline, the client will continue in run mode, this could suffice
+    /*if (unit.GetTypeId() == TYPEID_PLAYER && (moveFlags & MOVEFLAG_WALK_MODE) != (oldMoveFlags & MOVEFLAG_WALK_MODE))
+        mvtData.SetSplineOpcode(oldMoveFlags & MOVEFLAG_WALK_MODE ? SMSG_SPLINE_MOVE_SET_WALK_MODE : SMSG_SPLINE_MOVE_SET_RUN_MODE, unit.GetObjectGuid());*/
     if (compress)
     {
         WorldPacket data2;
