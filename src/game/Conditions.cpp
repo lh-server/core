@@ -80,6 +80,10 @@ uint8 const ConditionTargetsInternal[] =
     CONDITION_REQ_SOURCE_WORLDOBJECT, //  31
     CONDITION_REQ_SOURCE_CREATURE,    //  32
     CONDITION_REQ_MAP_OR_WORLDOBJECT, //  33
+    CONDITION_REQ_MAP_OR_WORLDOBJECT, //  34
+    CONDITION_REQ_MAP_OR_WORLDOBJECT, //  35
+    CONDITION_REQ_MAP_OR_WORLDOBJECT, //  36
+    CONDITION_REQ_SOURCE_AND_TARGET,  //  37
 };
 
 // Starts from 4th element so that -3 will return first element.
@@ -447,6 +451,37 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
 
             return false;
         }
+        case CONDITION_INSTANCE_DATA_EQUAL:
+        {
+            const Map* pMap = map ? map : (source ? source->GetMap() : target->GetMap());
+
+            if (InstanceData const* data = map->GetInstanceData())
+                return const_cast<InstanceData*>(data)->GetData(m_value1) == m_value2;
+
+            return false;
+        }
+        case CONDITION_INSTANCE_DATA_GREATER:
+        {
+            const Map* pMap = map ? map : (source ? source->GetMap() : target->GetMap());
+
+            if (InstanceData const* data = map->GetInstanceData())
+                return const_cast<InstanceData*>(data)->GetData(m_value1) >= m_value2;
+
+            return false;
+        }
+        case CONDITION_INSTANCE_DATA_LESS:
+        {
+            const Map* pMap = map ? map : (source ? source->GetMap() : target->GetMap());
+
+            if (InstanceData const* data = map->GetInstanceData())
+                return const_cast<InstanceData*>(data)->GetData(m_value1) <= m_value2;
+
+            return false;
+        }
+        case CONDITION_LINE_OF_SIGHT:
+        {
+            return source->IsWithinLOSInMap(target);
+        }
     }
     return false;
 }
@@ -506,6 +541,10 @@ bool ConditionEntry::CheckParamRequirements(WorldObject const* target, Map const
             if (map || source || target)
                 return true;
             return false;
+        case CONDITION_REQ_SOURCE_AND_TARGET:
+            if (!source || !target)
+                return false;
+            return true;
     }
     
     return true;
@@ -946,6 +985,10 @@ bool ConditionEntry::IsValid()
             break;
         }
         case CONDITION_NONE:
+        case CONDITION_INSTANCE_DATA_EQUAL:
+        case CONDITION_INSTANCE_DATA_GREATER:
+        case CONDITION_INSTANCE_DATA_LESS:
+        case CONDITION_LINE_OF_SIGHT:
             break;
         default:
             sLog.outErrorDb("Condition entry %u has bad type of %d, skipped ", m_entry, m_condition);
