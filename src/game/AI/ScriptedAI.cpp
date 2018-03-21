@@ -12,7 +12,6 @@
 
 ScriptedAI::ScriptedAI(Creature* pCreature) : CreatureAI(pCreature),
     me(pCreature),
-    m_bCombatMovement(true),
     m_uiEvadeCheckCooldown(2500),
     m_uiHomeArea(m_creature->GetAreaId())
 {
@@ -56,7 +55,7 @@ void ScriptedAI::AttackStart(Unit* pWho)
         m_creature->SetInCombatWith(pWho);
         pWho->SetInCombatWith(m_creature);
 
-        if (IsCombatMovement())
+        if (m_CombatMovementEnabled)
             m_creature->GetMotionMaster()->MoveChase(pWho);
     }
     else
@@ -146,7 +145,7 @@ void ScriptedAI::DoPlaySoundToSet(WorldObject* pSource, uint32 uiSoundId)
     if (!pSource)
         return;
 
-    if (!GetSoundEntriesStore()->LookupEntry(uiSoundId))
+    if (!sObjectMgr.GetSoundEntry(uiSoundId))
     {
         sLog.outError("Invalid soundId %u used in DoPlaySoundToSet (Source: TypeId %u, GUID %u)", uiSoundId, pSource->GetTypeId(), pSource->GetGUIDLow());
         return;
@@ -359,11 +358,6 @@ void ScriptedAI::SetEquipmentSlots(bool bLoadDefault, int32 uiMainHand, int32 ui
         m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + 2, uint32(uiRanged));
 }
 
-void ScriptedAI::SetCombatMovement(bool bCombatMove)
-{
-    m_bCombatMovement = bCombatMove;
-}
-
 // Hacklike storage used for misc creatures that are expected to evade of outside of a certain area.
 // It is assumed the information is found elswehere and can be handled by mangos. So far no luck finding such information/way to extract it.
 enum
@@ -465,13 +459,9 @@ void ScriptedAI::DoModifyThreatPercent(Unit* pUnit, int32 pct)
     me->getThreatManager().modifyThreatPercent(pUnit, pct);
 }
 
-void ScriptedAI::DoTeleportTo(float fX, float fY, float fZ, uint32 uiTime)
+void ScriptedAI::DoTeleportTo(float fX, float fY, float fZ)
 {
     me->NearTeleportTo(fX, fY, fZ, me->GetOrientation());
-/*
-    me->Relocate(fX, fY, fZ);
-    me->MonsterMoveWithSpeed(fX, fY, fZ, 100000);
-*/
 }
 
 void ScriptedAI::DoTeleportTo(const float fPos[4])

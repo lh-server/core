@@ -332,7 +332,6 @@ class MANGOS_DLL_SPEC ChatHandler
         bool HandleReloadFactionChangeQuests(char* args);
         bool HandleReloadFactionChangeMounts(char* args);
         bool HandleReloadCreatureModelInfo(char* args);
-        bool HandleReloadNostalriusStrings(char* args);
         bool HandleReloadIPBanList(char* args);
         bool HandleReloadAccountBanList(char* args);
         bool HandleReloadCreatureCommand(char* args);
@@ -393,6 +392,7 @@ class MANGOS_DLL_SPEC ChatHandler
 
         bool HandleDebugAnimCommand(char* args);
         bool HandleDebugBattlegroundCommand(char* args);
+        bool HandleDebugConditionCommand(char* args);
         bool HandleDebugGetItemStateCommand(char* args);
         bool HandleDebugGetItemValueCommand(char* args);
         bool HandleDebugGetLootRecipientCommand(char* args);
@@ -532,6 +532,7 @@ class MANGOS_DLL_SPEC ChatHandler
         bool HandleLookupQuestCommand(char* args);
         bool HandleLookupSkillCommand(char* args);
         bool HandleLookupSpellCommand(char* args);
+        bool HandleLookupSoundCommand(char* args);
         bool HandleLookupTaxiNodeCommand(char* args);
         bool HandleLookupTeleCommand(char* args);
 
@@ -641,19 +642,15 @@ class MANGOS_DLL_SPEC ChatHandler
         bool HandleReloadAllNpcCommand(char* args);
         bool HandleReloadAllQuestCommand(char* args);
         bool HandleReloadAllScriptsCommand(char* args);
-        bool HandleReloadAllEventAICommand(char* args);
         bool HandleReloadAllSpellCommand(char* args);
         bool HandleReloadAllLocalesCommand(char* args);
 
         bool HandleReloadConfigCommand(char* args);
 
-
         bool HandleReloadAreaTriggerTavernCommand(char* args);
         bool HandleReloadAreaTriggerTeleportCommand(char* args);
         bool HandleReloadEventScriptsCommand(char* args);
-        bool HandleReloadEventAITextsCommand(char* args);
-        bool HandleReloadEventAISummonsCommand(char* args);
-        bool HandleReloadEventAIScriptsCommand(char* args);
+        bool HandleReloadEventAIEventsCommand(char* args);
         bool HandleReloadCommandCommand(char* args);
         bool HandleReloadBattleEventCommand(char* args);
         bool HandleReloadConditionsCommand(char* args);
