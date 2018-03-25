@@ -1161,7 +1161,7 @@ void GameObject::TriggerLinkedGameObject(Unit* target)
     }
 
     // found correct GO
-    if (trapGO)
+    if (trapGO && trapGO->isSpawned())
         trapGO->Use(target);
 }
 
@@ -1301,6 +1301,16 @@ void GameObject::Use(Unit* user)
             // FIXME: when GO casting will be implemented trap must cast spell to target
             if (uint32 spellId = GetGOInfo()->trap.spellId)
                 user->CastSpell(user, spellId, true, NULL, NULL, GetObjectGuid());
+
+            if (uint32 max_charges = GetGOInfo()->GetCharges())
+            {
+                AddUse();
+                if (m_useTimes >= max_charges)
+                {
+                    m_useTimes = 0;
+                    SetLootState(GO_JUST_DEACTIVATED);
+                }
+            }
 
             return;
         }
