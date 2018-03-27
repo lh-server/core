@@ -313,7 +313,7 @@ void WorldSession::HandleLogoutRequestOpcode(WorldPacket & /*recv_data*/)
     if (GetPlayer()->isInCombat())
         reason = 1;
     else if (GetPlayer()->m_movementInfo.HasMovementFlag(MovementFlags(MOVEFLAG_JUMPING | MOVEFLAG_FALLINGFAR))
-        || !GetPlayer()->CanFreeMove())
+        || GetPlayer()->hasUnitState(UNIT_STAT_CAN_NOT_REACT))
         reason = 3;                                         // is jumping or falling or is controlled anyhow
     else if (GetPlayer()->duel || GetPlayer()->HasAura(9454)) // is dueling or frozen by GM via freeze command
         reason = 2;                                         // FIXME - Need the correct value
