@@ -340,12 +340,11 @@ void WorldSession::HandleLogoutRequestOpcode(WorldPacket & /*recv_data*/)
         return;
     }
 
+    GetPlayer()->AddAura(SPELL_LOGOUT_STUN_SELF);
+
     float height = GetPlayer()->GetMap()->GetHeight(GetPlayer()->GetPositionX(), GetPlayer()->GetPositionY(), GetPlayer()->GetPositionZ());
     if ((GetPlayer()->GetPositionZ() < height + 0.1f) && !(GetPlayer()->IsInWater()) && GetPlayer()->getStandState() == UNIT_STAND_STATE_STAND)
         GetPlayer()->SetStandState(UNIT_STAND_STATE_SIT);
-
-    GetPlayer()->SetMovement(MOVE_ROOT);
-    GetPlayer()->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
 
     WorldPacket data(SMSG_LOGOUT_RESPONSE, 1 + 4);
     data << uint32(0);
@@ -368,18 +367,11 @@ void WorldSession::HandleLogoutCancelOpcode(WorldPacket & /*recv_data*/)
     WorldPacket data(SMSG_LOGOUT_CANCEL_ACK, 0);
     SendPacket(&data);
 
-    // not remove flags if can't free move - its not set in Logout request code.
+    GetPlayer()->RemoveAurasDueToSpell(SPELL_LOGOUT_STUN_SELF);
+
+    // Stand Up
     if (GetPlayer()->CanFreeMove())
-    {
-        //!we can move again
-        GetPlayer()->SetMovement(MOVE_UNROOT);
-
-        //! Stand Up
         GetPlayer()->SetStandState(UNIT_STAND_STATE_STAND);
-
-        //! DISABLE_ROTATE
-        GetPlayer()->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
-    }
 
     DEBUG_LOG("WORLD: sent SMSG_LOGOUT_CANCEL_ACK Message");
 }
