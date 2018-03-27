@@ -3414,6 +3414,93 @@ Unit* Creature::DoSelectLowestHpFriendly(float fRange, uint32 uiMinHPDiff, bool 
     return pUnit;
 }
 
+// Returns friendly unit that does not have an aura from the provided spellid
+Unit* Creature::DoFindFriendlyMissingBuff(float range, uint32 spellid) const
+{
+    Unit* pUnit = nullptr;
+
+    MaNGOS::FriendlyMissingBuffInRangeCheck u_check(this, range, spellid);
+    MaNGOS::UnitSearcher<MaNGOS::FriendlyMissingBuffInRangeCheck> searcher(pUnit, u_check);
+
+    Cell::VisitGridObjects(this, searcher, range);
+
+    return pUnit;
+}
+
+// Returns friendly unit that is under a crowd control effect
+Unit* Creature::DoFindFriendlyCC(float range) const
+{
+    Unit* pUnit = nullptr;
+
+    MaNGOS::FriendlyCCedInRangeCheck u_check(this, range);
+    MaNGOS::UnitSearcher<MaNGOS::FriendlyCCedInRangeCheck> searcher(pUnit, u_check);
+
+    Cell::VisitGridObjects(this, searcher, range);
+
+    return pUnit;
+}
+
+SpellCastResult Creature::TryToCast(Unit* pTarget, uint32 uiSpell, uint32 uiCastFlags, uint8 uiChance)
+{
+    if (!pTarget)
+        return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
+
+    if (IsNonMeleeSpellCasted(false) && !(uiCastFlags & (CF_TRIGGERED | CF_INTERRUPT_PREVIOUS)))
+        return SPELL_FAILED_SPELL_IN_PROGRESS;
+
+    const SpellEntry* pSpellInfo = sSpellMgr.GetSpellEntry(uiSpell);
+
+    if (!pSpellInfo)
+    {
+        sLog.outError("CastSpell: attempt to cast unknown spell %u by creature with entry: %u", uiSpell, GetEntry());
+        return SPELL_FAILED_SPELL_UNAVAILABLE;
+    }   
+
+    // If cast flag CF_AURA_NOT_PRESENT is active, check if target already has aura on them
+    if (uiCastFlags & CF_AURA_NOT_PRESENT)
+    {
+        if (pTarget->HasAura(uiSpell))
+            return SPELL_FAILED_AURA_BOUNCED;
+    }
+
+    // Custom checks
+    if (!(uiCastFlags & (CF_TARGET_CASTS_ON_SELF | CF_FORCE_CAST)))
+    {
+        if (pSpellInfo->Custom & SPELL_CUSTOM_FROM_BEHIND && pTarget->HasInArc(M_PI_F, this))
+            return SPELL_FAILED_UNIT_NOT_BEHIND;
+
+        // If the spell requires the target having a specific power type
+        if (!IsAreaOfEffectSpell(pSpellInfo) && !IsTargetPowerTypeValid(pSpellInfo, pTarget->getPowerType()))
+            return SPELL_FAILED_UNKNOWN;
+
+        // Mind control abilities can't be used with just 1 attacker or mob will reset.
+        if ((getThreatManager().getThreatList().size() == 1) && IsCharmSpell(pSpellInfo))
+            return SPELL_FAILED_UNKNOWN;
+    }
+
+    // Interrupt any previous spell
+    if ((uiCastFlags & CF_INTERRUPT_PREVIOUS) && IsNonMeleeSpellCasted(false))
+        InterruptNonMeleeSpells(false);
+
+    Spell *spell = new Spell(this, pSpellInfo, uiCastFlags & CF_TRIGGERED);
+
+    SpellCastTargets targets;
+
+    // Don't set unit target on destination target based spells, otherwise the spell will cancel
+    // as soon as the target dies or leaves the area of the effect
+    if (pSpellInfo->Targets & TARGET_FLAG_DEST_LOCATION)
+        targets.setDestination(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
+    else
+        targets.setUnitTarget(pTarget);
+
+    if (pSpellInfo->Targets & TARGET_FLAG_SOURCE_LOCATION)
+        if (WorldObject* caster = spell->GetCastingObject())
+            targets.setSource(caster->GetPositionX(), caster->GetPositionY(), caster->GetPositionZ());
+
+    spell->SetCastItem(nullptr);
+    return spell->prepare(std::move(targets), nullptr, uiChance);
+}
+
 // use this function to avoid having hostile creatures attack
 // friendlies and other mobs they shouldn't attack
 bool Creature::_IsTargetAcceptable(Unit const *target) const

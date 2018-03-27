@@ -819,10 +819,14 @@ enum ScriptTarget
     TARGET_T_FRIENDLY                       = 14,           //Random friendly unit.
                                                             //Param1 = spell_id (for range check)
                                                             //Param2 = (bool) exclude_self
-
     TARGET_T_FRIENDLY_INJURED               = 15,           //Friendly unit missing the most health.
                                                             //Param1 = spell_id (for range check)
                                                             //Param2 = hp_percent
+    TARGET_T_FRIENDLY_MISSING_BUFF          = 16,           //Friendly unit without aura
+                                                            //Param1 = spell_id
+                                                            //Param2 = search_radius
+    TARGET_T_FRIENDLY_CC                    = 17,           //Friendly unit under crowd control
+                                                            //Param1 = spell_id (for range check)
     TARGET_T_END
 };
 
@@ -868,9 +872,19 @@ inline WorldObject* GetTargetByType(WorldObject* pSource, WorldObject* pTarget, 
         case TARGET_T_FRIENDLY:
             if (Unit* pUnitSource = ToUnit(pSource))
                 return pUnitSource->SelectRandomFriendlyTarget(Param2 ? pUnitSource : nullptr, Param1 ? sSpellRangeStore.LookupEntry(sSpellMgr.GetSpellEntry(Param1)->rangeIndex)->maxRange : 30);
+            break;
         case TARGET_T_FRIENDLY_INJURED:
             if (Creature* pCreatureSource = ToCreature(pSource))
                 return pCreatureSource->DoSelectLowestHpFriendly(Param1 ? sSpellRangeStore.LookupEntry(sSpellMgr.GetSpellEntry(Param1)->rangeIndex)->maxRange : 30, Param2 ? Param2 : 50, true);
+            break;
+        case TARGET_T_FRIENDLY_MISSING_BUFF:
+            if (Creature* pCreatureSource = ToCreature(pSource))
+                return pCreatureSource->DoFindFriendlyMissingBuff(Param2 ? Param2 : sSpellRangeStore.LookupEntry(sSpellMgr.GetSpellEntry(Param1)->rangeIndex)->maxRange, Param1);
+            break;
+        case TARGET_T_FRIENDLY_CC:
+            if (Creature* pCreatureSource = ToCreature(pSource))
+                return pCreatureSource->DoFindFriendlyCC(Param1 ? sSpellRangeStore.LookupEntry(sSpellMgr.GetSpellEntry(Param1)->rangeIndex)->maxRange : 30);
+            break;
     }
     return nullptr;
 }

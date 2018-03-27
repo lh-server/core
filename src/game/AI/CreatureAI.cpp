@@ -34,6 +34,10 @@ void CreatureAI::JustRespawned()
 {
     // Reset spells template to default on respawn.
     SetSpellsTemplate(m_creature->GetCreatureInfo()->spells_template);
+
+    // Reset combat movement and melee attack.
+    m_CombatMovementEnabled = true;
+    m_MeleeEnabled = true;
 }
 
 void CreatureAI::AttackedBy(Unit* attacker)
@@ -188,37 +192,50 @@ void CreatureAI::DoSpellTemplateCasts(const uint32 uiDiff)
     {
         if (spell.cooldown <= uiDiff)
         {
-            // we roll to see if we cast this time
-            if (spell.probability <= rand() % 100)
-            {
-                spell.cooldown = urand(spell.delayRepeatMin, spell.delayRepeatMax);
-                continue;
-            }
-
             Unit* spellTarget = ToUnit(GetTargetByType(m_creature, m_creature, spell.castTarget, spell.spellId));
 
-            CanCastResult result = DoCastSpellIfCan(spellTarget, spell.spellId, spell.castFlags);
+            SpellCastResult result = m_creature->TryToCast(spellTarget, spell.spellId, spell.castFlags, spell.probability);
             
-            if (result == CAST_OK)
+            switch (result)
             {
-                spell.cooldown = urand(spell.delayRepeatMin, spell.delayRepeatMax);
-
-                if (spell.castFlags & CF_MAIN_RANGED_SPELL)
+                case SPELL_CAST_OK:
                 {
-                    SetCombatMovement(false);
-                    SetMeleeAttack(false);
+                    spell.cooldown = urand(spell.delayRepeatMin, spell.delayRepeatMax);
+
+                    if (spell.castFlags & CF_MAIN_RANGED_SPELL)
+                    {
+                        if (m_creature->IsMoving())
+                            m_creature->StopMoving();
+
+                        SetCombatMovement(false);
+                        SetMeleeAttack(false);
+                    }
+
+                    // If there is a script for this spell, run it.
+                    if (spell.scriptId)
+                        m_creature->GetMap()->ScriptsStart(sCreatureSpellScripts, spell.scriptId, m_creature, spellTarget);
+                    break;
                 }
-
-                // If there is a script for this spell, run it.
-                if (spell.scriptId)
-                    m_creature->GetMap()->ScriptsStart(sCreatureSpellScripts, spell.scriptId, m_creature, spellTarget);
-            }
-            else if (result != CAST_FAIL_IS_CASTING)
-            {
-                if (spell.castFlags & CF_MAIN_RANGED_SPELL)
+                case SPELL_FAILED_TRY_AGAIN:
                 {
-                    SetCombatMovement(true);
-                    SetMeleeAttack(true);
+                    // Chance roll failed, so we reset cooldown.
+                    spell.cooldown = urand(spell.delayRepeatMin, spell.delayRepeatMax);
+                    continue;
+                }
+                case SPELL_FAILED_SPELL_IN_PROGRESS:
+                {
+                    // If we are casting, just continue so it will try again on next update.
+                    break;
+                }
+                default:
+                {
+                    // other error
+                    if (spell.castFlags & CF_MAIN_RANGED_SPELL)
+                    {
+                        SetCombatMovement(true);
+                        SetMeleeAttack(true);
+                    }
+                    break;
                 }
             }
         }
@@ -379,6 +396,10 @@ void CreatureAI::EnterEvadeMode()
 {
     // Reset back to default spells template. This also resets timers.
     SetSpellsTemplate(m_creature->GetCreatureInfo()->spells_template);
+
+    // Reset combat movement and melee attack.
+    m_CombatMovementEnabled = true;
+    m_MeleeEnabled = true;
 
     if (!m_creature->isAlive())
     {

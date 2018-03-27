@@ -729,6 +729,12 @@ class MANGOS_DLL_SPEC Creature : public Unit
         Unit* SelectNearestHostileUnitInAggroRange(bool useLOS) const;
         Unit* SelectNearestTargetInAttackDistance(float dist) const;
         Unit* DoSelectLowestHpFriendly(float fRange, uint32 uiMinHPDiff = 1, bool bPercent = false) const;
+        Unit* DoFindFriendlyMissingBuff(float range, uint32 spellid) const;
+        Unit* DoFindFriendlyCC(float range) const;
+
+        // Used by Creature Spells system to always know result of cast
+        SpellCastResult TryToCast(Unit* pTarget, uint32 uiSpell, uint32 uiCastFlags, uint8 uiChance);
+
         // - Victim selection (from aggro list)
         Unit* GetNearestVictimInRange(float min, float max);
         Unit* GetFarthestVictimInRange(float min, float max);
