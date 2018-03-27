@@ -80,6 +80,12 @@ uint8 const ConditionTargetsInternal[] =
     CONDITION_REQ_SOURCE_WORLDOBJECT, //  31
     CONDITION_REQ_SOURCE_CREATURE,    //  32
     CONDITION_REQ_MAP_OR_WORLDOBJECT, //  33
+    CONDITION_REQ_MAP_OR_WORLDOBJECT, //  34
+    CONDITION_REQ_MAP_OR_WORLDOBJECT, //  35
+    CONDITION_REQ_MAP_OR_WORLDOBJECT, //  36
+    CONDITION_REQ_SOURCE_AND_TARGET,  //  37
+    CONDITION_REQ_SOURCE_AND_TARGET,  //  38
+    CONDITION_REQ_TARGET_WORLDOBJECT, //  39
 };
 
 // Starts from 4th element so that -3 will return first element.
@@ -447,6 +453,56 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
 
             return false;
         }
+        case CONDITION_INSTANCE_DATA_EQUAL:
+        {
+            const Map* pMap = map ? map : (source ? source->GetMap() : target->GetMap());
+
+            if (InstanceData const* data = map->GetInstanceData())
+                return const_cast<InstanceData*>(data)->GetData(m_value1) == m_value2;
+
+            return false;
+        }
+        case CONDITION_INSTANCE_DATA_GREATER:
+        {
+            const Map* pMap = map ? map : (source ? source->GetMap() : target->GetMap());
+
+            if (InstanceData const* data = map->GetInstanceData())
+                return const_cast<InstanceData*>(data)->GetData(m_value1) >= m_value2;
+
+            return false;
+        }
+        case CONDITION_INSTANCE_DATA_LESS:
+        {
+            const Map* pMap = map ? map : (source ? source->GetMap() : target->GetMap());
+
+            if (InstanceData const* data = map->GetInstanceData())
+                return const_cast<InstanceData*>(data)->GetData(m_value1) <= m_value2;
+
+            return false;
+        }
+        case CONDITION_LINE_OF_SIGHT:
+        {
+            return source->IsWithinLOSInMap(target);
+        }
+        case CONDITION_DISTANCE:
+        {
+            uint32 distance = source->GetDistance(target);
+
+            switch (m_value2)
+            {
+                case 0:
+                    return distance == m_value1;
+                case 1:
+                    return distance >= m_value1;
+                case 2:
+                    return distance <= m_value1;
+            }
+            return false;
+        }
+        case CONDITION_IS_MOVING:
+        {
+            return target->IsMoving();
+        }
     }
     return false;
 }
@@ -504,6 +560,10 @@ bool ConditionEntry::CheckParamRequirements(WorldObject const* target, Map const
             return false;
         case CONDITION_REQ_MAP_OR_WORLDOBJECT:
             if (map || source || target)
+                return true;
+            return false;
+        case CONDITION_REQ_SOURCE_AND_TARGET:
+            if (source && target)
                 return true;
             return false;
     }
@@ -779,8 +839,6 @@ bool ConditionEntry::IsValid()
 
             break;
         }
-        case CONDITION_INSTANCE_SCRIPT:
-            break;
         case CONDITION_NEARBY_CREATURE:
         {
             if (!sObjectMgr.GetCreatureTemplate(m_value1))
@@ -823,10 +881,6 @@ bool ConditionEntry::IsValid()
                 sLog.outErrorDb("Nearby gameobject condition (entry %u, type %u) used without search radius (%u)!", m_entry, m_condition, m_value2);
             break;
         }
-        case CONDITION_HAS_FLAG:
-        case CONDITION_ACTIVE_HOLIDAY:
-            // no way check holidays in pre-3.x
-            break;
         case CONDITION_LEARNABLE_ABILITY:
         {
             SkillLineAbilityMapBounds bounds = sSpellMgr.GetSkillLineAbilityMapBounds(m_value1);
@@ -945,7 +999,24 @@ bool ConditionEntry::IsValid()
             }
             break;
         }
+        case CONDITION_DISTANCE:
+        {
+            if (m_value2 > 2)
+            {
+                sLog.outErrorDb("Distance condition (entry %u, type %u) has invalid argument %u (must be 0..2), skipped", m_entry, m_condition, m_value2);
+                return false;
+            }
+            break;
+        }
         case CONDITION_NONE:
+        case CONDITION_INSTANCE_SCRIPT:
+        case CONDITION_ACTIVE_HOLIDAY:
+        case CONDITION_HAS_FLAG:
+        case CONDITION_INSTANCE_DATA_EQUAL:
+        case CONDITION_INSTANCE_DATA_GREATER:
+        case CONDITION_INSTANCE_DATA_LESS:
+        case CONDITION_LINE_OF_SIGHT:
+        case CONDITION_IS_MOVING:
             break;
         default:
             sLog.outErrorDb("Condition entry %u has bad type of %d, skipped ", m_entry, m_condition);

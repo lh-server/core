@@ -42,8 +42,8 @@ class SpellCastTargets;
 // Legend:
 // source - the type of object which executes the command
 // target - the type of object used as target of the command if needed
-// provided source - the "Object* source" provided to the command
-// provided target - the "Object* target" provided to the command
+// provided source - the "WorldObject* source" provided to the command
+// provided target - the "WorldObject* target" provided to the command
 
 // For example the talk command can be used by any WorldObject and the text will
 // be said by this object. If there is also a target provided of type Unit, then
@@ -230,6 +230,11 @@ enum eScriptCommand
     SCRIPT_COMMAND_SET_SERVER_VARIABLE      = 54,           // source = None
                                                             // datalong = index
                                                             // datalong2 = value
+    SCRIPT_COMMAND_CREATURE_SPELLS          = 55,           // source = Creature
+                                                            // datalong1-4 = creature_spells id
+                                                            // dataint1-4 = chance (total cant be above 100)
+    SCRIPT_COMMAND_REMOVE_GUARDIANS         = 56,           // source = Unit
+
     SCRIPT_COMMAND_MAX,
 
     SCRIPT_COMMAND_DISABLED                 = 9999          // Script action was disabled during loading.
@@ -682,6 +687,15 @@ struct ScriptInfo
             uint32 index;                                   // datalong
             uint32 value;                                   // datalong2
         } serverVariable;
+
+        struct                                              // SCRIPT_COMMAND_CREATURE_SPELLS (55)
+        {
+            uint32 spells_template[4];                      // datalong to datalong4
+            uint32 unused;                                  // data_flags
+            int32 chance[4];                                // dataint to dataint4
+        } creatureSpells;
+
+                                                            // SCRIPT_COMMAND_REMOVE_GUARDIANS (56)
 
         struct
         {

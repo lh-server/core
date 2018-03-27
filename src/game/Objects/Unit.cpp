@@ -329,7 +329,7 @@ void Unit::Update(uint32 update_diff, uint32 p_time)
 
         while (m_extraAttacks)
         {
-            AttackerStateUpdate(victim, BASE_ATTACK, true);
+            AttackerStateUpdate(victim, BASE_ATTACK, true, true);
             if (m_extraAttacks > 0)
                 --m_extraAttacks;
         }
@@ -385,7 +385,7 @@ bool Unit::UpdateMeleeAttackingState()
         return false;
 
     uint8 swingError = 0;
-    if (!CanReachWithMeleeAttack(victim))
+    if (!CanReachWithMeleeAttack(victim) || (!IsWithinLOSInMap(victim) && !hasUnitState(UNIT_STAT_ALLOW_LOS_ATTACK)))
     {
         if (isAttackReady(BASE_ATTACK))
             setAttackTimer(BASE_ATTACK, 100);
@@ -412,7 +412,7 @@ bool Unit::UpdateMeleeAttackingState()
                 if (getAttackTimer(OFF_ATTACK) < ATTACK_DISPLAY_DELAY)
                     setAttackTimer(OFF_ATTACK, ATTACK_DISPLAY_DELAY);
             }
-            AttackerStateUpdate(victim, BASE_ATTACK);
+            AttackerStateUpdate(victim, BASE_ATTACK, false);
             resetAttackTimer(BASE_ATTACK);
         }
         if (haveOffhandWeapon() && isAttackReady(OFF_ATTACK))
@@ -422,7 +422,7 @@ bool Unit::UpdateMeleeAttackingState()
             if (base_att < ATTACK_DISPLAY_DELAY)
                 setAttackTimer(BASE_ATTACK, ATTACK_DISPLAY_DELAY);
             // do attack
-            AttackerStateUpdate(victim, OFF_ATTACK);
+            AttackerStateUpdate(victim, OFF_ATTACK, false);
             resetAttackTimer(OFF_ATTACK);
         }
     }
@@ -2435,7 +2435,7 @@ void Unit::CalculateAbsorbResistBlock(Unit *pCaster, SpellNonMeleeDamage *damage
     damageInfo->damage -= damageInfo->absorb + damageInfo->resist;
 }
 
-void Unit::AttackerStateUpdate(Unit *pVictim, WeaponAttackType attType, bool extra)
+void Unit::AttackerStateUpdate(Unit *pVictim, WeaponAttackType attType, bool checkLoS, bool extra)
 {
     if (hasUnitState(UNIT_STAT_CAN_NOT_REACT) || HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED))
         return;
@@ -2455,7 +2455,7 @@ void Unit::AttackerStateUpdate(Unit *pVictim, WeaponAttackType attType, bool ext
         return;                                             // ignore ranged case
 
     // Nostalrius: check ligne de vision
-    if (!hasUnitState(UNIT_STAT_ALLOW_LOS_ATTACK) && !IsWithinLOSInMap(pVictim))
+    if (checkLoS && !hasUnitState(UNIT_STAT_ALLOW_LOS_ATTACK) && !IsWithinLOSInMap(pVictim))
         return;
 
     if (GetExtraAttacks() && !extra)
@@ -5305,6 +5305,10 @@ void Unit::HandleTriggers(Unit *pVictim, uint32 procExtra, uint32 amount, SpellE
                     continue;
             }
 
+            // Spells that require target to be below 20%, like Deadly Swiftness (31255).
+            if ((triggeredByAura->GetSpellProto()->TargetAuraState == AURA_STATE_HEALTHLESS_20_PERCENT) && (!itr->target || !itr->target->HasAuraState(AURA_STATE_HEALTHLESS_20_PERCENT)))
+                continue;
+
             SpellAuraProcResult procResult = (*caster.*AuraProcHandler[auraModifier->m_auraname])(itr->target, amount, triggeredByAura, procSpell, itr->procFlag, procExtra, cooldown);
             switch (procResult)
             {
@@ -6035,6 +6039,22 @@ float Unit::GetDistanceToCenter(const Unit* target) const
     float dz = GetPositionZ() - target->GetPositionZ();
     float dist = sqrt((dx * dx) + (dy * dy) + (dz * dz));
     return (dist > 0 ? dist : 0);
+}
+
+float Unit::GetLeewayBonusRange(const Unit* target) const
+{
+    if (IsPlayer() && GetXZFlagBasedSpeed() > LEEWAY_MIN_MOVE_SPEED && target && target->GetXZFlagBasedSpeed() > LEEWAY_MIN_MOVE_SPEED)
+        return LEEWAY_BONUS_RANGE;
+
+    return 0.0f;
+}
+
+float Unit::GetLeewayBonusRadius() const
+{
+    if (IsPlayer() && (GetXZFlagBasedSpeed() > LEEWAY_MIN_MOVE_SPEED || ToPlayer()->m_movementInfo.HasMovementFlag(MOVEFLAG_JUMPING)))
+        return LEEWAY_BONUS_RANGE;
+
+    return 0.0f;
 }
 
 void Unit::SetPet(Pet* pet)
@@ -7981,30 +8001,38 @@ float Unit::GetSpeed(UnitMoveType mtype) const
     return m_speed_rate[mtype] * baseMoveSpeed[mtype];
 }
 
-float Unit::GetXZFlagBasedSpeed(const Unit *unit) const
+float Unit::GetXZFlagBasedSpeed() const
 {
-    if (!unit->HasUnitMovementFlag(MOVEFLAG_MASK_XZ))
-        return 0.0f;
+    return GetXZFlagBasedSpeed(m_movementInfo.moveFlags);
+}
 
-    if (unit->IsSwimming())
+float Unit::GetXZFlagBasedSpeed(uint32 moveFlags) const
+{
+    // not moving laterally? zero!
+    if (!(moveFlags & MOVEFLAG_MASK_XZ))
+        return 0.f;
+
+    // swimming?
+    if (!!(moveFlags & MOVEFLAG_SWIMMING))
     {
-        if (unit->HasUnitMovementFlag(MOVEFLAG_BACKWARD))
-            return unit->GetSpeed(MOVE_SWIM_BACK);
+        if (!!(moveFlags & MOVEFLAG_BACKWARD))
+            return GetSpeed(MOVE_SWIM_BACK);
 
-        return unit->GetSpeed(MOVE_SWIM);
+        return GetSpeed(MOVE_SWIM);
     }
 
-    if (unit->IsWalking())
+    // walking?
+    if (!!(moveFlags & MOVEFLAG_WALK_MODE))
     {
         // Seems to always be same speed forward and backward when walking
-        return unit->GetSpeed(MOVE_WALK);
+        return GetSpeed(MOVE_WALK);
     }
 
     // Presumably only running left when IsMoving is true
-    if (unit->HasUnitMovementFlag(MOVEFLAG_BACKWARD))
-        return unit->GetSpeed(MOVE_RUN_BACK);
+    if (!!(moveFlags & MOVEFLAG_BACKWARD))
+        return GetSpeed(MOVE_RUN_BACK);
 
-    return unit->GetSpeed(MOVE_RUN);
+    return GetSpeed(MOVE_RUN);
 }
 
 struct SetSpeedRateHelper
@@ -9449,7 +9477,9 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
                     {
                         ModifyAuraState(AURA_STATE_HUNTER_PARRY, true);
                         StartReactiveTimer(REACTIVE_HUNTER_PARRY, pTarget->GetObjectGuid());
-                        ((Player*)this)->AddComboPoints(pTarget, 1);
+
+                        if (Player* me = ToPlayer())
+                            me->AddComboPoints(pTarget, 1);
                     }
                     else
                     {
@@ -9469,7 +9499,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
                 // Overpower on victim dodge
                 if (procExtra & PROC_EX_DODGE && GetTypeId() == TYPEID_PLAYER && getClass() == CLASS_WARRIOR)
                 {
-                    ((Player*)this)->AddComboPoints(pTarget, 1);
+                    static_cast<Player*>(this)->AddComboPoints(pTarget, 1);
                     StartReactiveTimer(REACTIVE_OVERPOWER, pTarget->GetObjectGuid());
                 }
             }
@@ -10752,13 +10782,8 @@ float Unit::GetCombatReach(Unit const* pVictim, bool forMeleeRange /*=true*/, fl
 
     // Melee leeway mechanic.
     // When both player and target has > 70% of normal runspeed, and are moving,
-    // the player gains an additional 2.5yd of melee range.
-    if (IsPlayer())
-    {
-        static const float leewayMinSpeed = 4.97f;
-        if (GetXZFlagBasedSpeed(this) > leewayMinSpeed && GetXZFlagBasedSpeed(pVictim) > leewayMinSpeed)
-            reach += 2.5f;
-    }
+    // the player gains an additional 2.66yd of melee range.
+    reach += GetLeewayBonusRange(pVictim);
 
     return reach;
 }
