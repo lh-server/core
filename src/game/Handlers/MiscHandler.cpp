@@ -362,6 +362,10 @@ void WorldSession::HandleLogoutCancelOpcode(WorldPacket & /*recv_data*/)
 {
     DEBUG_LOG("WORLD: Recvd CMSG_LOGOUT_CANCEL Message");
 
+    // 1.12.1 sends it twice
+    if (!isLogingOut())
+        return;
+
     LogoutRequest(0);
 
     WorldPacket data(SMSG_LOGOUT_CANCEL_ACK, 0);
