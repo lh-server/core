@@ -6032,22 +6032,6 @@ float Unit::GetDistanceToCenter(const Unit* target) const
     return (dist > 0 ? dist : 0);
 }
 
-float Unit::GetLeewayBonusRange(const Unit* target) const
-{
-    if (IsPlayer() && GetXZFlagBasedSpeed() > LEEWAY_MIN_MOVE_SPEED && target && target->GetXZFlagBasedSpeed() > LEEWAY_MIN_MOVE_SPEED)
-        return LEEWAY_BONUS_RANGE;
-
-    return 0.0f;
-}
-
-float Unit::GetLeewayBonusRadius() const
-{
-    if (IsPlayer() && (GetXZFlagBasedSpeed() > LEEWAY_MIN_MOVE_SPEED || ToPlayer()->m_movementInfo.HasMovementFlag(MOVEFLAG_JUMPING)))
-        return LEEWAY_BONUS_RANGE;
-
-    return 0.0f;
-}
-
 void Unit::SetPet(Pet* pet)
 {
     SetPetGuid(pet ? pet->GetObjectGuid() : ObjectGuid());
@@ -10730,8 +10714,13 @@ float Unit::GetCombatReach(Unit const* pVictim, bool forMeleeRange /*=true*/, fl
 
     // Melee leeway mechanic.
     // When both player and target has > 70% of normal runspeed, and are moving,
-    // the player gains an additional 2.66yd of melee range.
-    reach += GetLeewayBonusRange(pVictim);
+    // the player gains an additional 2.5yd of melee range.
+    if (IsPlayer())
+    {
+        static const float leewayMinSpeed = 4.97f;
+        if (GetXZFlagBasedSpeed(this) > leewayMinSpeed && GetXZFlagBasedSpeed(pVictim) > leewayMinSpeed)
+            reach += 2.5f;
+    }
 
     return reach;
 }
