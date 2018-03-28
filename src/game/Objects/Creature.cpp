@@ -3402,29 +3402,45 @@ Unit* Creature::SelectNearestHostileUnitInAggroRange(bool useLOS) const
 }
 
 // Returns friendly unit with the most amount of hp missing from max hp
-Unit* Creature::DoSelectLowestHpFriendly(float fRange, uint32 uiMinHPDiff, bool bPercent) const
+Unit* Creature::DoSelectLowestHpFriendly(float fRange, uint32 uiMinHPDiff, bool bPercent, Unit* except) const
 {
-    Unit* pUnit = nullptr;
+    std::list<Unit *> targets;
 
     MaNGOS::MostHPMissingInRangeCheck u_check(this, fRange, uiMinHPDiff, bPercent);
-    MaNGOS::UnitLastSearcher<MaNGOS::MostHPMissingInRangeCheck> searcher(pUnit, u_check);
+    MaNGOS::UnitListSearcher<MaNGOS::MostHPMissingInRangeCheck> searcher(targets, u_check);
 
     Cell::VisitGridObjects(this, searcher, fRange);
 
-    return pUnit;
+    // remove current target
+    if (except)
+        targets.remove(except);
+
+    // no appropriate targets
+    if (targets.empty())
+        return nullptr;
+
+    return *targets.begin();
 }
 
 // Returns friendly unit that does not have an aura from the provided spellid
-Unit* Creature::DoFindFriendlyMissingBuff(float range, uint32 spellid) const
+Unit* Creature::DoFindFriendlyMissingBuff(float range, uint32 spellid, Unit* except) const
 {
-    Unit* pUnit = nullptr;
+    std::list<Unit *> targets;
 
     MaNGOS::FriendlyMissingBuffInRangeCheck u_check(this, range, spellid);
-    MaNGOS::UnitSearcher<MaNGOS::FriendlyMissingBuffInRangeCheck> searcher(pUnit, u_check);
+    MaNGOS::UnitListSearcher<MaNGOS::FriendlyMissingBuffInRangeCheck> searcher(targets, u_check);
 
     Cell::VisitGridObjects(this, searcher, range);
 
-    return pUnit;
+    // remove current target
+    if (except)
+        targets.remove(except);
+
+    // no appropriate targets
+    if (targets.empty())
+        return nullptr;
+
+    return *targets.begin();
 }
 
 // Returns friendly unit that is under a crowd control effect
@@ -3442,9 +3458,6 @@ Unit* Creature::DoFindFriendlyCC(float range) const
 
 SpellCastResult Creature::TryToCast(Unit* pTarget, uint32 uiSpell, uint32 uiCastFlags, uint8 uiChance)
 {
-    if (!pTarget)
-        return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
-
     if (IsNonMeleeSpellCasted(false) && !(uiCastFlags & (CF_TRIGGERED | CF_INTERRUPT_PREVIOUS)))
         return SPELL_FAILED_SPELL_IN_PROGRESS;
 
@@ -3452,14 +3465,22 @@ SpellCastResult Creature::TryToCast(Unit* pTarget, uint32 uiSpell, uint32 uiCast
 
     if (!pSpellInfo)
     {
-        sLog.outError("CastSpell: attempt to cast unknown spell %u by creature with entry: %u", uiSpell, GetEntry());
+        sLog.outError("TryToCast: attempt to cast unknown spell %u by creature with entry: %u", uiSpell, GetEntry());
         return SPELL_FAILED_SPELL_UNAVAILABLE;
-    }   
+    }
+
+    return TryToCast(pTarget, pSpellInfo, uiCastFlags, uiChance);
+}
+
+SpellCastResult Creature::TryToCast(Unit* pTarget, const SpellEntry* pSpellInfo, uint32 uiCastFlags, uint8 uiChance)
+{
+    if (!pTarget)
+        return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
 
     // If cast flag CF_AURA_NOT_PRESENT is active, check if target already has aura on them
     if (uiCastFlags & CF_AURA_NOT_PRESENT)
     {
-        if (pTarget->HasAura(uiSpell))
+        if (pTarget->HasAura(pSpellInfo->Id))
             return SPELL_FAILED_AURA_BOUNCED;
     }
 

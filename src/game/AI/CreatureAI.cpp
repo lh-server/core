@@ -192,9 +192,15 @@ void CreatureAI::DoSpellTemplateCasts(const uint32 uiDiff)
     {
         if (spell.cooldown <= uiDiff)
         {
-            Unit* spellTarget = ToUnit(GetTargetByType(m_creature, m_creature, spell.castTarget, spell.spellId));
+            if (m_creature->IsNonMeleeSpellCasted(false) && !(spell.castFlags & (CF_TRIGGERED | CF_INTERRUPT_PREVIOUS)))
+                continue;
 
-            SpellCastResult result = m_creature->TryToCast(spellTarget, spell.spellId, spell.castFlags, spell.probability);
+            // Checked on startup.
+            const SpellEntry* pSpellInfo = sSpellMgr.GetSpellEntry(spell.spellId);
+
+            Unit* pTarget = ToUnit(GetTargetByType(m_creature, m_creature, spell.castTarget, spell.targetParam1 ? spell.targetParam1 : sSpellRangeStore.LookupEntry(pSpellInfo->rangeIndex)->maxRange, spell.targetParam2));
+
+            SpellCastResult result = m_creature->TryToCast(pTarget, pSpellInfo, spell.castFlags, spell.probability);
             
             switch (result)
             {
@@ -213,7 +219,7 @@ void CreatureAI::DoSpellTemplateCasts(const uint32 uiDiff)
 
                     // If there is a script for this spell, run it.
                     if (spell.scriptId)
-                        m_creature->GetMap()->ScriptsStart(sCreatureSpellScripts, spell.scriptId, m_creature, spellTarget);
+                        m_creature->GetMap()->ScriptsStart(sCreatureSpellScripts, spell.scriptId, m_creature, pTarget);
                     break;
                 }
                 case SPELL_FAILED_TRY_AGAIN:
@@ -224,7 +230,7 @@ void CreatureAI::DoSpellTemplateCasts(const uint32 uiDiff)
                 }
                 case SPELL_FAILED_SPELL_IN_PROGRESS:
                 {
-                    // If we are casting, just continue so it will try again on next update.
+                    // If we are casting, do nothing so it will try again on next update.
                     break;
                 }
                 default:
