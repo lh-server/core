@@ -64,6 +64,7 @@ enum CreatureFlagsExtra
     CREATURE_FLAG_EXTRA_KEEP_POSITIVE_AURAS_ON_EVADE = 0x00001000,       // creature keeps positive auras at reset
     CREATURE_FLAG_EXTRA_ALWAYS_CRUSH                 = 0x00002000,       // creature always roll a crushing melee outcome when not miss/crit/dodge/parry/block
     CREATURE_FLAG_EXTRA_IMMUNE_AOE                   = 0x00004000,       // creature is immune to AoE
+    CREATURE_FLAG_EXTRA_NO_INJURED_SPEED             = 0x00008000,       // creature is not affected by speed reductions at low health
 };
 
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push,N), also any gcc version not support it at some platform
@@ -76,6 +77,11 @@ enum CreatureFlagsExtra
 #define MAX_KILL_CREDIT 2
 #define MAX_CREATURE_MODEL 4                                // only single send to client in static data
 #define CREATURE_FLEE_TEXT 1150
+
+#define SPEED_REDUCTION_NONE   1.0f
+#define SPEED_REDUCTION_HP_15  0.7f
+#define SPEED_REDUCTION_HP_10  0.6f
+#define SPEED_REDUCTION_HP_5   0.5f
 
 // from `creature_template` table
 struct CreatureInfo
@@ -836,6 +842,22 @@ class MANGOS_DLL_SPEC Creature : public Unit
             m_callForHelpDist = dist;
         }
 
+        float GetInjuredSpeedReduction() const
+        {
+            return m_injuredSpeedReduction;
+        }
+
+        void SetInjuredSpeedReduction(float reduction)
+        {
+            if (m_injuredSpeedReduction == reduction)
+                return;
+
+            m_injuredSpeedReduction = reduction;
+            UpdateSpeed(MOVE_RUN, true);
+            UpdateSpeed(MOVE_WALK, true);
+            UpdateSpeed(MOVE_SWIM, true);
+        }
+
         // (msecs)timer used for group loot
         uint32 GetGroupLootTimer() { return m_groupLootTimer; }
 
@@ -912,6 +934,7 @@ class MANGOS_DLL_SPEC Creature : public Unit
         uint32 _nonPlayerDamageTaken;
         
         float m_callForHelpDist;
+        float m_injuredSpeedReduction;
 
     private:
         GridReference<Creature> m_gridRef;

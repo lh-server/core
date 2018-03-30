@@ -7561,6 +7561,23 @@ int32 Unit::ModifyHealth(int32 dVal)
         gain = maxHealth - curHealth;
     }
 
+    if (Creature *creature = ToCreature())
+    {
+        // Apply speed reduction at low health percentages
+        if (!(creature->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_NO_INJURED_SPEED))
+        {
+            float hpPercent = GetHealthPercent();
+            if (hpPercent > 15.0f)
+                creature->SetInjuredSpeedReduction(SPEED_REDUCTION_NONE);
+            else if (hpPercent > 10.0f)
+                creature->SetInjuredSpeedReduction(SPEED_REDUCTION_HP_15);
+            else if (hpPercent > 5.0f)
+                creature->SetInjuredSpeedReduction(SPEED_REDUCTION_HP_10);
+            else
+                creature->SetInjuredSpeedReduction(SPEED_REDUCTION_HP_5);
+        }
+    }
+
     return gain;
 }
 
@@ -7953,14 +7970,8 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
             break;
     }
 
-    // for creature case, we check explicit if mob searched for assistance
-    if (GetTypeId() == TYPEID_UNIT)
-    {
-        if (((Creature*)this)->HasSearchedAssistance())
-            speed *= 0.66f;                                 // best guessed value, so this will be 33% reduction. Based off initial speed, mob can then "run", "walk fast" or "walk".
-    }
     // for player case, we look for some custom rates
-    else
+    if (GetTypeId() == TYPEID_PLAYER)
     {
         if (getDeathState() == CORPSE)
             speed *= sWorld.getConfig(((Player*)this)->InBattleGround() ? CONFIG_FLOAT_GHOST_RUN_SPEED_BG : CONFIG_FLOAT_GHOST_RUN_SPEED_WORLD);
@@ -7991,6 +8002,9 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
         }
         else
             speed *= 1.14286f;  // normalized player pet runspeed
+
+        // Speed reduction at low health percentages
+        speed *= pCreature->GetInjuredSpeedReduction();
     }
 
     SetSpeedRate(mtype, speed * ratio, forced);

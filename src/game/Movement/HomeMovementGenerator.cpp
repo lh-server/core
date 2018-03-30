@@ -38,6 +38,8 @@ void HomeMovementGenerator<Creature>::_setTargetLocation(Creature & owner)
     if (owner.hasUnitState(UNIT_STAT_CAN_NOT_MOVE))
         return;
 
+    owner.SetInjuredSpeedReduction(SPEED_REDUCTION_NONE);
+
     Movement::MoveSplineInit init(owner, "HomeMovementGenerator");
     float x, y, z, o;
     // at apply we can select more nice return points base at current movegen
