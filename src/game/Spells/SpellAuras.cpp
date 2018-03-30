@@ -2918,6 +2918,7 @@ void Unit::ModPossess(Unit* target, bool apply, AuraRemoveMode m_removeMode)
         if (target->hasUnitState(UNIT_STAT_STUNNED | UNIT_STAT_PENDING_STUNNED | UNIT_STAT_ROOT | UNIT_STAT_PENDING_ROOT))
             target->SetMovement(MOVE_ROOT);
         target->StopMoving();
+        target->SetWalk(p_caster->IsWalking());
     }
     else
     {
@@ -2958,6 +2959,7 @@ void Unit::ModPossess(Unit* target, bool apply, AuraRemoveMode m_removeMode)
         target->CombatStop(true);
         target->StopMoving(true);
         target->UpdateControl();
+        target->SetWalk(false);
 
         if (Creature* pCreature = target->ToCreature())
         {
