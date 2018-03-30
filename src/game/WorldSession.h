@@ -204,6 +204,8 @@ enum AccountFlags
     ACCOUNT_FLAG_MUTED_FROM_PUBLIC_CHANNELS     = 0x1,
 };
 
+const uint32 SPELL_LOGOUT_STUN_SELF = 25900;
+
 //class to deal with packet processing
 //allows to determine if next packet is safe to be processed
 class PacketFilter

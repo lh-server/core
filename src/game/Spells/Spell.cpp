@@ -5062,9 +5062,15 @@ void Spell::RemoveChanneledAuraHolder(SpellAuraHolder *holder, AuraRemoveMode mo
 
 SpellCastResult Spell::CheckCast(bool strict)
 {
-    // Cheat du joueur ?
-    if (m_caster->IsPlayer() && m_caster->ToPlayer()->HasOption(PLAYER_CHEAT_NO_CHECK_CAST))
-        return SPELL_CAST_OK;
+    if (Player *player = m_caster->ToPlayer())
+    {
+        // Player cheat ?
+        if (player->HasOption(PLAYER_CHEAT_NO_CHECK_CAST))
+            return SPELL_CAST_OK;
+        // Logging out ?
+        if (player->GetSession()->isLogingOut())
+            return SPELL_FAILED_STUNNED;
+    }
 
     //sLog.outString("CheckCast de %u %s%s%s sur %s",
     //   m_spellInfo->Id, strict ? "[strict]" : "", m_IsTriggeredSpell ? "[triggered]" : "", m_triggeredByAuraSpell ? "[triggeredByAura]" : "", m_targets.getUnitTargetGuid().GetString().c_str());

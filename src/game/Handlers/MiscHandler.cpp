@@ -312,8 +312,9 @@ void WorldSession::HandleLogoutRequestOpcode(WorldPacket & /*recv_data*/)
 
     if (GetPlayer()->isInCombat())
         reason = 1;
-    else if (GetPlayer()->m_movementInfo.HasMovementFlag(MovementFlags(MOVEFLAG_JUMPING | MOVEFLAG_FALLINGFAR)))
-        reason = 3;                                         // is jumping or falling
+    else if (GetPlayer()->m_movementInfo.HasMovementFlag(MovementFlags(MOVEFLAG_JUMPING | MOVEFLAG_FALLINGFAR))
+        || GetPlayer()->hasUnitState(UNIT_STAT_CAN_NOT_REACT))
+        reason = 3;                                         // is jumping or falling or is controlled anyhow
     else if (GetPlayer()->duel || GetPlayer()->HasAura(9454)) // is dueling or frozen by GM via freeze command
         reason = 2;                                         // FIXME - Need the correct value
 
@@ -339,16 +340,11 @@ void WorldSession::HandleLogoutRequestOpcode(WorldPacket & /*recv_data*/)
         return;
     }
 
-    // not set flags if player can't free move to prevent lost state at logout cancel
-    if (GetPlayer()->CanFreeMove())
-    {
-        float height = GetPlayer()->GetMap()->GetHeight(GetPlayer()->GetPositionX(), GetPlayer()->GetPositionY(), GetPlayer()->GetPositionZ());
-        if ((GetPlayer()->GetPositionZ() < height + 0.1f) && !(GetPlayer()->IsInWater()) && GetPlayer()->getStandState() == UNIT_STAND_STATE_STAND)
-            GetPlayer()->SetStandState(UNIT_STAND_STATE_SIT);
+    GetPlayer()->AddAura(SPELL_LOGOUT_STUN_SELF);
 
-        GetPlayer()->SetMovement(MOVE_ROOT);
-        GetPlayer()->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
-    }
+    float height = GetPlayer()->GetMap()->GetHeight(GetPlayer()->GetPositionX(), GetPlayer()->GetPositionY(), GetPlayer()->GetPositionZ());
+    if ((GetPlayer()->GetPositionZ() < height + 0.1f) && !(GetPlayer()->IsInWater()) && GetPlayer()->getStandState() == UNIT_STAND_STATE_STAND)
+        GetPlayer()->SetStandState(UNIT_STAND_STATE_SIT);
 
     WorldPacket data(SMSG_LOGOUT_RESPONSE, 1 + 4);
     data << uint32(0);
@@ -366,23 +362,20 @@ void WorldSession::HandleLogoutCancelOpcode(WorldPacket & /*recv_data*/)
 {
     DEBUG_LOG("WORLD: Recvd CMSG_LOGOUT_CANCEL Message");
 
+    // 1.12.1 sends it twice
+    if (!isLogingOut())
+        return;
+
     LogoutRequest(0);
 
     WorldPacket data(SMSG_LOGOUT_CANCEL_ACK, 0);
     SendPacket(&data);
 
-    // not remove flags if can't free move - its not set in Logout request code.
+    GetPlayer()->RemoveAurasDueToSpell(SPELL_LOGOUT_STUN_SELF);
+
+    // Stand Up
     if (GetPlayer()->CanFreeMove())
-    {
-        //!we can move again
-        GetPlayer()->SetMovement(MOVE_UNROOT);
-
-        //! Stand Up
         GetPlayer()->SetStandState(UNIT_STAND_STATE_STAND);
-
-        //! DISABLE_ROTATE
-        GetPlayer()->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
-    }
 
     DEBUG_LOG("WORLD: sent SMSG_LOGOUT_CANCEL_ACK Message");
 }
