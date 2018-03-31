@@ -36,6 +36,19 @@ void ElementalInvasion::Update()
 
         if (invasionTime < time(nullptr))
         {
+            // On server restart the boss could be dead in STAGE_BOSS stucking the event
+            // If the case is found the local event is stopped in next update
+            for (uint8 i = 0; i < 4; ++i)
+                if (sObjectMgr.GetSavedVariable(InvasionData[i].varStage, 0) == STAGE_BOSS)
+                {
+                    QueryResult *result = CharacterDatabase.PQuery("SELECT respawntime FROM `creature_respawn` where `guid` = %u", InvasionData[i].bossGuid);
+                    if (result)
+                    {
+                        sObjectMgr.SetSavedVariable(InvasionData[i].varStage, STAGE_BOSS_DOWN, true);
+                        delete result;
+                    }
+                }
+
             sGameEventMgr.StartEvent(EVENT_INVASION, true);
 
             StartLocalInvasion(EVENT_IND_FIRE, stageFire);
