@@ -7561,22 +7561,9 @@ int32 Unit::ModifyHealth(int32 dVal)
         gain = maxHealth - curHealth;
     }
 
+    // Apply speed reduction at low health percentages
     if (Creature *creature = ToCreature())
-    {
-        // Apply speed reduction at low health percentages
-        if (!(creature->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_NO_INJURED_SPEED))
-        {
-            float hpPercent = GetHealthPercent();
-            if (hpPercent > 15.0f)
-                creature->SetInjuredSpeedReduction(SPEED_REDUCTION_NONE);
-            else if (hpPercent > 10.0f)
-                creature->SetInjuredSpeedReduction(SPEED_REDUCTION_HP_15);
-            else if (hpPercent > 5.0f)
-                creature->SetInjuredSpeedReduction(SPEED_REDUCTION_HP_10);
-            else
-                creature->SetInjuredSpeedReduction(SPEED_REDUCTION_HP_5);
-        }
-    }
+        creature->UpdateInjuredSpeedReduction();
 
     return gain;
 }

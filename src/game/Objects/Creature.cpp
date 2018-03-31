@@ -971,7 +971,7 @@ void Creature::DoFleeToGetAssistance()
 float Creature::GetFleeingSpeed() const
 {
     //TODO: There are different speeds for the different mobs, isn't there?
-    return GetSpeed(MOVE_RUN) * 0.6f;
+    return GetSpeed(MOVE_RUN);
 }
 
 bool Creature::AIM_Initialize()
@@ -1823,6 +1823,7 @@ void Creature::SetDeathState(DeathState s)
 
         SetHealth(GetMaxHealth());
         SetLootRecipient(nullptr);
+        SetInjuredSpeedReduction(SPEED_REDUCTION_NONE);
 
         if (GetTemporaryFactionFlags() & TEMPFACTION_RESTORE_RESPAWN)
             ClearTemporaryFaction();
@@ -3675,4 +3676,29 @@ void Creature::DespawnOrUnsummon(uint32 msTimeToDespawn /*= 0*/)
         static_cast<Pet*>(this)->DelayedUnsummon(msTimeToDespawn, PET_SAVE_AS_DELETED);
     else
         ForcedDespawn(msTimeToDespawn);
+}
+
+void Creature::UpdateInjuredSpeedReduction()
+{
+    if (IsPet() || IsWorldBoss())
+        return;
+
+    uint32 perc = (GetHealth() * 100) / GetMaxHealth();
+    if (perc > 15)
+        SetInjuredSpeedReduction(SPEED_REDUCTION_NONE);
+    else if (perc > 10)
+        SetInjuredSpeedReduction(SPEED_REDUCTION_HP_15);
+    else if (perc > 5)
+        SetInjuredSpeedReduction(SPEED_REDUCTION_HP_10);
+    else
+        SetInjuredSpeedReduction(SPEED_REDUCTION_HP_5);
+}
+
+void Creature::SetInjuredSpeedReduction(float reduction)
+{
+    if (m_injuredSpeedReduction == reduction)
+        return;
+
+    m_injuredSpeedReduction = reduction;
+    UpdateSpeed(MOVE_RUN, true);
 }
