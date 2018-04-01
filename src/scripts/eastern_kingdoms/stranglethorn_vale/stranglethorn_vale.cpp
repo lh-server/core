@@ -543,6 +543,14 @@ struct npc_witch_doctor_unbagwaAI : ScriptedAI
         m_creature->ClearTemporaryFaction();
     }
 
+    void SummonedCreatureDespawn(Creature* /*pCreature*/) override
+    {
+        if (!m_bStartEvent)
+            return;
+
+        ResetCreature();
+    }
+
     void SummonedCreatureJustDied(Creature* /*pCreature*/) override
     {
         if (!m_bStartEvent)
