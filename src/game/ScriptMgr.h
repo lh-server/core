@@ -777,6 +777,7 @@ enum CastFlags
     CF_MAIN_RANGED_SPELL      = 0x08,                     //To be used by ranged mobs only. Creature will not chase target until cast fails.
     CF_TARGET_CASTS_ON_SELF   = 0x10,                     //Forces the target to cast this spell on itself
     CF_AURA_NOT_PRESENT       = 0x20,                     //Only casts the spell if the target does not have an aura from the spell
+    CF_TARGET_UNREACHABLE     = 0x40,                     //Will only use the ability if creature cannot currently get to target
 };
 
 #define ALL_CAST_FLAGS (CF_INTERRUPT_PREVIOUS | CF_TRIGGERED | CF_FORCE_CAST | CF_MAIN_RANGED_SPELL | CF_TARGET_CASTS_ON_SELF | CF_AURA_NOT_PRESENT)

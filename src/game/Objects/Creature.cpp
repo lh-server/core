@@ -3477,12 +3477,13 @@ SpellCastResult Creature::TryToCast(Unit* pTarget, const SpellEntry* pSpellInfo,
     if (!pTarget)
         return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
 
-    // If cast flag CF_AURA_NOT_PRESENT is active, check if target already has aura on them
-    if (uiCastFlags & CF_AURA_NOT_PRESENT)
-    {
-        if (pTarget->HasAura(pSpellInfo->Id))
-            return SPELL_FAILED_AURA_BOUNCED;
-    }
+    // This spell should only be cast when target does not have the aura it applies.
+    if ((uiCastFlags & CF_AURA_NOT_PRESENT) && pTarget->HasAura(pSpellInfo->Id))
+        return SPELL_FAILED_AURA_BOUNCED;
+
+    // This spell should only be cast when we cannot get into melee range.
+    if ((uiCastFlags & CF_TARGET_UNREACHABLE) && (CanReachWithMeleeAttack(pTarget) || (GetMotionMaster()->GetCurrentMovementGeneratorType() != CHASE_MOTION_TYPE) || !(hasUnitState(UNIT_STAT_NOT_MOVE) || !GetMotionMaster()->operator->()->IsReachable())))
+        return SPELL_FAILED_MOVING;
 
     // Custom checks
     if (!(uiCastFlags & (CF_TARGET_CASTS_ON_SELF | CF_FORCE_CAST)))
