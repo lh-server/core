@@ -124,9 +124,6 @@ CanCastResult CreatureAI::DoCastSpellIfCan(Unit* pTarget, uint32 uiSpell, uint32
 
     Unit* pCaster = m_creature;
 
-    if (uiCastFlags & CF_TARGET_CASTS_ON_SELF)
-        pCaster = pTarget;
-
     // Allowed to cast only if not casting (unless we interrupt ourself) or if spell is triggered
     if (!pCaster->IsNonMeleeSpellCasted(false) || uiCastFlags & (CF_TRIGGERED | CF_INTERRUPT_PREVIOUS))
     {
@@ -140,7 +137,7 @@ CanCastResult CreatureAI::DoCastSpellIfCan(Unit* pTarget, uint32 uiSpell, uint32
             }
 
             // Check if cannot cast spell
-            if (!(uiCastFlags & (CF_TARGET_CASTS_ON_SELF | CF_FORCE_CAST)))
+            if (!(uiCastFlags & CF_FORCE_CAST))
             {
                 CanCastResult castResult = CanCastSpell(pTarget, pSpell, uiCastFlags & CF_TRIGGERED);
 
