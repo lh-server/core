@@ -527,6 +527,7 @@ struct npc_witch_doctor_unbagwaAI : ScriptedAI
     uint8 m_uiAttackersCount;
     uint32 m_uiMobWaveTimer;
     bool m_bStartEvent;
+    bool m_bResetEvent;
 
     void Reset() override
     {
@@ -536,6 +537,7 @@ struct npc_witch_doctor_unbagwaAI : ScriptedAI
     void ResetCreature() override
     {
         m_bStartEvent = false;
+        m_bResetEvent = false;
         m_uiWaveCount = 1;
         m_uiAttackersCount = 0;
         m_uiMobWaveTimer = 10000;
@@ -548,7 +550,13 @@ struct npc_witch_doctor_unbagwaAI : ScriptedAI
         if (!m_bStartEvent)
             return;
 
-        ResetCreature();
+        m_bResetEvent = true;
+
+        if (m_uiAttackersCount > 0)
+            --m_uiAttackersCount;
+        
+        if (!m_uiAttackersCount)
+            ResetCreature();
     }
 
     void SummonedCreatureJustDied(Creature* /*pCreature*/) override
@@ -559,7 +567,7 @@ struct npc_witch_doctor_unbagwaAI : ScriptedAI
         if (m_uiAttackersCount > 0)
             --m_uiAttackersCount;
 
-        if (!m_uiAttackersCount && m_uiWaveCount > MAX_WAVE_COUNT)          
+        if (!m_uiAttackersCount && (m_bResetEvent || m_uiWaveCount > MAX_WAVE_COUNT))         
             ResetCreature();
     }
 
