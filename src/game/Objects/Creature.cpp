@@ -3481,6 +3481,10 @@ SpellCastResult Creature::TryToCast(Unit* pTarget, const SpellEntry* pSpellInfo,
     if ((uiCastFlags & CF_AURA_NOT_PRESENT) && pTarget->HasAura(pSpellInfo->Id))
         return SPELL_FAILED_AURA_BOUNCED;
 
+    // Can't cast while fleeing.
+    if (GetMotionMaster()->GetCurrentMovementGeneratorType() == TIMED_FLEEING_MOTION_TYPE)
+        return SPELL_FAILED_NOT_WHILE_FATIGUED;
+
     // This spell should only be cast when we cannot get into melee range.
     if ((uiCastFlags & CF_TARGET_UNREACHABLE) && (CanReachWithMeleeAttack(pTarget) || (GetMotionMaster()->GetCurrentMovementGeneratorType() != CHASE_MOTION_TYPE) || !(hasUnitState(UNIT_STAT_NOT_MOVE) || !GetMotionMaster()->operator->()->IsReachable())))
         return SPELL_FAILED_MOVING;
