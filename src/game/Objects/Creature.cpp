@@ -3489,6 +3489,10 @@ SpellCastResult Creature::TryToCast(Unit* pTarget, const SpellEntry* pSpellInfo,
     if ((uiCastFlags & CF_TARGET_UNREACHABLE) && (CanReachWithMeleeAttack(pTarget) || (GetMotionMaster()->GetCurrentMovementGeneratorType() != CHASE_MOTION_TYPE) || !(hasUnitState(UNIT_STAT_NOT_MOVE) || !GetMotionMaster()->operator->()->IsReachable())))
         return SPELL_FAILED_MOVING;
 
+    // ToDo: Remove this check when checking for stuns is fixed in Spell.cpp
+    if (!(uiCastFlags & CF_TRIGGERED) && hasUnitState(UNIT_STAT_CAN_NOT_REACT_OR_LOST_CONTROL))
+        return SPELL_FAILED_PREVENTED_BY_MECHANIC;
+
     // Custom checks
     if (!(uiCastFlags & CF_FORCE_CAST))
     {
