@@ -458,7 +458,7 @@ void Spell::FillTargetMap()
                         {
                             if (Unit* pUnitTarget = m_caster->SelectMagnetTarget(m_targets.getUnitTarget(), this, SpellEffectIndex(i)))
                             {
-                                if (m_caster->GetTypeId() == TYPEID_PLAYER && m_caster->IsValidAttackTarget(pUnitTarget))
+                                if (m_caster->IsValidAttackTarget(pUnitTarget))
                                     tmpUnitMap.push_back(pUnitTarget);
                             }
                         }
