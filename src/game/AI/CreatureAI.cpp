@@ -219,16 +219,16 @@ void CreatureAI::DoSpellTemplateCasts(const uint32 uiDiff)
                         m_creature->GetMap()->ScriptsStart(sCreatureSpellScripts, spell.scriptId, m_creature, pTarget);
                     break;
                 }
-                case SPELL_FAILED_TRY_AGAIN:
-                {
-                    // Chance roll failed, so we reset cooldown.
-                    spell.cooldown = urand(spell.delayRepeatMin, spell.delayRepeatMax);
-                    continue;
-                }
                 case SPELL_FAILED_SPELL_IN_PROGRESS:
                 {
                     // If we are casting, do nothing so it will try again on next update.
                     break;
+                }
+                case SPELL_FAILED_TRY_AGAIN:
+                {
+                    // Chance roll failed, so we reset cooldown.
+                    spell.cooldown = urand(spell.delayRepeatMin, spell.delayRepeatMax);
+                    // no break
                 }
                 default:
                 {
