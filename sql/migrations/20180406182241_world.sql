@@ -38,6 +38,9 @@ UPDATE `reference_loot_template` SET `condition_id`='2' WHERE `entry`=30429 AND 
 UPDATE `reference_loot_template` SET `condition_id`='3' WHERE `entry`=30436 AND `item`=21486;
 UPDATE `reference_loot_template` SET `condition_id`='2' WHERE `entry`=30436 AND `item`=21487;
 
+-- https://github.com/LightsHope/issues/issues/205 Darnassus banker faction
+UPDATE `creature_template` SET `faction_A`='79', `faction_H`='79' WHERE `entry`=4155;
+
 
 -- End of migration.
 END IF;
