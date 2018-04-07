@@ -76,9 +76,9 @@ class MANGOS_DLL_SPEC TargetedMovementGeneratorMedium
         float _targetLastZ;
         bool  _targetOnTransport;
     private:
-        void do_back_movement(T &, Unit* target);
-        bool target_deep_in_bounds(T &, Unit* target) const;
-        bool target_bounds_pct_dist(T &, Unit* target, float pct) const;
+        void DoBackMovement(T &, Unit* target);
+        bool TargetDeepInBounds(T &, Unit* target) const;
+        bool TargetWithinBoundsPercentDistance(T &, Unit* target, float pct) const;
 };
 
 template<class T>

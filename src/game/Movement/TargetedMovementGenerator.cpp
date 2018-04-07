@@ -332,8 +332,8 @@ bool TargetedMovementGeneratorMedium<T, D>::Update(T &owner, const uint32 & time
                     i_recheckBoundingRadius.Reset(3000);
                     if (Creature* creature = owner.ToCreature())
                     {
-                        if (!(creature->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_CHASE_GEN_NO_BACKING) && !creature->IsPet() && !i_target.getTarget()->IsMoving() && target_deep_in_bounds(owner, i_target.getTarget()))
-                            do_back_movement(owner, i_target.getTarget());
+                        if (!(creature->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_CHASE_GEN_NO_BACKING) && !creature->IsPet() && !i_target.getTarget()->IsMoving() && TargetDeepInBounds(owner, i_target.getTarget()))
+                            DoBackMovement(owner, i_target.getTarget());
                     }
                 }
         }
@@ -362,13 +362,13 @@ void TargetedMovementGeneratorMedium<T, D>::UpdateAsync(T &owner, uint32 /*diff*
 }
 
 template<class T, typename D>
-bool TargetedMovementGeneratorMedium<T, D>::target_deep_in_bounds(T &owner, Unit* target) const
+bool TargetedMovementGeneratorMedium<T, D>::TargetDeepInBounds(T &owner, Unit* target) const
 {
-    return target_bounds_pct_dist(owner, target, 0.8f);
+    return TargetWithinBoundsPercentDistance(owner, target, 0.8f);
 }
 
 template<class T, typename D>
-bool TargetedMovementGeneratorMedium<T, D>::target_bounds_pct_dist(T &owner, Unit* target, float pct) const
+bool TargetedMovementGeneratorMedium<T, D>::TargetWithinBoundsPercentDistance(T &owner, Unit* target, float pct) const
 {
     float radius =
         (target->GetObjectBoundingRadius() + owner.GetObjectBoundingRadius());
@@ -382,7 +382,7 @@ bool TargetedMovementGeneratorMedium<T, D>::target_bounds_pct_dist(T &owner, Uni
 }
 
 template<class T, typename D>
-void TargetedMovementGeneratorMedium<T, D>::do_back_movement(T &owner, Unit* target)
+void TargetedMovementGeneratorMedium<T, D>::DoBackMovement(T &owner, Unit* target)
 {
     float x, y, z;
     i_backing_up = true;
