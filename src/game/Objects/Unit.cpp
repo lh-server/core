@@ -5906,6 +5906,17 @@ void Unit::ModifyAuraState(AuraState flag, bool apply)
                         CastSpell(this, itr->first, true, nullptr);
                 }
             }
+            else 
+            {
+                switch (flag) 
+                {
+                    case AURA_STATE_HEALTHLESS_15_PERCENT:
+                    case AURA_STATE_HEALTHLESS_10_PERCENT:
+                    case AURA_STATE_HEALTHLESS_5_PERCENT:
+                        UpdateSpeed(MOVE_RUN, true);
+                        break;
+                }
+            }
         }
     }
     else
@@ -5925,6 +5936,17 @@ void Unit::ModifyAuraState(AuraState flag, bool apply)
                 }
                 else
                     ++itr;
+            }
+            if (GetTypeId() == TYPEID_UNIT)
+            {
+                switch (flag) 
+                {
+                    case AURA_STATE_HEALTHLESS_15_PERCENT:
+                    case AURA_STATE_HEALTHLESS_10_PERCENT:
+                    case AURA_STATE_HEALTHLESS_5_PERCENT:
+                        UpdateSpeed(MOVE_RUN, true);
+                        break;
+                }
             }
         }
     }
@@ -7561,10 +7583,6 @@ int32 Unit::ModifyHealth(int32 dVal)
         gain = maxHealth - curHealth;
     }
 
-    // Apply speed reduction at low health percentages
-    if (Creature *creature = ToCreature())
-        creature->UpdateInjuredSpeedReduction();
-
     return gain;
 }
 
@@ -7991,7 +8009,15 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
             speed *= 1.14286f;  // normalized player pet runspeed
 
         // Speed reduction at low health percentages
-        speed *= pCreature->GetInjuredSpeedReduction();
+        if (!pCreature->IsPet() && !pCreature->IsWorldBoss())
+        {
+            if (HasAuraState(AURA_STATE_HEALTHLESS_5_PERCENT))
+                speed *= SPEED_REDUCTION_HP_5;
+            else if (HasAuraState(AURA_STATE_HEALTHLESS_10_PERCENT))
+                speed *= SPEED_REDUCTION_HP_10;
+            else if (HasAuraState(AURA_STATE_HEALTHLESS_15_PERCENT))
+                speed *= SPEED_REDUCTION_HP_15;
+        }
     }
 
     SetSpeedRate(mtype, speed * ratio, forced);
@@ -8128,6 +8154,9 @@ void Unit::SetDeathState(DeathState s)
         StopMoving(true);
 
         ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, false);
+        ModifyAuraState(AURA_STATE_HEALTHLESS_15_PERCENT, false);
+        ModifyAuraState(AURA_STATE_HEALTHLESS_10_PERCENT, false);
+        ModifyAuraState(AURA_STATE_HEALTHLESS_5_PERCENT, false);
         // remove aurastates allowing special moves
         ClearAllReactives();
         ClearDiminishings();

@@ -841,13 +841,6 @@ class MANGOS_DLL_SPEC Creature : public Unit
             m_callForHelpDist = dist;
         }
 
-        void UpdateInjuredSpeedReduction();
-        void SetInjuredSpeedReduction(float reduction);
-        float GetInjuredSpeedReduction() const
-        {
-            return m_injuredSpeedReduction;
-        }
-
         // (msecs)timer used for group loot
         uint32 GetGroupLootTimer() { return m_groupLootTimer; }
 
@@ -924,7 +917,6 @@ class MANGOS_DLL_SPEC Creature : public Unit
         uint32 _nonPlayerDamageTaken;
         
         float m_callForHelpDist;
-        float m_injuredSpeedReduction;
 
     private:
         GridReference<Creature> m_gridRef;

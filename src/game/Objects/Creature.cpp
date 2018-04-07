@@ -177,7 +177,7 @@ Creature::Creature(CreatureSubtype subtype) :
     m_combatStartX(0.0f), m_combatStartY(0.0f), m_combatStartZ(0.0f),
     m_HomeX(0.0f), m_HomeY(0.0f), m_HomeZ(0.0f), m_HomeOrientation(0.0f), m_reactState(REACT_PASSIVE),
     m_CombatDistance(0.0f), _lastDamageTakenForEvade(0), _playerDamageTaken(0), _nonPlayerDamageTaken(0), m_creatureInfo(nullptr),
-    m_AI_InitializeOnRespawn(false), m_callForHelpDist(5.0f), m_combatWithZoneState(false), m_injuredSpeedReduction(1.0f)
+    m_AI_InitializeOnRespawn(false), m_callForHelpDist(5.0f), m_combatWithZoneState(false)
 {
     m_regenTimer = 200;
     m_valuesCount = UNIT_END;
@@ -756,6 +756,11 @@ void Creature::Update(uint32 update_diff, uint32 diff)
             if (!isAlive())
                 break;
 
+            float hpPercent = GetHealthPercent();
+            ModifyAuraState(AURA_STATE_HEALTHLESS_15_PERCENT, hpPercent < 16.0f);
+            ModifyAuraState(AURA_STATE_HEALTHLESS_10_PERCENT, hpPercent < 11.0f);
+            ModifyAuraState(AURA_STATE_HEALTHLESS_5_PERCENT, hpPercent < 6.0f);
+
             bool unreachableTarget = !i_motionMaster.empty() &&
                                      getVictim() &&
                                      GetMotionMaster()->GetCurrentMovementGeneratorType() == CHASE_MOTION_TYPE &&
@@ -928,6 +933,11 @@ void Creature::DoFlee()
 {
     if (!getVictim() || HasAuraType(SPELL_AURA_PREVENTS_FLEEING))
         return;
+
+    float hpPercent = GetHealthPercent();
+    ModifyAuraState(AURA_STATE_HEALTHLESS_15_PERCENT, hpPercent < 16.0f);
+    ModifyAuraState(AURA_STATE_HEALTHLESS_10_PERCENT, hpPercent < 11.0f);
+    ModifyAuraState(AURA_STATE_HEALTHLESS_5_PERCENT, hpPercent < 6.0f);
 
     SetNoSearchAssistance(true);
 
@@ -1823,7 +1833,6 @@ void Creature::SetDeathState(DeathState s)
 
         SetHealth(GetMaxHealth());
         SetLootRecipient(nullptr);
-        SetInjuredSpeedReduction(SPEED_REDUCTION_NONE);
 
         if (GetTemporaryFactionFlags() & TEMPFACTION_RESTORE_RESPAWN)
             ClearTemporaryFaction();
@@ -3676,29 +3685,4 @@ void Creature::DespawnOrUnsummon(uint32 msTimeToDespawn /*= 0*/)
         static_cast<Pet*>(this)->DelayedUnsummon(msTimeToDespawn, PET_SAVE_AS_DELETED);
     else
         ForcedDespawn(msTimeToDespawn);
-}
-
-void Creature::UpdateInjuredSpeedReduction()
-{
-    if (IsPet() || IsWorldBoss())
-        return;
-
-    uint32 perc = (GetHealth() * 100) / GetMaxHealth();
-    if (perc > 15)
-        SetInjuredSpeedReduction(SPEED_REDUCTION_NONE);
-    else if (perc > 10)
-        SetInjuredSpeedReduction(SPEED_REDUCTION_HP_15);
-    else if (perc > 5)
-        SetInjuredSpeedReduction(SPEED_REDUCTION_HP_10);
-    else
-        SetInjuredSpeedReduction(SPEED_REDUCTION_HP_5);
-}
-
-void Creature::SetInjuredSpeedReduction(float reduction)
-{
-    if (m_injuredSpeedReduction == reduction)
-        return;
-
-    m_injuredSpeedReduction = reduction;
-    UpdateSpeed(MOVE_RUN, true);
 }
