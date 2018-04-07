@@ -1817,8 +1817,7 @@ bool DungeonMap::CanEnter(Player *player)
     // cannot enter while an encounter is in progress
     Group *pGroup = player->GetGroup();
     if (IsRaid() && GetInstanceData() && GetInstanceData()->IsEncounterInProgress() && 
-        pGroup && pGroup->InCombatToInstance(GetInstanceId()) && player->isAlive() && 
-        player->GetMapId() != GetId() && !player->isGameMaster())
+        pGroup && pGroup->InCombatToInstance(GetInstanceId()) && player->isAlive() && !player->isGameMaster())
     {
         player->SendTransferAborted(TRANSFER_ABORT_ZONE_IN_COMBAT);
         return false;
