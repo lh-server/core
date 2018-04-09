@@ -31,12 +31,12 @@ struct instance_onyxia_lair : public ScriptedInstance
         return 0;
     }
 
-    void SetData(uint32 identifier, uint32 data)
+    void SetData(uint32 uiType, uint32 uiData) override
     {
         switch (identifier)
         {
             case DATA_ONYXIA_EVENT:
-                m_auiEncounter[0] = data;
+                m_auiEncounter[0] = uiData;
                 break;
         }
     }

@@ -273,7 +273,7 @@ struct instance_blackwing_lair : public ScriptedInstance
 
     bool IsEncounterInProgress() const
     {
-        for (int i = 0; i < MAX_ENCOUNTER; i++)
+        for (int i = 0; i < TYPE_VAEL_EVENT; i++)
         {
             if (m_auiEncounter[i] == IN_PROGRESS)
                 return true;
