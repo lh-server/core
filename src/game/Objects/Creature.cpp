@@ -3497,23 +3497,28 @@ SpellCastResult Creature::TryToCast(Unit* pTarget, const SpellEntry* pSpellInfo,
     if ((uiCastFlags & CF_TARGET_UNREACHABLE) && (CanReachWithMeleeAttack(pTarget) || (GetMotionMaster()->GetCurrentMovementGeneratorType() != CHASE_MOTION_TYPE) || !(hasUnitState(UNIT_STAT_NOT_MOVE) || !GetMotionMaster()->operator->()->IsReachable())))
         return SPELL_FAILED_MOVING;
 
-    // ToDo: Remove this check when checking for stuns is fixed in Spell.cpp
-    if (!(uiCastFlags & CF_TRIGGERED) && hasUnitState(UNIT_STAT_CAN_NOT_REACT_OR_LOST_CONTROL))
-        return SPELL_FAILED_PREVENTED_BY_MECHANIC;
-
     // Custom checks
     if (!(uiCastFlags & CF_FORCE_CAST))
     {
+        // ToDo: Remove this check when checking for stuns is fixed in Spell.cpp
+        if (!(uiCastFlags & CF_TRIGGERED) && hasUnitState(UNIT_STAT_CAN_NOT_REACT_OR_LOST_CONTROL))
+            return SPELL_FAILED_PREVENTED_BY_MECHANIC;
+
+        // If the spell requires to be behind the target.
         if (pSpellInfo->Custom & SPELL_CUSTOM_FROM_BEHIND && pTarget->HasInArc(M_PI_F, this))
             return SPELL_FAILED_UNIT_NOT_BEHIND;
 
-        // If the spell requires the target having a specific power type
+        // If the spell requires the target having a specific power type.
         if (!IsAreaOfEffectSpell(pSpellInfo) && !IsTargetPowerTypeValid(pSpellInfo, pTarget->getPowerType()))
             return SPELL_FAILED_UNKNOWN;
 
         // Mind control abilities can't be used with just 1 attacker or mob will reset.
         if ((getThreatManager().getThreatList().size() == 1) && IsCharmSpell(pSpellInfo))
             return SPELL_FAILED_UNKNOWN;
+
+        // Do not use dismounting spells when target is not mounted (there are 4 such spells).
+        if (!pTarget->IsMounted() && IsDismountSpell(pSpellInfo))
+            return SPELL_FAILED_ONLY_MOUNTED;
     }
 
     // Interrupt any previous spell
