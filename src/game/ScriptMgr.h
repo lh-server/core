@@ -879,7 +879,7 @@ inline WorldObject* GetTargetByType(WorldObject* pSource, WorldObject* pTarget, 
             break;
         case TARGET_T_FRIENDLY:
             if (Unit* pUnitSource = ToUnit(pSource))
-                return pUnitSource->SelectRandomFriendlyTarget(Param2 ? ToUnit(pTarget) : nullptr, Param1 ? Param1 : 30.0f);
+                return pUnitSource->SelectRandomFriendlyTarget(Param2 ? ToUnit(pTarget) : nullptr, Param1 ? Param1 : 30.0f, true);
             break;
         case TARGET_T_FRIENDLY_INJURED:
             if (Creature* pCreatureSource = ToCreature(pSource))
