@@ -777,6 +777,8 @@ enum CastFlags
     CF_MAIN_RANGED_SPELL      = 0x08,                     //To be used by ranged mobs only. Creature will not chase target until cast fails.
     CF_TARGET_UNREACHABLE     = 0x10,                     //Will only use the ability if creature cannot currently get to target
     CF_AURA_NOT_PRESENT       = 0x20,                     //Only casts the spell if the target does not have an aura from the spell
+    CF_ONLY_IN_MELEE          = 0x40,                     //Only casts if the creature is in melee range of the target
+    CF_NOT_IN_MELEE           = 0x80,                     //Only casts if the creature is not in melee range of the target
 };
 
 #define ALL_CAST_FLAGS (CF_INTERRUPT_PREVIOUS | CF_TRIGGERED | CF_FORCE_CAST | CF_MAIN_RANGED_SPELL | CF_TARGET_UNREACHABLE | CF_AURA_NOT_PRESENT)

@@ -3485,6 +3485,14 @@ SpellCastResult Creature::TryToCast(Unit* pTarget, const SpellEntry* pSpellInfo,
     if (GetMotionMaster()->GetCurrentMovementGeneratorType() == TIMED_FLEEING_MOTION_TYPE)
         return SPELL_FAILED_NOT_WHILE_FATIGUED;
 
+    // This spell is only used when target is in melee range.
+    if ((uiCastFlags & CF_ONLY_IN_MELEE) && !CanReachWithMeleeAttack(pTarget))
+        return SPELL_FAILED_OUT_OF_RANGE;
+
+    // This spell should not be used if target is in melee range.
+    if ((uiCastFlags & CF_NOT_IN_MELEE) && CanReachWithMeleeAttack(pTarget))
+        return SPELL_FAILED_TOO_CLOSE;
+
     // This spell should only be cast when we cannot get into melee range.
     if ((uiCastFlags & CF_TARGET_UNREACHABLE) && (CanReachWithMeleeAttack(pTarget) || (GetMotionMaster()->GetCurrentMovementGeneratorType() != CHASE_MOTION_TYPE) || !(hasUnitState(UNIT_STAT_NOT_MOVE) || !GetMotionMaster()->operator->()->IsReachable())))
         return SPELL_FAILED_MOVING;
