@@ -33,7 +33,7 @@ struct instance_onyxia_lair : public ScriptedInstance
 
     void SetData(uint32 uiType, uint32 uiData) override
     {
-        switch (identifier)
+        switch (uiType)
         {
             case DATA_ONYXIA_EVENT:
                 m_auiEncounter[0] = uiData;
