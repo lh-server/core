@@ -2214,12 +2214,7 @@ std::pair<unsigned int, float> getShapeshiftModelInfo(ShapeshiftForm form, Unit 
                 modelid = 8571;
         }
         else
-        {
-            if (sObjectMgr.GetFactionEntry(target->getFaction())->team == HORDE)
-                modelid = 8571;
-            else
-                modelid = 892;
-        }
+            modelid = 892;
         mod = 0.80f;
         break;
     case FORM_TRAVEL:
@@ -2240,12 +2235,7 @@ std::pair<unsigned int, float> getShapeshiftModelInfo(ShapeshiftForm form, Unit 
                 modelid = 2289;
         }
         else
-        {
-            if (sObjectMgr.GetFactionEntry(target->getFaction())->team == HORDE)
-                modelid = 2289;
-            else
-                modelid = 2281;
-        }
+            modelid = 2281;
         break;
     case FORM_GHOUL:
         if (Player::TeamForRace(target->getRace()) == ALLIANCE)
@@ -2267,12 +2257,7 @@ std::pair<unsigned int, float> getShapeshiftModelInfo(ShapeshiftForm form, Unit 
                 modelid = 15375;
         }
         else
-        {
-            if (sObjectMgr.GetFactionEntry(target->getFaction())->team == HORDE)
-                modelid = 15375;
-            else
-                modelid = 15374;
-        }
+            modelid = 15374;
         break;
     case FORM_TREE:
         modelid = 864;
