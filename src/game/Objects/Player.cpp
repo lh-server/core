@@ -1528,6 +1528,7 @@ void Player::SetDeathState(DeathState s)
         RemoveAuraTypeOnDeath(SPELL_AURA_MOD_SHAPESHIFT);
 
         RemovePet(PET_SAVE_REAGENTS);
+        Uncharm();
 
         // remove uncontrolled pets
         RemoveMiniPet();
