@@ -3,9 +3,9 @@ delimiter ??
 CREATE PROCEDURE `add_migration`()
 BEGIN
 DECLARE v INT DEFAULT 1;
-SET v = (SELECT COUNT(*) FROM `migrations` WHERE `id`='20180320125145');
+SET v = (SELECT COUNT(*) FROM `migrations` WHERE `id`='20180416114852');
 IF v=0 THEN
-INSERT INTO `migrations` VALUES ('20180320125145');
+INSERT INTO `migrations` VALUES ('20180416114852');
 -- Add your query below.
 
 
