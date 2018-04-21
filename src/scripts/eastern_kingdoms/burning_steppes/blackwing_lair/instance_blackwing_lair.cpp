@@ -123,7 +123,7 @@ enum
     MOB_DRACO_VERT              = 14023,
     MOB_DRACO_ROUGE             = 14022,
     MOB_DRACO_BLEU              = 14024,
-    MOB_DRACO_BRONZE            = 14025,g
+    MOB_DRACO_BRONZE            = 14025,
     GO_SUPPRESSION_ENGINE       = 179784,
     // Drags
     MOB_DEMONISTE_AILE_NOIRE    = 12459,
