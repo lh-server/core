@@ -1804,16 +1804,13 @@ bool DungeonMap::CanEnter(Player *player)
         return false;
     }
 
-    // cannot enter while players in the instance are in combat
+    // cannot enter while an encounter is in progress
     Group *pGroup = player->GetGroup();
-    if (pGroup && pGroup->InCombatToInstance(GetInstanceId()) && player->isAlive() && player->GetMapId() != GetId())
+    if (IsRaid() && GetInstanceData() && GetInstanceData()->IsEncounterInProgress() && 
+        pGroup && pGroup->InCombatToInstance(GetInstanceId()) && player->isAlive() && !player->isGameMaster())
     {
-		
-        if (GetId() == 249 || GetId() == 531 || GetId() == 533)        // Hack : Ustaag <Nostalrius> : concerne uniquement Onyxia's Lair
-        {
-            player->SendTransferAborted(TRANSFER_ABORT_ZONE_IN_COMBAT);
-            return false;
-        }
+        player->SendTransferAborted(TRANSFER_ABORT_ZONE_IN_COMBAT);
+        return false;
     }
 
     if (GetId() == 509 || GetId() == 531)
@@ -1824,7 +1821,6 @@ bool DungeonMap::CanEnter(Player *player)
             return false;
         }
     }
-
 
     return Map::CanEnter(player);
 }
