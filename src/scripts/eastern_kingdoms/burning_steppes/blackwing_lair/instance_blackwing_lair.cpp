@@ -123,7 +123,7 @@ enum
     MOB_DRACO_VERT              = 14023,
     MOB_DRACO_ROUGE             = 14022,
     MOB_DRACO_BLEU              = 14024,
-    MOB_DRACO_BRONZE            = 14025,
+    MOB_DRACO_BRONZE            = 14025,g
     GO_SUPPRESSION_ENGINE       = 179784,
     // Drags
     MOB_DEMONISTE_AILE_NOIRE    = 12459,
@@ -273,6 +273,8 @@ struct instance_blackwing_lair : public ScriptedInstance
 
     bool IsEncounterInProgress() const
     {
+        // Don't include TYPE_SCEPTER_RUN status in encounter progress check
+        // TODO: Move scepter run out of encounter ordering
         for (int i = 0; i < TYPE_VAEL_EVENT; i++)
         {
             if (m_auiEncounter[i] == IN_PROGRESS)
