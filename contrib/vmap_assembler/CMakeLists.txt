@@ -34,3 +34,5 @@ target_link_libraries(vmap_assembler vmap ${ACE_LIBRARIES})
 
 # add_executable(vmap_test coordinate_test.cpp)
 # target_link_libraries(vmap_test vmap)
+
+install(TARGETS vmap_assembler DESTINATION ${BIN_DIR})

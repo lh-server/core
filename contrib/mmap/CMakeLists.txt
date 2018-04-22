@@ -48,7 +48,15 @@ add_library(vmap
 	../../src/game/vmap/ModelInstance.cpp
 )
 
-target_link_libraries(vmap g3dlite zlib)
+if(UNIX)
+  find_package(ZLIB REQUIRED)
+  if(ZLIB_FOUND)
+    include_directories(${ZLIB_INCLUDE_DIRS})
+    target_link_libraries(vmap g3dlite ${ZLIB_LIBRARIES})
+  endif(ZLIB_FOUND)
+else()
+  target_link_libraries(vmap g3dlite zlib)
+endif(UNIX)
 
 add_library(Recast
     ../../dep/recastnavigation/Recast/Source/Recast.cpp
@@ -72,4 +80,15 @@ set(SOURCES
 
 add_executable( MoveMapGen ${SOURCES} )
 
-target_link_libraries( MoveMapGen g3dlite vmap Recast detour zlib ${ACE_LIBRARIES} )
+if(UNIX)
+  find_package(Threads)
+  find_package(ZLIB REQUIRED)
+  if(ZLIB_FOUND)
+    include_directories(${ZLIB_INCLUDE_DIRS})
+    target_link_libraries(MoveMapGen g3dlite vmap Recast detour ${ZLIB_LIBRARIES} ${ACE_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+  endif(ZLIB_FOUND)
+else()
+  target_link_libraries(MoveMapGen g3dlite vmap Recast detour zlib ${ACE_LIBRARIES})
+endif(UNIX)
+
+install(TARGETS MoveMapGen DESTINATION ${BIN_DIR})
