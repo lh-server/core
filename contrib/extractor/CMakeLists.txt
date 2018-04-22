@@ -22,3 +22,5 @@ include_directories (../../dep)
 add_executable (ad dbcfile.cpp System.cpp)
 
 target_link_libraries (ad loadlib)
+
+install(TARGETS ad DESTINATION ${BIN_DIR})
