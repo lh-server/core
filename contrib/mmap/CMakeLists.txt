@@ -37,19 +37,6 @@ include_directories(
     ../../dep/src/zlib
 )
 
-add_library(Recast
-    ../../dep/recastnavigation/Recast/Source/Recast.cpp
-    ../../dep/recastnavigation/Recast/Source/RecastAlloc.cpp
-    ../../dep/recastnavigation/Recast/Source/RecastArea.cpp
-    ../../dep/recastnavigation/Recast/Source/RecastContour.cpp
-    ../../dep/recastnavigation/Recast/Source/RecastFilter.cpp
-    ../../dep/recastnavigation/Recast/Source/RecastMesh.cpp
-    ../../dep/recastnavigation/Recast/Source/RecastMeshDetail.cpp
-    ../../dep/recastnavigation/Recast/Source/RecastRasterization.cpp
-    ../../dep/recastnavigation/Recast/Source/RecastRegion.cpp
-)
-SET_TARGET_PROPERTIES (Recast PROPERTIES FOLDER "3rd Party")
-
 set(SOURCES
     ./src/IntermediateValues.cpp
     ./src/generator.cpp

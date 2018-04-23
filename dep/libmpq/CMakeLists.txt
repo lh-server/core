@@ -1,5 +1,5 @@
-#
-# Copyright (C) 2005-2011 MaNGOS project <http://getmangos.com/>
+# Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
+# Copyright (C) 2009-2011 MaNGOSZero <https://github.com/mangos/zero>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,5 +14,36 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-add_subdirectory(Source)
+
+
+set (libMPQ_SRCS
+	libmpq/common.c
+	libmpq/common.h
+	libmpq/crypt_buf.h
+	libmpq/explode.c
+	libmpq/explode.h
+	libmpq/extract.c
+	libmpq/extract.h
+	libmpq/huffman.c
+	libmpq/huffman.h
+	libmpq/mpq.c
+	libmpq/mpq.h
+	libmpq/mpq-internal.h
+	libmpq/pack_begin.h
+	libmpq/pack_end.h
+	libmpq/platform.h
+	libmpq/wave.c
+	libmpq/wave.h
+)
+
+include_directories(
+	${CMAKE_CURRENT_SOURCE_DIR},
+	${CMAKE_SOURCE_DIR}/dep/include/zlib
+	${CMAKE_SOURCE_DIR}/dep/include/bzip2
+)
+
+add_library(libmpq STATIC
+	${libMPQ_SRCS}
+)
+
+SET_TARGET_PROPERTIES (libmpq PROPERTIES FOLDER "3rd Party")

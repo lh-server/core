@@ -603,7 +603,7 @@ namespace MMAP
         /// Add models to terrain
         for (uint32 i = 0; i < count; ++i)
         {
-            ModelInstance instance = models[i];
+            ModelInstance& instance = models[i];
 
             // model instances exist in tree even though there are instances of that model in this tile
             WorldModel* worldModel = instance.getWorldModel();

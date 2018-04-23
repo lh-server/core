@@ -331,7 +331,7 @@ dtNavMeshQuery const* MMapManager::GetNavMeshQuery(uint32 mapId)
         // allocate mesh query
         navMeshQuery = dtAllocNavMeshQuery();
         MANGOS_ASSERT(navMeshQuery);
-        if (DT_SUCCESS != navMeshQuery->init(mmap->navMesh, 2048, tid))
+        if (DT_SUCCESS != navMeshQuery->init(mmap->navMesh, 2048))
         {
             mmap->navMeshQueries_lock.release();
             dtFreeNavMeshQuery(navMeshQuery);
@@ -431,7 +431,7 @@ dtNavMeshQuery const* MMapManager::GetModelNavMeshQuery(uint32 displayId)
             // allocate mesh query
             dtNavMeshQuery* query = dtAllocNavMeshQuery();
             MANGOS_ASSERT(query);
-            if (dtStatusFailed(query->init(mmap->navMesh, 2048, tid)))
+            if (dtStatusFailed(query->init(mmap->navMesh, 2048)))
             {
                 dtFreeNavMeshQuery(query);
                 sLog.outError("MMAP:GetNavMeshQuery: Failed to initialize dtNavMeshQuery for displayid %03u tid %u", displayId, tid);

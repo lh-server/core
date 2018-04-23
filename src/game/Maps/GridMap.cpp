@@ -1102,9 +1102,9 @@ float TerrainInfo::GetWaterOrGroundLevel(float x, float y, float z, float* pGrou
 
 GridMap* TerrainInfo::GetGrid(const float x, const float y)
 {
-    // half opt method
-    int gx = (int)(32 - x / SIZE_OF_GRIDS);                 // grid x
-    int gy = (int)(32 - y / SIZE_OF_GRIDS);                 // grid y
+    // Giperion Elysium: It's reversed. That's ok
+    int gx = (int)(32 - y / SIZE_OF_GRIDS);                 // grid x
+    int gy = (int)(32 - x / SIZE_OF_GRIDS);                 // grid y
 
     // quick check if GridMap already loaded
     GridMap* pMap = m_GridMaps[gx][gy];

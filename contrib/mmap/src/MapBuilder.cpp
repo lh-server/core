@@ -516,20 +516,16 @@ namespace MMAP
 
         /***          calculate bounds of map         ***/
 
-        uint32 tileXMin = 64, tileYMin = 64, tileXMax = 0, tileYMax = 0, tileX, tileY;
+        uint32 tileXMax = 0, tileYMax = 0, tileX, tileY;
         for (set<uint32>::iterator it = tiles->begin(); it != tiles->end(); ++it)
         {
             StaticMapTree::unpackTileID((*it), tileX, tileY);
 
             if (tileX > tileXMax)
                 tileXMax = tileX;
-            else if (tileX < tileXMin)
-                tileXMin = tileX;
 
             if (tileY > tileYMax)
                 tileYMax = tileY;
-            else if (tileY < tileYMin)
-                tileYMin = tileY;
         }
 
         // use Max because '32 - tileX' is negative for values over 32
