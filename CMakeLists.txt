@@ -37,7 +37,6 @@ option(TBB_DEBUG "Use TBB debug librairies" 0)
 option(USE_ANTICHEAT "Use anticheat" 0)
 option(SCRIPTS "Compile scripts" 1)
 option(USE_EXTRACTORS "Compile extractors" 0)
-option(USE_UTILITY "Compile additional utility's" 0)
 option(USE_LIBCURL "Compile with libcurl for email support" 0)
 
 find_package(PCHSupport)
