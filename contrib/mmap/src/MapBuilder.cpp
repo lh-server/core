@@ -484,7 +484,7 @@ namespace MMAP
         TerrainBuilder::cleanVertices(meshData.solidVerts, meshData.solidTris);
         TerrainBuilder::cleanVertices(meshData.liquidVerts, meshData.liquidTris);
 
-        m_terrainBuilder->loadVMap(mapID, tileY, tileX, meshData); // get model data
+        m_terrainBuilder->loadVMap(mapID, tileX, tileY, meshData); // get model data
         //TerrainBuilder::cleanVertices(meshData.solidVerts, meshData.solidTris);
 
         // if there is no data, give up now
@@ -506,7 +506,7 @@ namespace MMAP
 
         // build navmesh tile
         buildMoveMapTile(mapID, tileX, tileY, meshData, bmin, bmax, navMesh);
-        m_terrainBuilder->unloadVMap(mapID, tileY, tileX);
+        m_terrainBuilder->unloadVMap(mapID, tileX, tileY);
     }
 
     /**************************************************************************/
@@ -1147,12 +1147,15 @@ namespace MMAP
     /**************************************************************************/
     bool MapBuilder::isTransportMap(uint32 mapID)
     {
+    #if 0
         switch (mapID)
         {
                 // no transport maps
             default:
                 return false;
         }
+    #endif
+        return false;
     }
 
     /**************************************************************************/

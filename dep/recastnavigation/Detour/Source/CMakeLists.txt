@@ -34,3 +34,5 @@ include_directories(
 add_library(detour STATIC
   ${detour_SRCS}
 )
+
+SET_TARGET_PROPERTIES (detour PROPERTIES FOLDER "3rd Party")

@@ -70,6 +70,8 @@ add_library(g3dlite STATIC
   ${g3dlite_SRCS}
 )
 
+SET_TARGET_PROPERTIES (g3dlite PROPERTIES FOLDER "3rd Party")
+
 if(WIN32)
   target_link_libraries(g3dlite
     zlib

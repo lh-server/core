@@ -17,5 +17,6 @@
 cmake_minimum_required (VERSION 2.6)
 project (MANGOS_IOMAP_EXTRACTOR)
 
-add_executable(vmapextractor adtfile.cpp  dbcfile.cpp gameobject_extract.cpp model.cpp  vmapexport.cpp  wdtfile.cpp  wmo.cpp)
-target_link_libraries(vmapextractor libmpq bzip2 zlib)
+add_executable(vmapextractor adtfile.cpp  dbcfile.cpp gameobject_extract.cpp model.cpp  mpq_libmpq.cpp  vmapexport.cpp  wdtfile.cpp  wmo.cpp)
+SET_TARGET_PROPERTIES (vmapextractor PROPERTIES FOLDER Extractors)
+target_link_libraries(vmapextractor libmpq bz2 zlib)
