@@ -18,20 +18,30 @@
 
 #include <string>
 #include <iostream>
+#include <direct.h>
 
 #include "TileAssembler.h"
 
 //=======================================================
 int main(int argc, char* argv[])
 {
+    std::string src;
+    std::string dest;
     if (argc != 3)
     {
-        std::cout << "usage: " << argv[0] << " <raw data dir> <vmap dest dir>" << std::endl;
-        return 1;
-    }
+        //std::cout << "usage: " << argv[0] << " <raw data dir> <vmap dest dir>" << std::endl;
+        //return 1;
 
-    std::string src = argv[1];
-    std::string dest = argv[2];
+        //Giperion Elysium: Consider we running in WoW directory. Just pick default folders
+        src = "Buildings";
+        dest = "vmaps";
+        int RetCode = mkdir (dest.c_str());
+    }
+    else
+    {
+        src = argv[1];
+        dest = argv[2];
+    }
 
     std::cout << "using " << src << " as source directory and writing output to " << dest << std::endl;
 
