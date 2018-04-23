@@ -18,4 +18,6 @@
 
 add_subdirectory(g3dlite)
 add_subdirectory(gsoap)
-add_subdirectory(zlib)
+if(WIN32)
+    add_subdirectory(zlib)
+endif()
