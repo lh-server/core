@@ -6770,7 +6770,7 @@ bool Spell::CanAutoCast(Unit* target, bool isPositive)
     }
 
     // Dont waste mana to heal someone already full life.
-    if (fullHealSpell && target->GetMaxHealth() == target->GetHealth())
+    if (isPositive && fullHealSpell && target->GetMaxHealth() == target->GetHealth())
         return false;
     SpellCastResult result = CheckPetCast(target);
 
