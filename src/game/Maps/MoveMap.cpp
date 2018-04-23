@@ -19,6 +19,7 @@
 #include "GridMap.h"
 #include "Log.h"
 #include "World.h"
+#include "VMapFactory.h"
 
 #include "MoveMap.h"
 #include "MoveMapSharedDefines.h"
@@ -139,12 +140,16 @@ bool MMapManager::loadMap(uint32 mapId, int32 x, int32 y)
     // load this tile :: mmaps/MMMXXYY.mmtile
     uint32 pathLen = sWorld.GetDataPath().length() + strlen("mmaps/%03i%02i%02i.mmtile") + 1;
     char *fileName = new char[pathLen];
-    snprintf(fileName, pathLen, (sWorld.GetDataPath() + "mmaps/%03i%02i%02i.mmtile").c_str(), mapId, x, y);
+    snprintf(fileName, pathLen, (sWorld.GetDataPath() + "mmaps/%03i%02i%02i.mmtile").c_str(), mapId, y, x);
 
     FILE *file = fopen(fileName, "rb");
     if (!file)
     {
-        DEBUG_LOG("MMAP:loadMap: Could not open mmtile file '%s'", fileName);
+        //mmaps not generated on every tile. But it's often generating, where vmap placed (most of the time)
+        if (VMAP::VMapFactory::createOrGetVMapManager()->existsMap((sWorld.GetDataPath() + "vmaps").c_str(), mapId, x, y))
+        {
+            DEBUG_LOG("MMAP:loadMap: Could not open mmtile file '%s' and vmap is exist in this tile", fileName);
+        }
         delete [] fileName;
         return false;
     }
