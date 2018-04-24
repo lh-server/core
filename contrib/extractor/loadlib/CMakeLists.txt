@@ -16,4 +16,13 @@
 
 add_library (loadlib loadlib.cpp  adt.cpp  wdt.cpp)
 # link loadlib with zlib
-target_link_libraries (loadlib z)
+
+if(UNIX)
+  find_package(ZLIB REQUIRED)
+  if(ZLIB_FOUND)
+    include_directories(${ZLIB_INCLUDE_DIRS})
+    target_link_libraries(loadlib ${ZLIB_LIBRARIES})
+  endif(ZLIB_FOUND)
+else()
+  target_link_libraries(loadlib zlib)
+endif(UNIX)

@@ -31,4 +31,12 @@ add_executable (mapextractor
 
 SET_TARGET_PROPERTIES (mapextractor PROPERTIES FOLDER Extractors)
 
-target_link_libraries (mapextractor zlib libmpq bz2)
+if(UNIX)
+  find_package(ZLIB REQUIRED)
+  if(ZLIB_FOUND)
+    include_directories(${ZLIB_INCLUDE_DIRS})
+    target_link_libraries(mapextractor ${ZLIB_LIBRARIES} libmpq bz2)
+  endif(ZLIB_FOUND)
+else()
+  target_link_libraries (mapextractor zlib libmpq bz2)
+endif(UNIX)

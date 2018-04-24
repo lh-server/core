@@ -37,13 +37,22 @@ set (libMPQ_SRCS
 )
 
 include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR},
-	${CMAKE_SOURCE_DIR}/dep/include/zlib
-	${CMAKE_SOURCE_DIR}/dep/include/bzip2
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/dep/include/bzip2
 )
 
 add_library(libmpq STATIC
 	${libMPQ_SRCS}
 )
+
+if(UNIX)
+  find_package(ZLIB REQUIRED)
+  if(ZLIB_FOUND)
+    include_directories(${ZLIB_INCLUDE_DIRS})
+    target_link_libraries(libmpq ${ZLIB_LIBRARIES})
+  endif(ZLIB_FOUND)
+else()
+  include_directories(${CMAKE_SOURCE_DIR}/dep/include/zlib)
+endif()
 
 SET_TARGET_PROPERTIES (libmpq PROPERTIES FOLDER "3rd Party")

@@ -18,7 +18,11 @@
 
 #include <string>
 #include <iostream>
-#include <direct.h>
+#ifdef WIN32
+#include "direct.h"
+#else
+#include <sys/stat.h>
+#endif
 
 #include "TileAssembler.h"
 
@@ -35,7 +39,11 @@ int main(int argc, char* argv[])
         //Giperion Elysium: Consider we running in WoW directory. Just pick default folders
         src = "Buildings";
         dest = "vmaps";
+        #ifdef WIN32
         int RetCode = mkdir (dest.c_str());
+        #else
+        int RetCode = mkdir (dest.c_str(), 0777);
+        #endif
     }
     else
     {
