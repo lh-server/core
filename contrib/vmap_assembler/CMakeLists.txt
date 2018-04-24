@@ -59,3 +59,5 @@ target_link_libraries(vmap_assembler
                     shared
                     framework
 )
+
+install(TARGETS vmap_assembler DESTINATION ${BIN_DIR})

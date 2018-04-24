@@ -56,3 +56,5 @@ target_link_libraries(MoveMapGen
                         shared
                         framework
                         )
+
+install(TARGETS MoveMapGen DESTINATION ${BIN_DIR})

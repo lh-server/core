@@ -40,3 +40,5 @@ if(UNIX)
 else()
   target_link_libraries (mapextractor zlib libmpq bz2)
 endif(UNIX)
+
+install(TARGETS mapextractor DESTINATION ${BIN_DIR})

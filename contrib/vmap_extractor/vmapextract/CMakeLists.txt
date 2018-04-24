@@ -29,3 +29,5 @@ if(UNIX)
 else()
   target_link_libraries(vmapextractor libmpq bz2 zlib)
 endif(UNIX)
+
+install(TARGETS vmapextractor DESTINATION ${BIN_DIR})
