@@ -43,7 +43,10 @@ void PetEventAI::MoveInLineOfSight(Unit *pWho)
     if (!m_bEmptyList)
         UpdateEventsOn_MoveInLineOfSight(pWho);
 
-    if (m_creature->GetCharmInfo() && !m_creature->GetCharmInfo()->HasReactState(REACT_AGGRESSIVE))
+    if (!m_creature->HasReactState(REACT_AGGRESSIVE))
+        return;
+
+    if (m_creature->GetCharmInfo() && m_creature->GetCharmInfo()->IsReturning())
         return;
 
     if (m_creature->GetDistanceZ(pWho) > CREATURE_Z_ATTACK_RANGE)
@@ -52,11 +55,8 @@ void PetEventAI::MoveInLineOfSight(Unit *pWho)
     if (m_creature->CanInitiateAttack() && pWho->isTargetableForAttack())
     {
         float attackRadius = m_creature->GetAttackDistance(pWho);
-        if (m_creature->IsWithinDistInMap(pWho, attackRadius) && m_creature->IsHostileTo(pWho))
-        {
-            if (m_creature->IsWithinLOSInMap(pWho) && pWho->isInAccessablePlaceFor(m_creature))
-                AttackStart(pWho);
-        }
+        if (m_creature->IsWithinDistInMap(pWho, attackRadius) && m_creature->IsHostileTo(pWho) && pWho->isInAccessablePlaceFor(m_creature))
+            AttackStart(pWho);
     }
 }
 
@@ -79,29 +79,38 @@ void PetEventAI::AttackStart(Unit* pWho)
 
     if (m_creature->Attack(pWho, m_MeleeEnabled))
     {
-        // Play sound to let the player know the pet is attacking something it picked on its own
-        if (m_creature->HasReactState(REACT_AGGRESSIVE) && !m_creature->GetCharmInfo()->IsCommandAttack())
-            m_creature->SendPetAIReaction();
-
         m_creature->AddThreat(pWho);
         m_creature->SetInCombatWith(pWho);
         pWho->SetInCombatWith(m_creature);
 
-        // Flag owner for PvP if owner is player and target is flagged
-        Unit* owner = m_creature->GetCharmerOrOwner();
-        if (owner && owner->IsPlayer() && !owner->IsPvP())
+        if (Player* pOwner = ToPlayer(m_creature->GetCharmerOrOwner()))
         {
-            Player* pOwner = owner->ToPlayer();
-            if ((pWho->IsPlayer() && pWho->IsPvP() && !pOwner->IsInDuelWith(static_cast<Player*>(pWho))) || // PvP flagged players
-                (pWho->IsCreature() && pWho->IsPvP()))                                           // PvP flagged creatures
+            if (!pOwner->isInCombat())
             {
-                pOwner->UpdatePvP(true);
-                pOwner->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_ENTER_PVP_COMBAT);
+                if (m_creature->HasReactState(REACT_AGGRESSIVE))
+                    m_creature->SendPetAIReaction();
+
+                pOwner->SetInCombatWith(pWho);
+                pWho->SetInCombatWith(pOwner);
+            }
+            
+            if (!pOwner->IsPvP())
+            {
+                if ((pWho->IsPlayer() && pWho->IsPvP() && !pOwner->IsInDuelWith(static_cast<Player*>(pWho))) || // PvP flagged players
+                    (pWho->IsCreature() && pWho->IsPvP()))                                           // PvP flagged creatures
+                {
+                    pOwner->UpdatePvP(true);
+                    pOwner->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_ENTER_PVP_COMBAT);
+                }
             }
         }
 
         if (m_CombatMovementEnabled)
+        {
+            if (m_creature->GetCharmInfo())
+                m_creature->GetCharmInfo()->SetIsReturning(false);
             m_creature->GetMotionMaster()->MoveChase(pWho);
+        }   
     } 
 }
 
@@ -119,11 +128,23 @@ void PetEventAI::AttackedBy(Unit* pAttacker)
 
 bool PetEventAI::FindTargetForAttack()
 {
+    // Check if any of the Pet's attackers are valid targets.
+    Unit::AttackerSet attackers = m_creature->getAttackers();
+    for (Unit::AttackerSet::const_iterator itr = attackers.begin(); itr != attackers.end(); ++itr)
+    {
+        if ((*itr)->IsInMap(m_creature) && (*itr)->isTargetableForAttack() && !(*itr)->HasBreakableByDamageCrowdControlAura())
+        {
+            AttackStart((*itr));
+            return true;
+        }
+    }
+
     Unit* pOwner = m_creature->GetCharmerOrOwner();
 
     if (!pOwner)
         return false;
 
+    // Pet has no attackers, check for anyone attacking Owner.
     if (Unit * const pTarget = pOwner->getAttackerForHelper())
     {
         // Prevent pets from breaking CC effects
@@ -135,8 +156,8 @@ bool PetEventAI::FindTargetForAttack()
         else
         {
             // Main target is CC-ed, so pick another attacker.
-            Unit::AttackerSet attackers = pOwner->getAttackers();
-            for (Unit::AttackerSet::const_iterator itr = attackers.begin(); itr != attackers.end(); ++itr)
+            Unit::AttackerSet owner_attackers = pOwner->getAttackers();
+            for (Unit::AttackerSet::const_iterator itr = owner_attackers.begin(); itr != owner_attackers.end(); ++itr)
             {
                 if ((*itr)->IsInMap(m_creature) && (*itr)->isTargetableForAttack() && !(*itr)->HasBreakableByDamageCrowdControlAura())
                 {
@@ -151,7 +172,7 @@ bool PetEventAI::FindTargetForAttack()
 
 void PetEventAI::UpdateAI(const uint32 uiDiff)
 {
-    bool Combat = m_creature->getVictim();
+    bool bHasVictim = m_creature->getVictim();
 
     //Must return if creature isn't alive. Normally select hostile target and get victim prevent this
     if (!m_creature->isAlive())
@@ -160,16 +181,16 @@ void PetEventAI::UpdateAI(const uint32 uiDiff)
     Unit* pOwner = m_creature->GetCharmerOrOwner();
     bool hasAliveOwner = pOwner && pOwner->isAlive() && m_creature->GetCharmInfo();
 
-    if (!Combat && hasAliveOwner && pOwner->isInCombat())
+    if (!bHasVictim && (m_creature->isInCombat() || (hasAliveOwner && pOwner->isInCombat())))
     {
         if (FindTargetForAttack())
-            Combat = m_creature->getVictim();
+            bHasVictim = m_creature->getVictim();
     }
 
     if (!m_bEmptyList)
-        UpdateEventsOn_UpdateAI(uiDiff, Combat);
+        UpdateEventsOn_UpdateAI(uiDiff, bHasVictim);
 
-    if (Combat)
+    if (bHasVictim)
     {
         if (!m_CreatureSpells.empty())
             DoSpellTemplateCasts(uiDiff);
@@ -178,19 +199,23 @@ void PetEventAI::UpdateAI(const uint32 uiDiff)
     }
     else
     {
-        if (m_creature->isInCombat())
+        if (m_creature->isInCombat() && !(hasAliveOwner && pOwner->isInCombat()))
             m_creature->OnLeaveCombat();
 
         if (hasAliveOwner && m_creature->GetCharmInfo()->HasCommandState(COMMAND_FOLLOW) && !m_creature->hasUnitState(UNIT_STAT_FOLLOW))
+        {
             m_creature->GetMotionMaster()->MoveFollow(m_creature->GetCharmerOrOwner(), PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
+            if (m_creature->GetCharmInfo())
+                m_creature->GetCharmInfo()->SetIsReturning(true);
+        }     
     }
 }
 
-void PetEventAI::OwnerAttackedBy(Unit* attacker)
+void PetEventAI::OwnerAttackedBy(Unit* pAttacker)
 {
     // Called when owner takes damage. This function helps keep pets from running off
     //  simply due to owner gaining aggro.
-    if (!attacker)
+    if (!pAttacker)
         return;
 
     // Prevent pet from disengaging from current target
@@ -198,29 +223,48 @@ void PetEventAI::OwnerAttackedBy(Unit* attacker)
         return;
 
     // If owner attacked by fire, attacker=owner. Don't attack our owner !
-    if (!m_creature->IsValidAttackTarget(attacker))
+    if (!m_creature->IsValidAttackTarget(pAttacker))
         return;
 
     // Continue to evaluate and attack if necessary
-    AttackStart(attacker);
+    AttackStart(pAttacker);
 }
 
-void PetEventAI::OwnerAttacked(Unit* target)
+void PetEventAI::OwnerAttacked(Unit* pTarget)
 {
     // Called when owner attacks something. Allows defensive pets to know
     //  that they need to assist
 
     // Target might be NULL if called from spell with invalid cast targets
-    if (!target)
+    if (!pTarget)
         return;
 
     // Prevent pet from disengaging from current target
     if (m_creature->getVictim() && m_creature->getVictim()->isAlive())
         return;
 
-    if (!m_creature->IsValidAttackTarget(target))
+    if (!m_creature->IsValidAttackTarget(pTarget))
         return;
 
     // Continue to evaluate and attack if necessary
-    AttackStart(target);
+    AttackStart(pTarget);
+}
+
+void PetEventAI::MovementInform(uint32 moveType, uint32 data)
+{
+    CreatureEventAI::MovementInform(moveType, data);
+
+    if (!m_creature->GetCharmInfo() || !m_creature->GetCharmerOrOwner())
+        return;
+
+    // Receives notification when pet reaches owner
+    if (moveType == FOLLOW_MOTION_TYPE)
+    {
+        // If data is owner's GUIDLow then we've reached follow point,
+        // otherwise we're probably chasing a creature.
+        if ((data == m_creature->GetCharmerOrOwner()->GetGUIDLow()) && m_creature->GetCharmInfo()->IsReturning())
+        {
+            m_creature->GetCharmInfo()->SetIsReturning(false);
+        }
+    }
 }

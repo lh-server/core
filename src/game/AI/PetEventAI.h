@@ -21,6 +21,10 @@
 
 #include "CreatureEventAI.h"
 
+// To be used by non-controllable pets (no pet bar) that require scripting.
+// Like Guardian pets for example. If the creature has EventAI assigned,
+// but is a pet, it will automatically be reassigned PetEventAI instead.
+
 class PetEventAI : public CreatureEventAI
 {
 public:
@@ -38,6 +42,8 @@ public:
     virtual void OwnerAttackedBy(Unit* /*attacker*/) override;
 
     virtual void OwnerAttacked(Unit* /*target*/) override;
+
+    void MovementInform(uint32 type, uint32 id) override;
 
     static int Permissible(const Creature *);
 private:
