@@ -735,12 +735,13 @@ void CreatureEventAI::UpdateAI(const uint32 diff)
     if (!m_bEmptyList)
         UpdateEventsOn_UpdateAI(diff, Combat);
 
-    if (Combat && !m_CreatureSpells.empty())
-        DoSpellTemplateCasts(diff);
-
-    //Melee Auto-Attack
     if (Combat)
+    {
+        if (!m_CreatureSpells.empty())
+            DoSpellTemplateCasts(diff);
+
         DoMeleeAttackIfReady();
+    }
 }
 
 void CreatureEventAI::UpdateEventsOn_UpdateAI(const uint32 diff, bool Combat)
