@@ -94,7 +94,7 @@ class MANGOS_DLL_SPEC CreatureAI
         // Called for reaction at stopping attack at no attackers or targets
         virtual void EnterEvadeMode();
 
-        // When leaving combat.
+        // Called when leaving combat
         virtual void OnCombatStop();
 
         // Called at reaching home after evade
