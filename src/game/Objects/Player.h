@@ -2055,6 +2055,8 @@ class MANGOS_DLL_SPEC Player final: public Unit
         bool CanSwim() const { return true; }
         bool CanFly() const { return IsFlying(); }
 
+        void SetFly(bool enable) override;
+
         uint32 watching_cinematic_entry;
         Position cinematic_start;
         Position const* cinematic_current_waypoint;
