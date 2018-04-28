@@ -5271,10 +5271,10 @@ void Unit::ProcDamageAndSpell(Unit *pVictim, uint32 procAttacker, uint32 procVic
     if (pVictim && pVictim->isAlive() && procVictim)
         pVictim->ProcDamageAndSpellFor(true, this, procVictim, procExtra, attType, procSpell, amount, procTriggered, spell);
 
-    HandleTriggers(pVictim, procExtra, amount, procSpell, procTriggered);
+    HandleTriggers(pVictim, procExtra, amount, procSpell, procTriggered, spell);
 }
 
-void Unit::HandleTriggers(Unit *pVictim, uint32 procExtra, uint32 amount, SpellEntry const *procSpell, ProcTriggeredList const& procTriggered)
+void Unit::HandleTriggers(Unit *pVictim, uint32 procExtra, uint32 amount, SpellEntry const *procSpell, ProcTriggeredList const& procTriggered, Spell* spell)
 {
     RemoveSpellList removedSpells;
     // Nothing found
@@ -5358,6 +5358,11 @@ void Unit::HandleTriggers(Unit *pVictim, uint32 procExtra, uint32 amount, SpellE
             // If last charge dropped add spell to remove list
             if (triggeredByHolder->DropAuraCharge())
                 removedSpells.push_back(RemovedSpellData(triggeredByHolder->GetId(), caster));
+        }
+
+        if (spell && anyAuraProc)
+        {
+            spell->GetTriggeredAuras().insert(std::pair<uint32, bool>(triggeredByHolder->GetId(), true));
         }
 
         triggeredByHolder->SetInUse(false);
@@ -9588,6 +9593,11 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
                         break;
                     }
         if (hasmodifier)
+            continue;
+
+        // Do not allow the effect to be triggered multiple times in a single spell cast
+        // if it is not possible
+        if (spell && !SpellMgr::CanAuraTriggerForSecondaryTargets(spell, itr->second->GetSpellProto()))
             continue;
 
         SpellProcEventEntry const* spellProcEvent = nullptr;

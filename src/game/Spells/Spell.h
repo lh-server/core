@@ -220,6 +220,8 @@ enum SpellTargets
 typedef std::multimap<uint64, uint64> SpellTargetTimeMap;
 struct SpellModifier;
 
+typedef UNORDERED_MAP<uint32, bool> TriggeredAuraMap;
+
 class Spell
 {
     friend struct MaNGOS::SpellNotifierPlayer;
@@ -490,6 +492,9 @@ class Spell
         // For summoning ritual helpers visual spell
         void SetChannelingVisual(bool value) { m_isChannelingVisual = value; }
         bool IsChannelingVisual() const { return m_isChannelingVisual; }
+
+        TriggeredAuraMap& GetTriggeredAuras() { return _triggeredAuras; }
+
     protected:
         bool HasGlobalCooldown() const;
         void TriggerGlobalCooldown();
@@ -642,6 +647,7 @@ class Spell
         typedef std::list<SpellEntry const*> SpellInfoList;
         SpellInfoList m_TriggerSpells;                      // casted by caster to same targets settings in m_targets at success finish of current spell
         SpellInfoList m_preCastSpells;                      // casted by caster to each target at spell hit before spell effects apply
+        TriggeredAuraMap _triggeredAuras;                   // A map of all auras that have procced during this spell cast
 
         uint32 m_spellState;
         uint32 m_timer;

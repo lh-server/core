@@ -1130,6 +1130,10 @@ class SpellMgr
         }
 
         static bool IsSpellProcEventCanTriggeredBy( SpellProcEventEntry const * spellProcEvent, uint32 EventProcFlag, SpellEntry const * procSpell, uint32 procFlags, uint32 procExtra);
+        static bool CanAuraTriggerForSecondaryTargets(Spell* castedSpell, SpellEntry const* triggerableAura);
+
+        static bool IsEnergizingOrCostReductionSpell(SpellEntry const* spellInfo);
+        static bool CanAuraHaveMultipleTriggerChances(Spell* spell, SpellEntry const* triggerAura);
 
         // Spell bonus data
         SpellBonusEntry const* GetSpellBonusData(uint32 spellId) const
