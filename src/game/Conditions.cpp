@@ -1072,6 +1072,21 @@ bool ConditionEntry::IsValid()
             }
             break;
         }
+        case CONDITION_HEALTH_PERCENT:
+        case CONDITION_MANA_PERCENT:
+        {
+            if ((m_value1 < 1) || (m_value1 > 100))
+            {
+                sLog.outErrorDb("Health or Mana percent condition (entry %u, type %u) has invalid argument %u (must be 1..100), skipped", m_entry, m_condition, m_value1);
+                return false;
+            }
+            if (m_value2 > 2)
+            {
+                sLog.outErrorDb("Health or Mana percent condition (entry %u, type %u) has invalid argument %u (must be 0..2), skipped", m_entry, m_condition, m_value2);
+                return false;
+            }
+            break;
+        }
         case CONDITION_NONE:
         case CONDITION_INSTANCE_SCRIPT:
         case CONDITION_ACTIVE_HOLIDAY:
