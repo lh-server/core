@@ -5360,9 +5360,11 @@ void Unit::HandleTriggers(Unit *pVictim, uint32 procExtra, uint32 amount, SpellE
                 removedSpells.push_back(RemovedSpellData(triggeredByHolder->GetId(), caster));
         }
 
-        if (spell && anyAuraProc)
+        // Add it to the triggered auras list if we have a successful proc and this is
+        // not the victim so that we can prevent further procs of this aura if necessary
+        if (spell && anyAuraProc && pVictim != this)
         {
-            spell->GetTriggeredAuras().insert(std::pair<uint32, bool>(triggeredByHolder->GetId(), true));
+            spell->GetTriggeredAuras().emplace(triggeredByHolder->GetId(), true);
         }
 
         triggeredByHolder->SetInUse(false);
@@ -9578,15 +9580,17 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
         if (procSpell && procSpell->Id == itr->first)
             continue;
 
+        SpellAuraHolder* holder = itr->second;
+
         // skip deleted auras (possible at recursive triggered call
-        if (itr->second->IsDeleted())
+        if (holder->IsDeleted())
             continue;
 
         // Aura that applies a modifier with charges. Gere? otherwise.
         bool hasmodifier = false;
         for (int i = 0; i < 3; ++i)
-            if (itr->second->GetAuraByEffectIndex(SpellEffectIndex(i)))
-                if (SpellModifier* auraMod = itr->second->GetAuraByEffectIndex(SpellEffectIndex(i))->GetSpellModifier())
+            if (holder->GetAuraByEffectIndex(SpellEffectIndex(i)))
+                if (SpellModifier* auraMod = holder->GetAuraByEffectIndex(SpellEffectIndex(i))->GetSpellModifier())
                     if (auraMod->charges > 0 || (spell && spell->HasModifierApplied(auraMod)))
                     {
                         hasmodifier = true;
@@ -9596,16 +9600,27 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
             continue;
 
         // Do not allow the effect to be triggered multiple times in a single spell cast
-        // if it is not possible
-        if (spell && !SpellMgr::CanAuraTriggerForSecondaryTargets(spell, itr->second->GetSpellProto()))
-            continue;
+        // if it is not possible. Only check for the attacker, since we want to allow
+        // unique victims affected by this cast to be able to trigger the same auras as
+        // other victims
+        if (spell && !isVictim)
+        {
+            SpellEntry const* triggerProto = holder->GetSpellProto();
+            if (!SpellMgr::CanAuraTriggerForSecondaryTargets(spell, triggerProto))
+                continue;
+
+            // Additionally, if the spell cannot have multiple chances at proccing,
+            // then add it to the triggered list now to prevent multiple proc chances
+            if (triggerProto->GetProcTargets() == SPELL_PROC_TARGET_SINGLE_CHANCE)
+                spell->GetTriggeredAuras().emplace(triggerProto->Id, true);
+        }
 
         SpellProcEventEntry const* spellProcEvent = nullptr;
-        if (!IsTriggeredAtSpellProcEvent(pTarget, itr->second, procSpell, procFlag, procExtra, attType, isVictim, spellProcEvent))
+        if (!IsTriggeredAtSpellProcEvent(pTarget, holder, procSpell, procFlag, procExtra, attType, isVictim, spellProcEvent))
             continue;
 
-        itr->second->SetInUse(true);                        // prevent holder deletion
-        triggeredList.push_back(ProcTriggeredData(spellProcEvent, itr->second, pTarget, procFlag));
+        holder->SetInUse(true);                        // prevent holder deletion
+        triggeredList.push_back(ProcTriggeredData(spellProcEvent, holder, pTarget, procFlag));
     }
 }
 
