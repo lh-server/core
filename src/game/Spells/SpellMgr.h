@@ -696,6 +696,13 @@ enum ProcFlagsEx
     PROC_EX_NO_PERIODIC         = 0x0080000,                // Will never proc if periodic proc flag present
 };
 
+enum SpellProcTarget
+{
+    SPELL_PROC_TARGET_ANY               = 0x00,             // Can proc any number of times
+    SPELL_PROC_TARGET_ONCE              = 0x01,             // Has multiple chances to proc per cast, but can only proc once in that cast
+    SPELL_PROC_TARGET_SINGLE_CHANCE     = 0x02,             // Only has a single chance to proc each cast, and therefore implicitly can only proc once
+};
+
 struct SpellProcEventEntry
 {
     uint32      schoolMask;
@@ -1132,8 +1139,14 @@ class SpellMgr
         static bool IsSpellProcEventCanTriggeredBy( SpellProcEventEntry const * spellProcEvent, uint32 EventProcFlag, SpellEntry const * procSpell, uint32 procFlags, uint32 procExtra);
         static bool CanAuraTriggerForSecondaryTargets(Spell* castedSpell, SpellEntry const* triggerableAura);
 
+        static bool IsEnergizingSpell(SpellEntry const* spellInfo);
+        static bool IsEnergizingSpellEffect(SpellEntry const* spellInfo, int effectIdx);
+        static bool IsCostReductionSpell(SpellEntry const* spellInfo);
+        static bool IsCostReductionSpellEffect(SpellEntry const* spellInfo, int effectIdx);
         static bool IsEnergizingOrCostReductionSpell(SpellEntry const* spellInfo);
-        static bool CanAuraHaveMultipleTriggerChances(Spell* spell, SpellEntry const* triggerAura);
+
+        static bool CanAuraHaveMultipleTriggerChances(SpellEntry const* triggerAura);
+        static bool CanAuraHaveMultipleProcs(SpellEntry const* triggerAura);
 
         // Spell bonus data
         SpellBonusEntry const* GetSpellBonusData(uint32 spellId) const

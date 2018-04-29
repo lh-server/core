@@ -19,6 +19,7 @@ void SpellEntry::InitCachedValues()
     ComputeBinary();
     ComputeDispel();
     ComputeNonPeriodicDispel();
+    ComputeProcTarget();
 }
 
 void SpellEntry::ComputeBinary()
@@ -93,6 +94,18 @@ void SpellEntry::ComputeDispel()
         }
     }
 }
+
+void SpellEntry::ComputeProcTargets()
+{
+    _procTargets = SPELL_PROC_TARGET_ANY;
+
+    if (!SpellMgr::CanAuraHaveMultipleProcs(this))
+        _procTargets = SPELL_PROC_TARGET_ONCE;
+
+    if (!SpellMgr::CanAuraHaveMultipleTriggerChances(this))
+        _procTargets = SPELL_PROC_TARGET_SINGLE_CHANCE;
+}
+
 DiminishingGroup SpellEntry::GetDiminishingReturnsGroup(bool triggered) const
 {
     // Explicit Diminishing Groups

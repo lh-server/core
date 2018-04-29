@@ -1784,62 +1784,66 @@ bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const * spellP
 }
 
 /// Determine whether the given triggerableAura can proc again on secondary targets if it has
-/// procced already for the castedSpell. If the spell has not yet triggered the aura, it can proc.
+/// procced already for the castedSpell. If the spell has not yet triggered the aura, it can typically
+/// proc, depending on whether the proc is allowed multiple chances per cast. Some are only allowed a
+/// single chance per cast, eg. Clearcasting
 bool SpellMgr::CanAuraTriggerForSecondaryTargets(Spell* castedSpell, SpellEntry const* triggerableAura)
 {
+    auto procTargets = triggerableAura->GetProcTargets();
+    if (procTargets == SPELL_PROC_TARGET_ANY)
+        return true;
+
     auto triggeredAuras = castedSpell->GetTriggeredAuras();
     auto found = triggeredAuras.find(triggerableAura->Id);
 
-    // Has not procced yet for this spell. Can definitely proc then
-    if (found == triggeredAuras.end())
-        return true;
+    // Has not procced yet for this spell, nor is it single proc chance per cast
+    if (found != triggeredAuras.end())
+    {
+        if (procTargets == SPELL_PROC_TARGET_SINGLE_CHANCE || procTargets == SPELL_PROC_TARGET_ONCE)
+            return false;
+    }
 
-    // Has procced previously. Whether it can proc multiple times depends on
-    // the type of the triggerable aura. There are some basic known rules:
-    // 1. Cannot consume multiple charges in a single cast. Therefore, if the triggerableAura
-    // has stacks it cannot proc again
-    // 2. Cannot proc multiple times if the aura grants resources back to the caster
-    // 3. Cannot proc multiple times if the aura grants resource-free effects, such as Clearcasting
-    if (triggerableAura->StackAmount > 1)
-        return false;
-
-    if (IsEnergizingOrCostReductionSpell(triggerableAura))
-        return false;
-
-    if (IsHealSpell(triggerableAura))
-        return false;
+    return true;
 }
 
-bool SpellMgr::IsEnergizingOrCostReductionSpell(SpellEntry const* spellInfo)
+bool SpellMgr::IsEnergizingSpell(SpellEntry const* spellInfo)
 {
     // Check for resource refund
     for (int i = 0; i < MAX_EFFECT_INDEX; ++i)
     {
-        switch (spellInfo->Effect[i])
-        {
-            case SPELL_EFFECT_ENERGIZE:
-                return true;
-            default:
-                break;
-        }
-    }
-
-    for (int i = 0; i < MAX_EFFECT_INDEX; ++i)
-    {
-        if (!spellInfo->Effect[i] || !spellInfo->EffectApplyAuraName[i])
+        if (!spellInfo->Effect[i])
             continue;
 
-        switch (spellInfo->EffectApplyAuraName[i])
+        if (IsEnergizingSpellEffect(spellInfo, i))
+            return true;
+    }
+
+    return false;
+}
+
+bool SpellMgr::IsEnergizingSpellEffect(SpellEntry const* spellInfo, int effectIdx)
+{
+    switch (spellInfo->Effect[effectIdx])
+    {
+        case SPELL_EFFECT_ENERGIZE:
+            return true;
+        default:
+            break;
+
+        if (!spellInfo->EffectApplyAuraName[effectIdx])
+            return false;
+
+        switch (spellInfo->EffectApplyAuraName[effectIdx])
         {
             // If we proc another spell based on this, then check that too
             case SPELL_AURA_PROC_TRIGGER_SPELL:
             case SPELL_AURA_PERIODIC_TRIGGER_SPELL:
             {
-                if (spellInfo->EffectTriggerSpell[i])
+                if (uint32 triggerId = spellInfo->EffectTriggerSpell[effectIdx])
                 {
-                    if (SpellEntry const* triggerInfo = sSpellMgr.GetSpellEntry(spellInfo->EffectTriggerSpell[i]))
+                    if (SpellEntry const* triggerInfo = sSpellMgr.GetSpellEntry(triggerId))
                     {
-                        if (IsEnergizingOrCostReductionSpell(triggerInfo))
+                        if (IsEnergizingSpell(triggerInfo))
                             return true;
                     }
                 }
@@ -1865,16 +1869,107 @@ bool SpellMgr::IsEnergizingOrCostReductionSpell(SpellEntry const* spellInfo)
                 break;
         }
     }
+    return false;
+}
+
+/// Does the spell grant power cost reductions
+bool SpellMgr::IsCostReductionSpell(SpellEntry const* spellInfo)
+{
+    for (int i = 0; i < MAX_EFFECT_INDEX; ++i)
+    {
+        if (!spellInfo->Effect[i] || !spellInfo->EffectApplyAuraName[i])
+            continue;
+
+        if (IsCostReductionSpellEffect(spellInfo, i))
+            return true;
+    }
+
+    return false;
+}
+
+bool SpellMgr::IsCostReductionSpellEffect(SpellEntry const* spellInfo, int effectIdx)
+{
+    switch (spellInfo->EffectApplyAuraName[effectIdx])
+    {
+        // If we proc another spell based on this, then check that too
+        case SPELL_AURA_PROC_TRIGGER_SPELL:
+        case SPELL_AURA_PERIODIC_TRIGGER_SPELL:
+        {
+            if (uint32 triggerId = spellInfo->EffectTriggerSpell[effectIdx])
+            {
+                if (SpellEntry const* triggerInfo = sSpellMgr.GetSpellEntry(triggerId))
+                {
+                    if (IsCostReductionSpell(triggerInfo))
+                        return true;
+                }
+            }
+            break;
+        }
+        case SPELL_AURA_ADD_FLAT_MODIFIER:
+        case SPELL_AURA_ADD_PCT_MODIFIER:
+        {
+            if (spellInfo->EffectMiscValue[effectIdx] == SPELLMOD_COST)
+                return true;
+
+            break;
+        }
+        default:
+            break;
+    }
+
+    return false;
+}
+
+bool SpellMgr::IsEnergizingOrCostReductionSpell(SpellEntry const* spellInfo)
+{
+    for (int i = 0; i < MAX_EFFECT_INDEX; ++i)
+    {
+        if (!spellInfo->Effect[i])
+            continue;
+
+        if (IsEnergizingSpellEffect(spellInfo, i))
+            return true;
+
+        if (IsCostReductionSpellEffect(spellInfo, i))
+            return true;
+    }
 
     return false;
 }
 
 /// Some auras only have a single chance to proc per cast, rather than a chance to proc
 /// on each target hit by the cast. Prime example being Clearcasting
-bool SpellMgr::CanAuraHaveMultipleTriggerChances(Spell* spell, SpellEntry const* triggerAura)
+bool SpellMgr::CanAuraHaveMultipleTriggerChances(SpellEntry const* triggerAura)
 {
+    if (IsCostReductionSpell(triggerAura))
+        return false;
 
+    return true;
 }
+
+/// Some auras can only proc once per cast
+bool SpellMgr::CanAuraHaveMultipleProcs(SpellEntry const* triggerAura)
+{
+    // Whether it can proc multiple times depends on the type of the triggerable
+    // aura. There are some basic known rules:
+    // 1. Cannot consume multiple charges in a single cast. Therefore, if the
+    // triggerableAura has stacks it cannot proc again
+    // 2. Cannot proc multiple times if the aura grants resources back to the caster
+    // 3. Cannot proc multiple times if the aura grants resource-free effects, such as
+    // Clearcasting
+    if (triggerAura->StackAmount > 1)
+        return false;
+
+    if (IsEnergizingOrCostReductionSpell(triggerAura))
+        return false;
+
+    if (IsHealSpell(triggerAura))
+        return false;
+
+    // Passed tests. Can proc (again)
+    return true;
+}
+
 
 void SpellMgr::LoadSpellGroups()
 {
