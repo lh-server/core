@@ -1841,6 +1841,10 @@ bool SpellMgr::IsEnergizingSpellEffect(SpellEntry const* spellInfo, int effectId
             {
                 if (uint32 triggerId = spellInfo->EffectTriggerSpell[effectIdx])
                 {
+                    // Circular triggering (spell triggers itself)
+                    if (triggerId == spellInfo->Id)
+                        break;
+
                     if (SpellEntry const* triggerInfo = sSpellMgr.GetSpellEntry(triggerId))
                     {
                         if (IsEnergizingSpell(triggerInfo))
@@ -1897,6 +1901,10 @@ bool SpellMgr::IsCostReductionSpellEffect(SpellEntry const* spellInfo, int effec
         {
             if (uint32 triggerId = spellInfo->EffectTriggerSpell[effectIdx])
             {
+                // Circular triggering (spell triggers itself)
+                if (triggerId == spellInfo->Id)
+                    break;
+
                 if (SpellEntry const* triggerInfo = sSpellMgr.GetSpellEntry(triggerId))
                 {
                     if (IsCostReductionSpell(triggerInfo))
