@@ -19,7 +19,7 @@ void SpellEntry::InitCachedValues()
     ComputeBinary();
     ComputeDispel();
     ComputeNonPeriodicDispel();
-    ComputeProcTarget();
+    ComputeProcTargets();
 }
 
 void SpellEntry::ComputeBinary()

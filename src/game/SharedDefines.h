@@ -771,6 +771,13 @@ enum SpellCastResult
     SPELL_CAST_OK                               = 0xFF      // custom value, don't must be send to client
 };
 
+enum SpellProcTarget
+{
+    SPELL_PROC_TARGET_ANY = 0x00,             // Can proc any number of times
+    SPELL_PROC_TARGET_ONCE = 0x01,             // Has multiple chances to proc per cast, but can only proc once in that cast
+    SPELL_PROC_TARGET_SINGLE_CHANCE = 0x02,             // Only has a single chance to proc each cast, and therefore implicitly can only proc once
+};
+
 // Spell aura states
 enum AuraState
 {   // (C) used in caster aura state     (T) used in target aura state
