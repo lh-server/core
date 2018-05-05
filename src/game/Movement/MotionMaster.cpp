@@ -501,7 +501,7 @@ void MotionMaster::MoveTaxiFlight()
                     else
                     {
                         sLog.outError("%s attempt taxi to (nonexistent Path %u)",
-                            m_owner->GetGuidStr().c_str(), path);
+                            m_owner->GetGuidStr().c_str(), foundPath);
                         return;
                     }
                 }
