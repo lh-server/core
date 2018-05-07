@@ -44,6 +44,63 @@ REPLACE INTO `mangos_string` (`entry`, `content_default`, `content_loc1`, `conte
 REPLACE INTO `mangos_string` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`) VALUES (251, 'UNUSED', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 REPLACE INTO `mangos_string` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`) VALUES (252, 'AIScriptName: %s', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
+-- This column is unused.
+ALTER TABLE `creature_movement`
+	DROP COLUMN `wpguid`;
+ALTER TABLE `creature_movement_template`
+	DROP COLUMN `wpguid`;
+
+-- Add new table for special waypoints.
+CREATE TABLE IF NOT EXISTS `creature_movement_special` (
+  `id` int(10) unsigned NOT NULL,
+  `point` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `position_x` float NOT NULL DEFAULT '0',
+  `position_y` float NOT NULL DEFAULT '0',
+  `position_z` float NOT NULL DEFAULT '0',
+  `waittime` int(10) unsigned NOT NULL DEFAULT '0',
+  `script_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `textid1` int(11) NOT NULL DEFAULT '0',
+  `textid2` int(11) NOT NULL DEFAULT '0',
+  `textid3` int(11) NOT NULL DEFAULT '0',
+  `textid4` int(11) NOT NULL DEFAULT '0',
+  `textid5` int(11) NOT NULL DEFAULT '0',
+  `emote` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `spell` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `orientation` float NOT NULL DEFAULT '0',
+  `model1` mediumint(9) NOT NULL DEFAULT '0',
+  `model2` mediumint(9) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`,`point`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Creature System';
+
+-- Fix current waypoint for some npcs.
+UPDATE `creature` SET `currentwaypoint`=0 WHERE `currentwaypoint`=1;
+UPDATE `creature` SET `currentwaypoint`=24 WHERE `guid`=32905;
+UPDATE `creature` SET `currentwaypoint`=2 WHERE `guid`=88303;
+
+-- Fix errors in script for mobs in naxxramas.
+UPDATE `creature_movement` SET `script_id`=8844402 WHERE `id`=88444 && `point`=2;
+DELETE FROM `creature_movement_scripts` WHERE `id`=8844402;
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 0, 1, 19, 0, 0, 0, 16157, 10, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Doom Touched warrior chicken');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 1, 1, 36, 0, 0, 0, 16145, 10, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deathknight captain attacks');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 2, 1, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deathknight parries');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 5, 1, 1, 0, 0, 0, 16145, 10, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deathknight captain talks');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 7, 1, 36, 0, 0, 0, 16145, 10, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deathknight captain attacks');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 8, 1, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deathknight parries');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 10, 1, 15, 0, 0, 0, 16158, 10, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Dark Touched warrior roar');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 14, 1, 60, 0, 0, 0, 16145, 10, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deathknight captain kicks');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 15, 1, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deathknight parries');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 17, 1, 36, 0, 0, 0, 16145, 10, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deathknight captain attacks');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 18, 1, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deathknight parries');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 20, 1, 5, 0, 0, 0, 16145, 10, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deathknight captain shouts');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 22, 1, 36, 0, 0, 0, 16145, 10, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deathknight captain attacks');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 23, 1, 21, 0, 0, 0, 16157, 10, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Doom Touched warrior applaude');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 23, 1, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deathknight parries');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 26, 1, 60, 0, 0, 0, 16145, 10, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deathknight captain kicks');
+INSERT INTO `creature_movement_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (8844402, 27, 1, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deathknight attacks');
+
+-- This guy should have waypoint movement.
+UPDATE `creature` SET `MovementType`=2 WHERE `guid`=1816;
+
 
 -- End of migration.
 END IF;

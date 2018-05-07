@@ -55,9 +55,9 @@ enum MovementGeneratorType
     PATROL_MOTION_TYPE              = 16,
     CHARGE_MOTION_TYPE              = 17,
 
-    EXTERNAL_WAYPOINT_MOVE          = 256,                  // Only used in CreatureAI::MovementInform when a waypoint is reached. The pathId >= 0 is added as additonal value
-    EXTERNAL_WAYPOINT_MOVE_START    = 512,                  // Only used in CreatureAI::MovementInform when a waypoint is started. The pathId >= 0 is added as additional value
-    EXTERNAL_WAYPOINT_FINISHED_LAST = 1024,                 // Only used in CreatureAI::MovementInform when the waittime of the last wp is finished The pathId >= 0 is added as additional value
+    WAYPOINT_SPECIAL_REACHED        = 256,                  // Only used in CreatureAI::MovementInform when a special waypoint is reached. The pathId >= 0 is added as additonal value
+    WAYPOINT_SPECIAL_STARTED        = 512,                  // Only used in CreatureAI::MovementInform when a special waypoint is started. The pathId >= 0 is added as additional value
+    WAYPOINT_SPECIAL_FINISHED_LAST  = 1024,                 // Only used in CreatureAI::MovementInform when the waittime of the last special wp is finished. The pathId >= 0 is added as additional value
 };
 
 enum MMCleanFlag

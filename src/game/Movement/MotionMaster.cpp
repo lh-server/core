@@ -59,7 +59,7 @@ void MotionMaster::Initialize()
         push(movement == NULL ? &si_idleMovement : movement);
         top()->Initialize(*m_owner);
         if (top()->GetMovementGeneratorType() == WAYPOINT_MOTION_TYPE)
-            (static_cast<WaypointMovementGenerator<Creature>*>(top()))->InitializeWaypointPath(*((Creature*)(m_owner)), 0, 0, PATH_NO_PATH, 0, 0, true);
+            (static_cast<WaypointMovementGenerator<Creature>*>(top()))->InitializeWaypointPath(*(static_cast<Creature*>(m_owner)), 0, static_cast<Creature*>(m_owner)->m_startwaypoint, PATH_NO_PATH, 0, 0, true);
     }
     else
         push(&si_idleMovement);

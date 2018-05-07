@@ -108,12 +108,12 @@ void WaypointMovementGenerator<Creature>::Reset(Creature &creature)
 void WaypointMovementGenerator<Creature>::OnArrived(Creature& creature)
 {
     if (!i_path || i_path->empty())
-        { return; }
+        return;
 
     m_lastReachedWaypoint = i_currentNode;
 
     if (m_isArrivalDone)
-        { return; }
+        return;
 
     creature.clearUnitState(UNIT_STAT_ROAMING_MOVE);
     m_isArrivalDone = true;
@@ -132,13 +132,13 @@ void WaypointMovementGenerator<Creature>::OnArrived(Creature& creature)
     if (WaypointBehavior* behavior = node.behavior)
     {
         if (behavior->emote != 0)
-            { creature.HandleEmote(behavior->emote); }
+            creature.HandleEmote(behavior->emote);
 
         if (behavior->spell != 0)
-            { creature.CastSpell(&creature, behavior->spell, false); }
+            creature.CastSpell(&creature, behavior->spell, false);
 
         if (behavior->model1 != 0)
-            { creature.SetDisplayId(behavior->model1); }
+            creature.SetDisplayId(behavior->model1);
 
         if (behavior->textid[0])
         {
@@ -151,7 +151,7 @@ void WaypointMovementGenerator<Creature>::OnArrived(Creature& creature)
                 for (; i < MAX_WAYPOINT_TEXT; ++i)
                 {
                     if (!behavior->textid[i])
-                        { break; }
+                        break;
                 }
 
                 textId = behavior->textid[urand(0, i - 1)];
@@ -165,8 +165,8 @@ void WaypointMovementGenerator<Creature>::OnArrived(Creature& creature)
     if (creature.AI())
     {
         uint32 type = WAYPOINT_MOTION_TYPE;
-        if (m_PathOrigin == PATH_FROM_EXTERNAL && m_pathId > 0)
-            type = EXTERNAL_WAYPOINT_MOVE + m_pathId;
+        if (m_PathOrigin == PATH_FROM_SPECIAL && m_pathId > 0)
+            type = WAYPOINT_SPECIAL_REACHED + m_pathId;
         creature.AI()->MovementInform(type, i_currentNode);
     }
 
@@ -211,12 +211,12 @@ void WaypointMovementGenerator<Creature>::StartMove(Creature &creature)
         }
 
         // Inform AI
-        if (creature.AI() && m_PathOrigin == PATH_FROM_EXTERNAL &&  m_pathId > 0)
+        if (creature.AI() && m_PathOrigin == PATH_FROM_SPECIAL &&  m_pathId > 0)
         {
             if (!reachedLast)
-                creature.AI()->MovementInform(EXTERNAL_WAYPOINT_MOVE_START + m_pathId, currPoint->first);
+                creature.AI()->MovementInform(WAYPOINT_SPECIAL_STARTED + m_pathId, currPoint->first);
             else
-                creature.AI()->MovementInform(EXTERNAL_WAYPOINT_FINISHED_LAST + m_pathId, currPoint->first);
+                creature.AI()->MovementInform(WAYPOINT_SPECIAL_FINISHED_LAST + m_pathId, currPoint->first);
 
             if (creature.isDead() || !creature.IsInWorld()) // Might have happened with above calls
                 return;

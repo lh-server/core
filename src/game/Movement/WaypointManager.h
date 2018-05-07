@@ -33,7 +33,7 @@ enum WaypointPathOrigin
     PATH_NO_PATH            = 0,
     PATH_FROM_GUID          = 1,
     PATH_FROM_ENTRY         = 2,
-    PATH_FROM_EXTERNAL      = 3
+    PATH_FROM_SPECIAL       = 3
 };
 
 #define MAX_WAYPOINT_TEXT 5
@@ -69,7 +69,7 @@ typedef std::map < uint32 /*pointId*/, WaypointNode > WaypointPath;
 class WaypointManager
 {
     public:
-        WaypointManager() : m_externalTable("external.waypointTable") {}
+        WaypointManager() {}
         ~WaypointManager() { Unload(); }
 
         void Load();
@@ -109,7 +109,7 @@ class WaypointManager
         // Helper function to get a path provided the required information
         WaypointPath* GetPathFromOrigin(uint32 entry, uint32 lowGuid, int32 pathId, WaypointPathOrigin wpOrigin)
         {
-            WaypointPathMap* wpMap = NULL;
+            WaypointPathMap* wpMap = nullptr;
             uint32 key = 0;
 
             switch (wpOrigin)
@@ -120,32 +120,24 @@ class WaypointManager
                     break;
                 case PATH_FROM_ENTRY:
                     if (pathId >= 0xFF || pathId < 0)
-                        return NULL;
+                        return nullptr;
                     key = (entry << 8) + pathId;
                     wpMap = &m_pathTemplateMap;
                     break;
-                case PATH_FROM_EXTERNAL:
-                    if (pathId >= 0xFF || pathId < 0)
-                        return NULL;
-                    key = (entry << 8) + pathId;
-                    wpMap = &m_externalPathTemplateMap;
+                case PATH_FROM_SPECIAL:
+                    key = entry;
+                    wpMap = &m_pathSpecialMap;
                     break;
                 case PATH_NO_PATH:
                 default:
-                    return NULL;
+                    return nullptr;
             }
             WaypointPathMap::iterator find = wpMap->find(key);
-            return find != wpMap->end() ? &find->second : NULL;
+            return find != wpMap->end() ? &find->second : nullptr;
         }
 
         void DeletePath(uint32 id);
         void CheckTextsExistance();
-
-        /// Set external source table
-        void SetExternalWPTable(char const* tableName) { m_externalTable = std::string(tableName); }
-        std::string GetExternalWPTable() const { return m_externalTable; }
-        /// Add Nodes from external sources
-        bool AddExternalNode(uint32 entry, int32 pathId, uint32 pointId, float x, float y, float z, float o, uint32 waittime);
 
         // Toolbox for .wp add command
         /// Add a node as position pointId. If pointId == 0 then as last point
@@ -166,7 +158,7 @@ class WaypointManager
                 case PATH_NO_PATH:          return "<no path>";
                 case PATH_FROM_GUID:        return "guid";
                 case PATH_FROM_ENTRY:       return "entry";
-                case PATH_FROM_EXTERNAL:    return "external";
+                case PATH_FROM_SPECIAL:     return "special";
                 default:                    return "invalid origin";
             }
         }
@@ -175,13 +167,19 @@ class WaypointManager
         WaypointPath* GetPath(uint32 id)
         {
             WaypointPathMap::iterator itr = m_pathMap.find(id);
-            return itr != m_pathMap.end() ? &itr->second : NULL;
+            return itr != m_pathMap.end() ? &itr->second : nullptr;
         }
 
         WaypointPath* GetPathTemplate(uint32 entry)
         {
             WaypointPathMap::iterator itr = m_pathTemplateMap.find((entry << 8) /*+ pathId*/);
-            return itr != m_pathTemplateMap.end() ? &itr->second : NULL;
+            return itr != m_pathTemplateMap.end() ? &itr->second : nullptr;
+        }
+
+        WaypointPath* GetPathSpecial(uint32 id)
+        {
+            WaypointPathMap::iterator itr = m_pathSpecialMap.find(id);
+            return itr != m_pathSpecialMap.end() ? &itr->second : nullptr;
         }
 
         void _clearPath(WaypointPath& path);
@@ -189,8 +187,7 @@ class WaypointManager
         typedef UNORDERED_MAP < uint32 /*guidOrEntry*/, WaypointPath > WaypointPathMap;
         WaypointPathMap m_pathMap;
         WaypointPathMap m_pathTemplateMap;
-        WaypointPathMap m_externalPathTemplateMap;
-        std::string m_externalTable;
+        WaypointPathMap m_pathSpecialMap;
 };
 
 #define sWaypointMgr MaNGOS::Singleton<WaypointManager>::Instance()

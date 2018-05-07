@@ -3093,7 +3093,7 @@ bool ChatHandler::HandleWpShowCommand(char* args)
         PSendSysMessage(LANG_WAYPOINT_INFO_WAITTIME, point->second.delay);
         PSendSysMessage(LANG_WAYPOINT_INFO_ORI, point->second.orientation);
         PSendSysMessage(LANG_WAYPOINT_INFO_SCRIPTID, point->second.script_id);
-        if (wpOrigin == PATH_FROM_EXTERNAL)
+        if (wpOrigin == PATH_FROM_SPECIAL)
             PSendSysMessage(LANG_WAYPOINT_INFO_AISCRIPT, wpOwner->GetScriptName().c_str());
         if (WaypointBehavior* behaviour = point->second.behavior)
         {
@@ -3102,7 +3102,7 @@ bool ChatHandler::HandleWpShowCommand(char* args)
             PSendSysMessage(" Emote: %u", behaviour->emote);
             PSendSysMessage(" Spell: %u", behaviour->spell);
             for (int i = 0;  i < MAX_WAYPOINT_TEXT; ++i)
-                PSendSysMessage(" TextId%i: %i \'%s\'", i + 1, behaviour->textid[i], (behaviour->textid[i] ? GetMangosString(behaviour->textid[i]) : ""));
+                PSendSysMessage(" TextId%i: %i \'%s\'", i + 1, behaviour->textid[i], (behaviour->textid[i] ? sObjectMgr.GetBroadcastText(behaviour->textid[i], m_session->GetSessionDbLocaleIndex()) : ""));
         }
 
         return true;
@@ -3284,16 +3284,13 @@ bool ChatHandler::HandleWpExportCommand(char* args)
     {
     case PATH_FROM_ENTRY: key = wpOwner->GetEntry();    key_field = "entry";    table = "creature_movement_template"; break;
     case PATH_FROM_GUID: key = wpOwner->GetGUIDLow();   key_field = "id";       table = "creature_movement"; break;
-    case PATH_FROM_EXTERNAL: key = wpOwner->GetEntry(); key_field = "entry";    table = sWaypointMgr.GetExternalWPTable(); break;
+    case PATH_FROM_SPECIAL: key = wpOwner->GetEntry();  key_field = "id";    table = "creature_movement_special"; break;
     case PATH_NO_PATH:
         return false;
     }
 
     outfile << "DELETE FROM " << table << " WHERE " << key_field << "=" << key << ";\n";
-    if (wpOrigin != PATH_FROM_EXTERNAL)
-        outfile << "INSERT INTO " << table << " (" << key_field << ", point, position_x, position_y, position_z, orientation, waittime, script_id) VALUES\n";
-    else
-        outfile << "INSERT INTO " << table << " (" << key_field << ", point, position_x, position_y, position_z, orientation, waittime) VALUES\n";
+    outfile << "INSERT INTO " << table << " (" << key_field << ", point, position_x, position_y, position_z, orientation, waittime, script_id) VALUES\n";
 
     WaypointPath::const_iterator itr = wpPath->begin();
     uint32 countDown = wpPath->size();
@@ -3306,8 +3303,7 @@ bool ChatHandler::HandleWpExportCommand(char* args)
         outfile << itr->second.z << ",";
         outfile << itr->second.orientation << ",";
         outfile << itr->second.delay << ",";
-        if (wpOrigin != PATH_FROM_EXTERNAL)                 // Only for normal waypoints
-            outfile << itr->second.script_id << ")";
+        outfile << itr->second.script_id << ")";
         if (countDown > 1)
             outfile << ",\n";
         else

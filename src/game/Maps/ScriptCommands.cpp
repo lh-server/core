@@ -1597,3 +1597,19 @@ bool Map::ScriptCommand_SetReactState(const ScriptInfo& script, WorldObject* sou
 
     return false;
 }
+
+// SCRIPT_COMMAND_START_WAYPOINTS (60)
+bool Map::ScriptCommand_StartWaypoints(const ScriptInfo& script, WorldObject* source, WorldObject* target)
+{
+    Creature* pSource = ToCreature(source);
+
+    if (!pSource)
+    {
+        sLog.outError("SCRIPT_COMMAND_START_WAYPOINTS (script id %u) call for a NULL or non-creature source (TypeId: %u), skipping.", script.id, source ? source->GetTypeId() : 0);
+        return ShouldAbortScript(script);
+    }
+
+    pSource->GetMotionMaster()->MoveWaypoint(script.startWaypoints.pathId, script.startWaypoints.startPoint, script.startWaypoints.wpSource, script.startWaypoints.initialDelay, script.startWaypoints.overwriteEntry, script.startWaypoints.canRepeat);
+
+    return false;
+}
