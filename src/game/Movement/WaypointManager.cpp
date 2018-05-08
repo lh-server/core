@@ -803,7 +803,7 @@ inline void CheckWPText(std::string table, uint32 entryOrGuid, uint32 point, Way
         if (!sObjectMgr.GetBroadcastTextLocale(be->textid[j]))
         {
             sLog.outErrorDb("Table %s %u, PointId %u has textid%u with non existing textid %i.",
-                table, entryOrGuid, point, j, be->textid[j]);
+                table.c_str(), entryOrGuid, point, j, be->textid[j]);
             be->textid[j] = 0;
             ++zeroCount;
             continue;
