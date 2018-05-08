@@ -8167,7 +8167,7 @@ void ObjectMgr::LoadTrainerTemplates()
 
     // We need to use a query to get all used trainer ids because of progression.
     // It might be used by a creature that is not loaded in this patch.
-    QueryResult* result = WorldDatabase.Query("SELECT entry, trainer_id FROM creature_template WHERE trainer_id != 0");
+    QueryResult* result = WorldDatabase.Query("SELECT entry, patch, trainer_id FROM creature_template WHERE trainer_id != 0");
 
     if (result)
     {
@@ -8176,10 +8176,11 @@ void ObjectMgr::LoadTrainerTemplates()
         {
             fields = result->Fetch();
             uint32 creature_id = fields[0].GetUInt32();
-            uint32 trainer_id = fields[1].GetUInt32();
+            uint32 patch = fields[1].GetUInt32();
+            uint32 trainer_id = fields[2].GetUInt32();
             if (m_mCacheTrainerTemplateSpellMap.find(trainer_id) != m_mCacheTrainerTemplateSpellMap.end())
                 trainer_ids.erase(trainer_id);
-            else
+            else if (patch <= sWorld.GetWowPatch())
                 sLog.outErrorDb("Creature (Entry: %u) has trainer_id = %u for nonexistent trainer template", creature_id, trainer_id);
         } while (result->NextRow());
         delete result;
@@ -8254,7 +8255,7 @@ void ObjectMgr::LoadVendorTemplates()
 
     // We need to use a query to get all used vendor ids because of progression.
     // It might be used by a creature that is not loaded in this patch.
-    QueryResult* result = WorldDatabase.Query("SELECT entry, vendor_id FROM creature_template WHERE vendor_id != 0");
+    QueryResult* result = WorldDatabase.Query("SELECT entry, patch, vendor_id FROM creature_template WHERE vendor_id != 0");
 
     if (result)
     {
@@ -8263,10 +8264,11 @@ void ObjectMgr::LoadVendorTemplates()
         {
             fields = result->Fetch();
             uint32 creature_id = fields[0].GetUInt32();
-            uint32 vendor_id = fields[1].GetUInt32();
+            uint32 patch = fields[1].GetUInt32();
+            uint32 vendor_id = fields[2].GetUInt32();
             if (m_mCacheVendorTemplateItemMap.find(vendor_id) != m_mCacheVendorTemplateItemMap.end())
                 vendor_ids.erase(vendor_id);
-            else
+            else if (patch <= sWorld.GetWowPatch())
                 sLog.outErrorDb("Creature (Entry: %u) has vendor_id = %u for nonexistent vendor template", creature_id, vendor_id);
         } while (result->NextRow());
         delete result;
