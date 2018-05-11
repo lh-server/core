@@ -77,7 +77,7 @@ UPDATE `quest_template` SET `DetailsEmote1`=1 WHERE `entry`=569 AND `patch`=0;
 -- Add missing quest greeting for Hemet Nesingwary
 DELETE FROM `quest_greeting` WHERE `entry`=715 AND `type`=0;
 INSERT INTO `quest_greeting` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`) VALUES 
-(715, 'Another fine day in the jungle!  It\'s going to be quite a hunt.  I can feel it.  Once Barnil is done cleaning the guns, I\'m taking the hunting party deep into the twisting vines.  Not such a bad way for an old war vet to spend his retirement, eh?', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(715, 'Another fine day in the jungle!  It\'s going to be quite a hunt,  I can feel it.  Once Barnil is done cleaning the guns, I\'m taking the hunting party deep into the twisting vines.  Not such a bad way for an old war vet to spend his retirement, eh?', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- Panther Mastery pt. 4 - already ok
 
