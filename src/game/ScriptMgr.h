@@ -68,6 +68,7 @@ enum eScriptCommand
                                                             // datalong2 = time
                                                             // datalong3 = movement_options (see enum MoveOptions)
                                                             // datalong4 = eMoveToFlags
+                                                            // dataint = path_id
                                                             // x/y/z/o = coordinates
     SCRIPT_COMMAND_MODIFY_FLAGS             = 4,            // source = Object
                                                             // datalong = field_id
@@ -412,6 +413,8 @@ struct ScriptInfo
             uint32 travelTime;                              // datalong2
             uint32 movementOptions;                         // datalong3
             uint32 flags;                                   // datalong4
+            uint32 unused;                                  // data_flags
+            int32 pointId;                                  // dataint
         } moveTo;
 
         struct                                              // SCRIPT_COMMAND_MODIFY_FLAGS (4)
@@ -739,7 +742,7 @@ struct ScriptInfo
             uint32 canRepeat;                               // datalong4
             uint32 unused;                                  // data_flags
             int32  pathId;                                  // dataint
-            int32  overwriteEntry;                          // dataint
+            int32  overwriteEntry;                          // dataint2
         } startWaypoints;
         
         struct

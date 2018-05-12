@@ -165,7 +165,7 @@ bool Map::ScriptCommand_MoveTo(const ScriptInfo& script, WorldObject* source, Wo
     float orientation = script.o ? script.o : -10.0f;
 
     if (script.moveTo.flags & SF_MOVETO_POINT_MOVEGEN)
-        pSource->GetMotionMaster()->MovePoint(0, x, y, z, script.moveTo.movementOptions, speed, orientation);
+        pSource->GetMotionMaster()->MovePoint(script.moveTo.pointId, x, y, z, script.moveTo.movementOptions, speed, orientation);
     else
         pSource->MonsterMoveWithSpeed(x, y, z, orientation, speed, script.moveTo.movementOptions);
 
