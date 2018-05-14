@@ -2815,8 +2815,11 @@ void World::LogTransaction(PlayerTransactionData const& data)
         logStmt.addUInt32(part.spell);
         std::stringstream items;
         for (int i = 0; i < TransactionPart::MAX_TRANSACTION_ITEMS; ++i)
-            if (part.itemsEntries[i])
+            if (part.itemsEntries[i]) {
+                if (i != 0)
+                    items << ";";
                 items << uint32(part.itemsEntries[i]) << ":" << uint32(part.itemsCount[i]) << ":" << part.itemsGuid[i];
+            }
         logStmt.addString(items.str());
     }
     logStmt.Execute();
