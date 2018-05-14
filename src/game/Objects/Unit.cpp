@@ -11418,10 +11418,39 @@ protected:
     Unit* _to;
 };
 
+class ThreatRemovalDo
+{
+public:
+    ThreatRemovalDo(Unit* from, Unit* caster) : _from(from), _caster(caster) {}
+    void operator()(Unit* unit)
+    {
+        if (unit == _from || unit == _caster)
+            return;
+        if (!unit->IsValidAttackTarget(_caster))
+            return;
+
+        if (unit->getThreatManager().getThreat(_from) > 0.1f)
+        {
+            unit->getThreatManager().modifyThreatPercent(_from, -100);
+            unit->AddThreat(_caster, 1.0f);
+        }
+    }
+protected:
+    Unit * _from;
+    Unit* _caster;
+};
+
 void Unit::TransferAttackersThreatTo(Unit* unit)
 {
     ThreatTransferDo u_do(this, unit);
     MaNGOS::CreatureWorker<ThreatTransferDo> worker(this, u_do);
+    Cell::VisitGridObjects(this, worker, 50.0f);
+}
+
+void Unit::RemoveAttackersThreat(Unit* unit)
+{
+    ThreatRemovalDo u_do(this, unit);
+    MaNGOS::CreatureWorker<ThreatRemovalDo> worker(this, u_do);
     Cell::VisitGridObjects(this, worker, 50.0f);
 }
 
