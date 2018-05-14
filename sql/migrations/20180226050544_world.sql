@@ -279,7 +279,7 @@ UPDATE `gameobject_loot_template` SET `ChanceOrQuestChance`=0, `groupid`=1 WHERE
 -- Long Forgotten Memories
 -- https://github.com/LightsHope/issues/issues/34
 UPDATE `quest_template` SET `Method`=2, `SpecialFlags`=2, `StartScript`=8305 WHERE `entry`=8305;
-REPLACE INTO `quest_start_scripts` VALUES (8305, 0, 7, 8305, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Long Forgotten Memories: Complete Quest');
+REPLACE INTO `quest_start_scripts` VALUES (8305, 0, 7, 8305, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Long Forgotten Memories: Complete Quest');
 
 -- Added Medium Shot Pouch to vendors
 -- https://github.com/LightsHope/issues/issues/33
