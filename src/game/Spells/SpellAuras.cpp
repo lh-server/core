@@ -3181,6 +3181,7 @@ void Aura::HandleModCharm(bool apply, bool Real)
         // Clear threat list for targets engaged while charmed
         target->DeleteThreatList();
         target->getHostileRefManager().deleteReferences();
+        target->AttackStop();
 
         // Re-add the target to the caster's hated list to prevent combat dropping.
         // Combat reset timer kicks in once the hated list is empty. If the caster is
