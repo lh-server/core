@@ -106,7 +106,7 @@ Map::Map(uint32 id, time_t expiry, uint32 InstanceId)
       _lastPlayersUpdate(WorldTimer::getMSTime()), _lastMapUpdate(WorldTimer::getMSTime()),
       _lastCellsUpdate(WorldTimer::getMSTime()), _inactivePlayersSkippedUpdates(0),
       _objUpdatesThreads(0), _unitRelocationThreads(0), _lastPlayerLeftTime(0),
-      m_lastMvtSpellsUpdate(0), _bonesCleanupTimer(0)
+      m_lastMvtSpellsUpdate(0), _bonesCleanupTimer(0), m_uiScriptedEventsTimer(1000)
 {
     m_CreatureGuids.Set(sObjectMgr.GetFirstTemporaryCreatureLowGuid());
     m_GameObjectGuids.Set(sObjectMgr.GetFirstTemporaryGameObjectLowGuid());
@@ -945,6 +945,14 @@ void Map::Update(uint32 t_diff)
     }
 
     ///- Process necessary scripts
+    if (m_uiScriptedEventsTimer <= t_diff)
+    {
+        UpdateScriptedEvents(t_diff);
+        m_uiScriptedEventsTimer = 1000;
+    }
+    else
+        m_uiScriptedEventsTimer -= t_diff;
+
     ScriptsProcess();
 
     if (i_data)
@@ -992,6 +1000,106 @@ void Map::Update(uint32 t_diff)
         }
     }
     m_updateFinished = true;
+}
+
+void Map::UpdateScriptedEvents(uint32 uiDiff)
+{
+    for (auto& itr = m_mScriptedEvents.begin(); itr != m_mScriptedEvents.end(); itr++)
+    {
+        if (itr->second.UpdateEvent(uiDiff))
+        {
+            itr->second.EndEvent(false);
+            itr = m_mScriptedEvents.erase(itr);
+            continue;
+        }
+    }
+}
+
+ScriptEvent* Map::StartScriptedEvent(uint32 id, WorldObject* source, WorldObject* target, uint32 timelimit, uint32 failureCondition, uint32 failureScript, uint32 successCondition, uint32 successScript)
+{
+    if (m_mScriptedEvents.find(id) != m_mScriptedEvents.end())
+        return nullptr;
+
+    m_mScriptedEvents.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple(source, target, this, timelimit, failureCondition, failureScript, successCondition, successScript));
+    
+    return &m_mScriptedEvents[id];
+}
+
+bool ScriptEvent::UpdateEvent(uint32 uiDiff)
+{
+    if (uiTimeLeft <= uiDiff)
+    {
+        EndEvent(false);
+        return true;
+    }
+    else
+        uiTimeLeft -= uiDiff;
+
+    if (uiFailureCondition && sObjectMgr.IsConditionSatisfied(uiFailureCondition, pTarget, pMap, pSource, CONDITION_FROM_MAP_EVENT))
+    {
+        EndEvent(false);
+        return true;
+    }
+    else if (uiSuccessCondition && sObjectMgr.IsConditionSatisfied(uiSuccessCondition, pTarget, pMap, pSource, CONDITION_FROM_MAP_EVENT))
+    {
+        EndEvent(true);
+        return true;
+    }
+
+    for (const auto& target : vTargets)
+    {
+        if (target.uiFailureCondition && sObjectMgr.IsConditionSatisfied(target.uiFailureCondition, pTarget, pMap, target.pObject, CONDITION_FROM_MAP_EVENT))
+        {
+            EndEvent(false);
+            return true;
+        }
+        else if (target.uiSuccessCondition && sObjectMgr.IsConditionSatisfied(target.uiSuccessCondition, pTarget, pMap, target.pObject, CONDITION_FROM_MAP_EVENT))
+        {
+            EndEvent(true);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void ScriptEvent::EndEvent(bool bSuccess)
+{
+    if (bSuccess && uiSuccessScript)
+        pMap->ScriptsStart(sMapEventScripts, uiSuccessScript, pSource, pTarget);
+    else if (!bSuccess && uiFailureScript)
+        pMap->ScriptsStart(sMapEventScripts, uiFailureScript, pSource, pTarget);
+
+    for (const auto& target : vTargets)
+    {
+        if (bSuccess && target.uiSuccessScript)
+            pMap->ScriptsStart(sMapEventScripts, target.uiSuccessScript, pSource, pTarget);
+        else if (!bSuccess && target.uiFailureScript)
+            pMap->ScriptsStart(sMapEventScripts, target.uiFailureScript, pSource, pTarget);
+    }
+}
+
+void ScriptEvent::SendEventToMainTargets(uint32 uiData)
+{
+    if (Creature* pCreatureSource = ToCreature(pSource))
+        if (pCreatureSource->AI())
+            pCreatureSource->AI()->MapScriptEventHappened(this, uiData);
+
+    if (Creature* pCreatureTarget = ToCreature(pTarget))
+        if (pCreatureTarget->AI())
+            pCreatureTarget->AI()->MapScriptEventHappened(this, uiData);
+}
+
+void ScriptEvent::SendEventToAllTargets(uint32 uiData)
+{
+    SendEventToMainTargets(uiData);
+
+    for (const auto& target : vTargets)
+    {
+        if (Creature* pCreature = ToCreature(target.pObject))
+            if (pCreature->AI())
+                pCreature->AI()->MapScriptEventHappened(this, uiData);
+    }
 }
 
 void Map::Remove(Player *player, bool remove)

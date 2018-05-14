@@ -194,6 +194,47 @@ typedef ACE_Thread_Mutex MapMutexType; // Use ACE_Null_Mutex to disable locks
 
 typedef bool(Map::*ScriptCommandFunction) (const ScriptInfo& script, WorldObject* source, WorldObject* target);
 
+struct ScriptEventTarget
+{
+    WorldObject* pObject;
+    uint32 uiFailureCondition;
+    uint32 uiFailureScript;
+    uint32 uiSuccessCondition;
+    uint32 uiSuccessScript;
+};
+
+struct ScriptEvent
+{
+    ScriptEvent(WorldObject* source, WorldObject* target, Map* map, uint32 timelimit, uint32 failureCondition, uint32 failureScript, uint32 successCondition, uint32 successScript) :
+        pSource(source), pTarget(target), pMap(map), uiTimeLeft(timelimit), uiFailureCondition(failureCondition), uiFailureScript(failureScript), uiSuccessCondition(successCondition), uiSuccessScript(successScript) {}
+    
+    WorldObject* pSource;
+    WorldObject* pTarget;
+    Map* pMap;
+
+    uint32 uiTimeLeft;
+
+    uint32 uiFailureCondition;
+    uint32 uiFailureScript;
+    uint32 uiSuccessCondition;
+    uint32 uiSuccessScript;
+
+    std::map<uint32, uint32> mData;
+    std::vector<ScriptEventTarget> vTargets;
+
+    // Returns true when event has expired.
+    bool UpdateEvent(uint32 uiDiff);
+
+    void EndEvent(bool bSuccess);
+
+    void SendEventToMainTargets(uint32 uiData);
+
+    void SendEventToAllTargets(uint32 uiData);
+    
+    ScriptEvent() {}
+    ScriptEvent(const ScriptEvent&) = delete;
+};
+
 class MANGOS_DLL_SPEC Map : public GridRefManager<NGridType>, public MaNGOS::ObjectLevelLockable<Map, ACE_Thread_Mutex>
 {
     friend class MapReference;
@@ -328,6 +369,16 @@ class MANGOS_DLL_SPEC Map : public GridRefManager<NGridType>, public MaNGOS::Obj
 
         typedef MapRefManager PlayerList;
         PlayerList const& GetPlayers() const { return m_mapRefManager; }
+
+        ScriptEvent* GetScriptedMapEvent(uint32 id)
+        {
+            auto itr = m_mScriptedEvents.find(id);
+            if (itr != m_mScriptedEvents.end())
+                return &itr->second;
+            return nullptr;
+        }
+
+        ScriptEvent* StartScriptedEvent(uint32 id, WorldObject* source, WorldObject* target, uint32 timelimit, uint32 failureCondition, uint32 failureScript, uint32 successCondition, uint32 successScript);
 
         // Adds all commands that are part of the provided script id to the queue.
         void ScriptsStart(std::map<uint32, std::multimap<uint32, ScriptInfo> > const& scripts, uint32 id, WorldObject* source, WorldObject* target);
@@ -663,6 +714,11 @@ class MANGOS_DLL_SPEC Map : public GridRefManager<NGridType>, public MaNGOS::Obj
 
         // WeatherSystem
         WeatherSystem* m_weatherSystem;
+
+        // Scripted Map Events
+        std::map<uint32, ScriptEvent> m_mScriptedEvents;
+        void UpdateScriptedEvents(uint32 uiDiff);
+        uint32 m_uiScriptedEventsTimer;
 
         // Functions to handle all db script commands.
         bool ScriptCommand_Talk(const ScriptInfo& script, WorldObject* source, WorldObject* target);

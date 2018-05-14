@@ -43,6 +43,7 @@ ScriptMapMap sEventScripts;
 ScriptMapMap sGossipScripts;
 ScriptMapMap sCreatureMovementScripts;
 ScriptMapMap sCreatureAIScripts;
+ScriptMapMap sMapEventScripts;
 
 INSTANTIATE_SINGLETON_1(ScriptMgr);
 
