@@ -11427,8 +11427,7 @@ void Unit::TransferAttackersThreatTo(Unit* unit)
 
 void Unit::RemoveAttackersThreat(Unit* owner)
 {
-    Unit::AttackerSet attackers = getAttackers();
-    for (Unit::AttackerSet::iterator itr = attackers.begin(); itr != attackers.end(); ++itr)
+    for (AttackerSet::iterator itr = m_attackers.begin(); itr != m_attackers.end(); ++itr)
     {
         (*itr)->getThreatManager().modifyThreatPercent(this, -100);
         if (owner)
