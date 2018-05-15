@@ -205,33 +205,59 @@ struct ScriptEventTarget
 
 struct ScriptEvent
 {
-    ScriptEvent(WorldObject* source, WorldObject* target, Map* map, uint32 timelimit, uint32 failureCondition, uint32 failureScript, uint32 successCondition, uint32 successScript) :
-        pSource(source), pTarget(target), pMap(map), uiTimeLeft(timelimit), uiFailureCondition(failureCondition), uiFailureScript(failureScript), uiSuccessCondition(successCondition), uiSuccessScript(successScript) {}
+    ScriptEvent(uint32 eventId, WorldObject* source, WorldObject* target, Map* map, uint32 timelimit, uint32 failureCondition, uint32 failureScript, uint32 successCondition, uint32 successScript) :
+        m_uiEventId(eventId), m_pSource(source), m_pTarget(target), m_pMap(map), m_uiTimeLeft(timelimit), m_uiFailureCondition(failureCondition), m_uiFailureScript(failureScript), m_uiSuccessCondition(successCondition), m_uiSuccessScript(successScript) {}
     
-    WorldObject* pSource;
-    WorldObject* pTarget;
-    Map* pMap;
+    WorldObject* m_pSource;
+    WorldObject* m_pTarget;
+    Map* const m_pMap;
 
-    uint32 uiTimeLeft;
+    const uint32 m_uiEventId;
+    uint32 m_uiTimeLeft;
 
-    uint32 uiFailureCondition;
-    uint32 uiFailureScript;
-    uint32 uiSuccessCondition;
-    uint32 uiSuccessScript;
+    uint32 m_uiFailureCondition;
+    uint32 m_uiFailureScript;
+    uint32 m_uiSuccessCondition;
+    uint32 m_uiSuccessScript;
 
-    std::map<uint32, uint32> mData;
-    std::vector<ScriptEventTarget> vTargets;
+    std::map<uint32, uint32> m_mData;
+    std::vector<ScriptEventTarget> m_vTargets;
 
     // Returns true when event has expired.
-    bool UpdateEvent(uint32 uiDiff);
+    bool UpdateEvent();
 
     void EndEvent(bool bSuccess);
 
     void SendEventToMainTargets(uint32 uiData);
 
     void SendEventToAllTargets(uint32 uiData);
-    
-    ScriptEvent() {}
+
+    uint32 GetData(uint32 uiIndex) const
+    {
+        auto itr = m_mData.find(uiIndex);
+        if (itr != m_mData.end())
+            return itr->second;
+        return 0;
+    }
+
+    void SetData(uint32 uiIndex, uint32 uiValue)
+    {
+        m_mData[uiIndex] = uiValue;
+    }
+
+    void IncrementData(uint32 uiIndex, uint32 uiValue)
+    {
+        m_mData[uiIndex] += uiValue;
+    }
+
+    void DecrementData(uint32 uiIndex, uint32 uiValue)
+    {
+        if (m_mData[uiIndex] < uiValue)
+            m_mData[uiIndex] = 0;
+        else
+            m_mData[uiIndex] -= uiValue;
+    }
+
     ScriptEvent(const ScriptEvent&) = delete;
 };
 
@@ -371,6 +397,14 @@ class MANGOS_DLL_SPEC Map : public GridRefManager<NGridType>, public MaNGOS::Obj
         PlayerList const& GetPlayers() const { return m_mapRefManager; }
 
         ScriptEvent* GetScriptedMapEvent(uint32 id)
+        {
+            auto itr = m_mScriptedEvents.find(id);
+            if (itr != m_mScriptedEvents.end())
+                return &itr->second;
+            return nullptr;
+        }
+
+        const ScriptEvent* GetScriptedMapEvent(uint32 id) const
         {
             auto itr = m_mScriptedEvents.find(id);
             if (itr != m_mScriptedEvents.end())
@@ -717,7 +751,7 @@ class MANGOS_DLL_SPEC Map : public GridRefManager<NGridType>, public MaNGOS::Obj
 
         // Scripted Map Events
         std::map<uint32, ScriptEvent> m_mScriptedEvents;
-        void UpdateScriptedEvents(uint32 uiDiff);
+        void UpdateScriptedEvents();
         uint32 m_uiScriptedEventsTimer;
 
         // Functions to handle all db script commands.

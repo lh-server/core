@@ -357,6 +357,8 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pAction
             pHolder.UpdateRepeatTimer(m_creature, event.move_inform.repeatMin, event.move_inform.repeatMax);
             break;
         }
+        case EVENT_T_MAP_SCRIPT_EVENT:
+            break;
         default:
             sLog.outErrorDb("CreatureEventAI: Creature %u using Event %u has invalid Event Type(%u), missing from ProcessEvent() Switch.", m_creature->GetEntry(), pHolder.Event.event_id, pHolder.Event.event_type);
             break;
@@ -842,5 +844,18 @@ void CreatureEventAI::DamageTaken(Unit* /*done_by*/, uint32& damage)
             damage = 0;
         else
             damage = m_creature->GetHealth() - m_InvinceabilityHpLevel;
+    }
+}
+
+void CreatureEventAI::MapScriptEventHappened(ScriptEvent* pEvent, uint32 uiData)
+{
+    if (m_bEmptyList)
+        return;
+
+    for (CreatureEventAIList::iterator i = m_CreatureEventAIList.begin(); i != m_CreatureEventAIList.end(); ++i)
+    {
+        if ((*i).Event.event_type == EVENT_T_MAP_SCRIPT_EVENT)
+            if (((*i).Event.map_event.eventId == pEvent->m_uiEventId) && ((*i).Event.map_event.data == uiData))
+                ProcessEvent(*i);
     }
 }

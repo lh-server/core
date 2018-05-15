@@ -564,7 +564,7 @@ struct ScriptInfo
 
         struct                                              // SCRIPT_COMMAND_STAND_STATE (28)
         {
-            uint32 stand_state;                             // datalong
+            uint32 standState;                             // datalong
         } standState;
 
         struct                                              // SCRIPT_COMMAND_MODIFY_THREAT (29)
@@ -708,7 +708,7 @@ struct ScriptInfo
 
         struct                                              // SCRIPT_COMMAND_CREATURE_SPELLS (55)
         {
-            uint32 spells_template[4];                      // datalong to datalong4
+            uint32 spellTemplate[4];                        // datalong to datalong4
             uint32 unused;                                  // data_flags
             int32 chance[4];                                // dataint to dataint4
         } creatureSpells;

@@ -908,7 +908,7 @@ bool Map::ScriptCommand_SetStandState(const ScriptInfo& script, WorldObject* sou
         return ShouldAbortScript(script);
     }
 
-    pSource->SetStandState(script.standState.stand_state);
+    pSource->SetStandState(script.standState.standState);
 
     return false;
 }
@@ -1501,7 +1501,7 @@ bool Map::ScriptCommand_CreatureSpells(const ScriptInfo& script, WorldObject* so
 
     for (int i = 0; i < 4; i++)
     {
-        const uint32 currentId = script.creatureSpells.spells_template[i];
+        const uint32 currentId = script.creatureSpells.spellTemplate[i];
         const uint32 currentChance = script.creatureSpells.chance[i];
 
         if (!currentChance)

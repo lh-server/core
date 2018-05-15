@@ -947,8 +947,8 @@ void Map::Update(uint32 t_diff)
     ///- Process necessary scripts
     if (m_uiScriptedEventsTimer <= t_diff)
     {
-        UpdateScriptedEvents(t_diff);
-        m_uiScriptedEventsTimer = 1000;
+        UpdateScriptedEvents();
+        m_uiScriptedEventsTimer = 1000u;
     }
     else
         m_uiScriptedEventsTimer -= t_diff;
@@ -1002,11 +1002,11 @@ void Map::Update(uint32 t_diff)
     m_updateFinished = true;
 }
 
-void Map::UpdateScriptedEvents(uint32 uiDiff)
+void Map::UpdateScriptedEvents()
 {
     for (auto& itr = m_mScriptedEvents.begin(); itr != m_mScriptedEvents.end(); itr++)
     {
-        if (itr->second.UpdateEvent(uiDiff))
+        if (itr->second.UpdateEvent())
         {
             itr->second.EndEvent(false);
             itr = m_mScriptedEvents.erase(itr);
@@ -1020,40 +1020,40 @@ ScriptEvent* Map::StartScriptedEvent(uint32 id, WorldObject* source, WorldObject
     if (m_mScriptedEvents.find(id) != m_mScriptedEvents.end())
         return nullptr;
 
-    m_mScriptedEvents.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple(source, target, this, timelimit, failureCondition, failureScript, successCondition, successScript));
-    
-    return &m_mScriptedEvents[id];
+    auto itr = m_mScriptedEvents.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple(id, source, target, this, timelimit, failureCondition, failureScript, successCondition, successScript));
+
+    return &itr.first->second;
 }
 
-bool ScriptEvent::UpdateEvent(uint32 uiDiff)
+bool ScriptEvent::UpdateEvent()
 {
-    if (uiTimeLeft <= uiDiff)
+    if (m_uiTimeLeft <= 1000u)
     {
         EndEvent(false);
         return true;
     }
     else
-        uiTimeLeft -= uiDiff;
+        m_uiTimeLeft -= 1000u;
 
-    if (uiFailureCondition && sObjectMgr.IsConditionSatisfied(uiFailureCondition, pTarget, pMap, pSource, CONDITION_FROM_MAP_EVENT))
+    if (m_uiFailureCondition && sObjectMgr.IsConditionSatisfied(m_uiFailureCondition, m_pTarget, m_pMap, m_pSource, CONDITION_FROM_MAP_EVENT))
     {
         EndEvent(false);
         return true;
     }
-    else if (uiSuccessCondition && sObjectMgr.IsConditionSatisfied(uiSuccessCondition, pTarget, pMap, pSource, CONDITION_FROM_MAP_EVENT))
+    else if (m_uiSuccessCondition && sObjectMgr.IsConditionSatisfied(m_uiSuccessCondition, m_pTarget, m_pMap, m_pSource, CONDITION_FROM_MAP_EVENT))
     {
         EndEvent(true);
         return true;
     }
 
-    for (const auto& target : vTargets)
+    for (const auto& target : m_vTargets)
     {
-        if (target.uiFailureCondition && sObjectMgr.IsConditionSatisfied(target.uiFailureCondition, pTarget, pMap, target.pObject, CONDITION_FROM_MAP_EVENT))
+        if (target.uiFailureCondition && sObjectMgr.IsConditionSatisfied(target.uiFailureCondition, m_pTarget, m_pMap, target.pObject, CONDITION_FROM_MAP_EVENT))
         {
             EndEvent(false);
             return true;
         }
-        else if (target.uiSuccessCondition && sObjectMgr.IsConditionSatisfied(target.uiSuccessCondition, pTarget, pMap, target.pObject, CONDITION_FROM_MAP_EVENT))
+        else if (target.uiSuccessCondition && sObjectMgr.IsConditionSatisfied(target.uiSuccessCondition, m_pTarget, m_pMap, target.pObject, CONDITION_FROM_MAP_EVENT))
         {
             EndEvent(true);
             return true;
@@ -1065,27 +1065,27 @@ bool ScriptEvent::UpdateEvent(uint32 uiDiff)
 
 void ScriptEvent::EndEvent(bool bSuccess)
 {
-    if (bSuccess && uiSuccessScript)
-        pMap->ScriptsStart(sMapEventScripts, uiSuccessScript, pSource, pTarget);
-    else if (!bSuccess && uiFailureScript)
-        pMap->ScriptsStart(sMapEventScripts, uiFailureScript, pSource, pTarget);
+    if (bSuccess && m_uiSuccessScript)
+        m_pMap->ScriptsStart(sMapEventScripts, m_uiSuccessScript, m_pSource, m_pTarget);
+    else if (!bSuccess && m_uiFailureScript)
+        m_pMap->ScriptsStart(sMapEventScripts, m_uiFailureScript, m_pSource, m_pTarget);
 
-    for (const auto& target : vTargets)
+    for (const auto& target : m_vTargets)
     {
         if (bSuccess && target.uiSuccessScript)
-            pMap->ScriptsStart(sMapEventScripts, target.uiSuccessScript, pSource, pTarget);
+            m_pMap->ScriptsStart(sMapEventScripts, target.uiSuccessScript, m_pSource, m_pTarget);
         else if (!bSuccess && target.uiFailureScript)
-            pMap->ScriptsStart(sMapEventScripts, target.uiFailureScript, pSource, pTarget);
+            m_pMap->ScriptsStart(sMapEventScripts, target.uiFailureScript, m_pSource, m_pTarget);
     }
 }
 
 void ScriptEvent::SendEventToMainTargets(uint32 uiData)
 {
-    if (Creature* pCreatureSource = ToCreature(pSource))
+    if (Creature* pCreatureSource = ToCreature(m_pSource))
         if (pCreatureSource->AI())
             pCreatureSource->AI()->MapScriptEventHappened(this, uiData);
 
-    if (Creature* pCreatureTarget = ToCreature(pTarget))
+    if (Creature* pCreatureTarget = ToCreature(m_pTarget))
         if (pCreatureTarget->AI())
             pCreatureTarget->AI()->MapScriptEventHappened(this, uiData);
 }
@@ -1094,7 +1094,7 @@ void ScriptEvent::SendEventToAllTargets(uint32 uiData)
 {
     SendEventToMainTargets(uiData);
 
-    for (const auto& target : vTargets)
+    for (const auto& target : m_vTargets)
     {
         if (Creature* pCreature = ToCreature(target.pObject))
             if (pCreature->AI())
