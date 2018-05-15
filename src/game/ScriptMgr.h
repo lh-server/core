@@ -250,7 +250,38 @@ enum eScriptCommand
                                                             // datalong4 = (bool) repeat
                                                             // dataint = path_id
                                                             // dataint2 = overwrite_entry
-
+    SCRIPT_COMMAND_START_MAP_EVENT          = 61,           // source = Map
+                                                            // datalong = event_id
+                                                            // datalong2 = time_limit
+                                                            // dataint = success_condition
+                                                            // dataint2 = success_script
+                                                            // dataint3 = failure_condition
+                                                            // dataint4 = failure_script
+    SCRIPT_COMMAND_END_MAP_EVENT            = 62,           // source = Map
+                                                            // datalong = event_id
+                                                            // datalong2 = (bool) success
+    SCRIPT_COMMAND_ADD_MAP_EVENT_TARGET     = 63,           // source = Map
+                                                            // target = WorldObject
+                                                            // datalong = event_id
+                                                            // dataint = success_condition
+                                                            // dataint2 = success_script
+                                                            // dataint3 = failure_condition
+                                                            // dataint4 = failure_script
+    SCRIPT_COMMAND_REMOVE_MAP_EVENT_TARGET  = 64,           // source = Map
+                                                            // target = WorldObject
+                                                            // datalong = event_id
+                                                            // datalong2 = condition_id
+                                                            // datalong3 = eRemoveMapEventTargetOptions
+    SCRIPT_COMMAND_SET_MAP_EVENT_DATA       = 65,           // source = Map
+                                                            // datalong = event_id
+                                                            // datalong2 = index
+                                                            // datalong3 = data
+                                                            // datalong4 = eSetMapScriptDataOptions
+    SCRIPT_COMMAND_SEND_MAP_EVENT           = 66,           // source = Map
+                                                            // datalong = event_id
+                                                            // datalong2 = data
+                                                            // datalong3 = eSendMapEventOptions
+    
     SCRIPT_COMMAND_MAX,
 
     SCRIPT_COMMAND_DISABLED                 = 9999          // Script action was disabled during loading.
@@ -357,11 +388,42 @@ enum eSetInstData64Options
 // Possible datalong values for SCRIPT_COMMAND_SET_PHASE
 enum eSetPhaseOptions
 {
-    SO_SETPHASE_RAW = 0,
+    SO_SETPHASE_RAW       = 0,
     SO_SETPHASE_INCREMENT = 1,
     SO_SETPHASE_DECREMENT = 2,
 
     SO_SETPHASE_MAX
+};
+
+// Possible datalong4 values for SCRIPT_COMMAND_SET_MAP_EVENT_DATA
+enum eSetMapScriptDataOptions
+{
+    SO_MAPEVENTDATA_RAW       = 0,
+    SO_MAPEVENTDATA_INCREMENT = 1,
+    SO_MAPEVENTDATA_DECREMENT = 2,
+
+    SO_MAPEVENTDATA_MAX
+};
+
+// Possible datalong3 values for SCRIPT_COMMAND_SEND_MAP_EVENT
+enum eSendMapEventOptions
+{
+    SO_SENDMAPEVENT_MAIN_TARGETS_ONLY  = 0,
+    SO_SENDMAPEVENT_EXTRA_TARGETS_ONLY = 1,
+    SO_SENDMAPEVENT_ALL_TARGETS        = 2,
+
+    SO_SENDMAPEVENT_MAX
+};
+
+// Possible datalong3 values for SCRIPT_COMMAND_REMOVE_MAP_EVENT_TARGET
+enum eRemoveMapEventTargetOptions
+{
+    SO_REMOVETARGET_SELF              = 0,
+    SO_REMOVETARGET_ONE_FIT_CONDITION = 1,
+    SO_REMOVETARGET_ALL_FIT_CONDITION = 2,
+    SO_REMOVETARGET_ALL_TARGETS       = 3,
+
+    SO_REMOVETARGET_MAX
 };
 
 enum eDataFlags
