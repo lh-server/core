@@ -12070,7 +12070,7 @@ void Player::OnGossipSelect(WorldObject* pSource, uint32 gossipListId)
             break;
         case GOSSIP_OPTION_VENDOR:
         case GOSSIP_OPTION_ARMORER:
-            GetSession()->SendListInventory(guid);
+            GetSession()->SendListInventory(guid, pMenuData.m_gAction_menu ? pMenuData.m_gAction_menu : VENDOR_MENU_ALL);
             break;
         case GOSSIP_OPTION_STABLEPET:
             GetSession()->SendStablePet(guid);
@@ -17499,6 +17499,7 @@ bool Player::BuyItemFromVendor(ObjectGuid vendorGuid, uint32 item, uint8 count, 
 
     VendorItemData const* vItems = pCreature->GetVendorItems();
     VendorItemData const* tItems = pCreature->GetVendorTemplateItems();
+    
     if ((!vItems || vItems->Empty()) && (!tItems || tItems->Empty()))
     {
         SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, item, 0);
@@ -17509,8 +17510,12 @@ bool Player::BuyItemFromVendor(ObjectGuid vendorGuid, uint32 item, uint8 count, 
     uint32 tCount = tItems ? tItems->GetItemCount() : 0;
 
     size_t vendorslot = vItems ? vItems->FindItemSlot(item) : vCount;
-    if (vendorslot > vCount)
-        vendorslot = vCount + (tItems ? tItems->FindItemSlot(item) : tCount);
+
+    // If item was not found in npc_vendor, check npc_vendor_template.
+    if (vendorslot >= vCount)
+    {
+        vendorslot = tItems ? tItems->FindItemSlot(item) + vCount : tCount + vCount;
+    }
 
     if (vendorslot >= vCount + tCount)
     {

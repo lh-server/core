@@ -1485,7 +1485,7 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
                 }
                 case 27662: // Silver Shafted Arrow
                 {
-                    if (unitTarget && m_caster && unitTarget->IsPlayer()) 
+                    if (unitTarget && m_caster && unitTarget->IsPlayer())
                     {
                         if (!unitTarget->GetMiniPet())
                             unitTarget->CastSpell(unitTarget, 27570, true);

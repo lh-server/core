@@ -163,7 +163,6 @@ bool ConditionEntry::Meets(WorldObject const* target, Map const* map, WorldObjec
         case CONDITION_RESERVED_1:
         case CONDITION_RESERVED_2:
         case CONDITION_RESERVED_3:
-        case CONDITION_RESERVED_4:
             return false;
         case CONDITION_QUEST_NONE:
         {
@@ -276,7 +275,9 @@ bool ConditionEntry::Meets(WorldObject const* target, Map const* map, WorldObjec
             }
             return false;
         }
-        case CONDITION_GENDER:
+        case CONDITION_SOURCE_GENDER:
+            return source->getGender() == m_value1;
+        case CONDITION_TARGET_GENDER:
             return static_cast<Player const*>(target)->getGender() == m_value1;
         case CONDITION_DEAD_OR_AWAY:
         {
@@ -402,7 +403,7 @@ bool ConditionEntry::CheckParamRequirements(WorldObject const* target, Map const
         case CONDITION_LEARNABLE_ABILITY:
         case CONDITION_SKILL_BELOW:
         case CONDITION_REPUTATION_RANK_MAX:
-        case CONDITION_GENDER:
+        case CONDITION_TARGET_GENDER:
         {
             if (!target || (target->GetTypeId() != TYPEID_PLAYER))
                 return false;
@@ -427,6 +428,7 @@ bool ConditionEntry::CheckParamRequirements(WorldObject const* target, Map const
             break;
         case CONDITION_SOURCE_AURA:
         case CONDITION_LAST_WAYPOINT:
+        case CONDITION_SOURCE_GENDER:
             if (!source)
             {
                 sLog.outErrorDb("CONDITION %u type %u used with bad parameters, called from %s, used with target: %s, map %i, source %s",
@@ -760,7 +762,6 @@ bool ConditionEntry::IsValid()
         case CONDITION_RESERVED_1:
         case CONDITION_RESERVED_2:
         case CONDITION_RESERVED_3:
-        case CONDITION_RESERVED_4:
         {
             sLog.outErrorDb("Condition (%u) reserved for later versions, skipped", m_condition);
             return false;
@@ -808,7 +809,8 @@ bool ConditionEntry::IsValid()
             }
             break;
         }
-        case CONDITION_GENDER:
+        case CONDITION_SOURCE_GENDER:
+        case CONDITION_TARGET_GENDER:
         {
             if (m_value1 >= GENDER_NONE)
             {
@@ -909,6 +911,7 @@ bool ConditionEntry::CanBeUsedWithoutPlayer(uint16 entry)
         case CONDITION_INSTANCE_SCRIPT:
         case CONDITION_SOURCE_AURA:
         case CONDITION_LAST_WAYPOINT:
+        case CONDITION_SOURCE_GENDER:
         case CONDITION_WOW_PATCH:
         case CONDITION_SOURCE_ENTRY:
         case CONDITION_WAR_EFFORT_STAGE:

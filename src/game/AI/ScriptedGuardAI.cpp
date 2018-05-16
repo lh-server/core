@@ -54,9 +54,22 @@ guardAI::guardAI(Creature* pCreature, bool isCapitalGuard) : ScriptedAI(pCreatur
 
 void guardAI::Reset()
 {
+    
     GlobalCooldown = 0;
     BuffTimer = 0;                                          //Rebuff as soon as we can
 }
+
+void guardAI::MoveInLineOfSight(Unit* pWho)
+{
+    // Valentine Event Aura
+    if (CapitalGuard && sGameEventMgr.IsActiveEvent(EVENT_VALENTINES) && m_creature->HasAura(SPELL_AMOROUS))
+    {
+        if (Gender == GENDER_FEMALE && pWho->HasAura(SPELL_COLOGNE) || (Gender != GENDER_FEMALE && pWho->HasAura(SPELL_PERFUME)))
+            m_creature->AddAura(SPELL_LOVE_IN_AIR, ADD_AURA_PERMANENT);
+    }
+    ScriptedAI::MoveInLineOfSight(pWho);
+}
+
 
 void guardAI::Aggro(Unit *who)
 {

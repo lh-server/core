@@ -485,13 +485,14 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
                 }
                 break;
             }
+            case SCRIPT_COMMAND_REMOVE_ITEM:
             case SCRIPT_COMMAND_CREATE_ITEM:
             {
                 if (!ObjectMgr::GetItemPrototype(tmp.createItem.itemEntry))
                 {
                     if (!sObjectMgr.IsExistingItemId(tmp.createItem.itemEntry))
                     {
-                        sLog.outErrorDb("Table `%s` has nonexistent item (entry: %u) in SCRIPT_COMMAND_CREATE_ITEM for script id %u",
+                        sLog.outErrorDb("Table `%s` has nonexistent item (entry: %u) in SCRIPT_COMMAND_*_ITEM for script id %u",
                             tablename, tmp.createItem.itemEntry, tmp.id);
                         continue;
                     }
@@ -500,7 +501,7 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
                 }
                 if (!tmp.createItem.amount)
                 {
-                    sLog.outErrorDb("Table `%s` SCRIPT_COMMAND_CREATE_ITEM but amount is %u for script id %u",
+                    sLog.outErrorDb("Table `%s` SCRIPT_COMMAND_*_ITEM but amount is %u for script id %u",
                                     tablename, tmp.createItem.amount, tmp.id);
                     continue;
                 }

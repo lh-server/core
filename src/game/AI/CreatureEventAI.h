@@ -242,6 +242,7 @@ struct CreatureEventAI_Action
         {
             uint32 value;
             uint32 target;
+            uint32 field;
         } unit_flag;
         // ACTION_T_AUTO_ATTACK                             = 20
         struct

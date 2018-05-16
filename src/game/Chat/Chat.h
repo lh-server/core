@@ -392,6 +392,7 @@ class MANGOS_DLL_SPEC ChatHandler
 
         bool HandleDebugAnimCommand(char* args);
         bool HandleDebugBattlegroundCommand(char* args);
+        bool HandleDebugConditionCommand(char* args);
         bool HandleDebugGetItemStateCommand(char* args);
         bool HandleDebugGetItemValueCommand(char* args);
         bool HandleDebugGetLootRecipientCommand(char* args);

@@ -3475,8 +3475,7 @@ enum
 
     TEXT_ID_VICTORY_A   = 8315,
     TEXT_ID_VICTORY_H   = 8316,
-    TEXT_ID_TIE         = 8318,
-
+    TEXT_ID_TIE         = 8318
 };
 
 const uint32 CityZones[6] =
@@ -3508,7 +3507,7 @@ struct npc_kwee_peddlefeetAI : public ScriptedAI
 
     void Reset() { }
 
-    void SetVariables() 
+    void SetVariables()
     {
         uint32 firstBoss = 0;
         uint32 horde = sObjectMgr.GetSavedVariable(VAR_KWEE_HORDE, 0);
@@ -3576,7 +3575,6 @@ bool GossipHello_npc_kwee_peddlefeet(Player* pPlayer, Creature* pCreature)
             return true;
         }
     }
-    
     return false;
 }
 
