@@ -3610,6 +3610,72 @@ bool QuestRewarded_npc_kwee_peddlefeet(Player* pPlayer, Creature* pCreature, con
     return true;
 }
 
+enum
+{
+    OBJECT_DARK_IRON_MUG = 165578,
+    SPELL_DARK_IRON_MUG = 14813,
+    EMOTE_GUZZLE_ALE = 10167,
+};
+
+struct npc_oozeling_jubjubAI : public ScriptedPetAI
+{
+    npc_oozeling_jubjubAI(Creature* pCreature) : ScriptedPetAI(pCreature)
+    {
+        Reset();
+    }
+
+    uint32 m_uiReturnTimer;
+    void Reset()
+    {
+        m_uiReturnTimer = 0;
+    }
+
+    void SpellHit(Unit* pUnit, const SpellEntry* pSpell)
+    {
+        if (pSpell->Id == SPELL_DARK_IRON_MUG)
+            m_uiReturnTimer = 10000;
+    }
+
+    void MovementInform(uint32 type, uint32 id)
+    {
+        if (type == POINT_MOTION_TYPE && id == 1)
+        {
+            m_creature->MonsterTextEmote(EMOTE_GUZZLE_ALE);
+            m_creature->addUnitState(UNIT_STAT_ROOT);
+            m_uiReturnTimer = 3000;
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (m_uiReturnTimer > 0)
+        {
+            if (m_uiReturnTimer <= uiDiff)
+            {
+                m_uiReturnTimer = 0;
+                m_creature->clearUnitState(UNIT_STAT_ROOT);
+
+                if (GameObject* pMug = m_creature->FindNearestGameObject(OBJECT_DARK_IRON_MUG, 1.0f))
+                {
+                    pMug->SetLootState(GO_JUST_DEACTIVATED);
+                    pMug->AddObjectToRemoveList();
+                }
+            }
+            else
+                m_uiReturnTimer -= uiDiff;
+        }
+        else
+        {
+            ScriptedPetAI::UpdateAI(uiDiff);
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_oozeling_jubjub(Creature* pCreature)
+{
+    return new npc_oozeling_jubjubAI(pCreature);
+}
+
 void AddSC_npcs_special()
 {
     Script *newscript;
@@ -3787,5 +3853,10 @@ void AddSC_npcs_special()
     newscript->GetAI = &GetAI_npc_kwee_peddlefeet;
     newscript->pGossipHello = &GossipHello_npc_kwee_peddlefeet;
     newscript->pQuestRewardedNPC = &QuestRewarded_npc_kwee_peddlefeet;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_oozeling_jubjub";
+    newscript->GetAI = &GetAI_npc_oozeling_jubjub;
     newscript->RegisterSelf();
 }

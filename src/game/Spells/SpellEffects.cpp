@@ -1501,6 +1501,40 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
                     }
                     return;
                 }
+                case 14813: // Dark Iron Drunk Mug
+                {
+                    if (unitTarget->HasAura(14823) || unitTarget->GetEntry() == 14871)
+                        return;
+
+                    if (m_originalCasterGUID && m_originalCasterGUID.IsGameObject())
+                    {
+                        if (GameObject* pMug = unitTarget->GetMap()->GetGameObject(m_originalCasterGUID))
+                        {
+                            float fX, fY, fZ;
+                            pMug->GetContactPoint(unitTarget, fX, fY, fZ);
+                            unitTarget->GetMotionMaster()->MovePoint(1, fX, fY, fZ, MOVE_WALK_MODE);
+                            m_caster->SummonGameObject(165738, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 30000);
+                        }
+                    }
+                    return;
+                }
+                case 23845: // Attract Jubjub
+                {
+                    if (GameObject* pMug = m_caster->FindNearestGameObject(165578, 3.0f))
+                    {
+                        float fX, fY, fZ;
+                        pMug->GetContactPoint(unitTarget, fX, fY, fZ);
+                        unitTarget->GetMotionMaster()->MovePoint(1, fX, fY, fZ, MOVE_WALK_MODE);
+                    }
+                    return;
+                }
+                case 23852: // Jubling Cooldown
+                {
+                    // Trigger 7 day cooldown
+                    SpellEntry const *spellInfo = sSpellMgr.GetSpellEntry(23851);
+                    unitTarget->AddSpellAndCategoryCooldowns(spellInfo, 19462);
+                    return;
+                }
             }
 
             //All IconID Check in there

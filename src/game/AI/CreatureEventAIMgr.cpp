@@ -371,6 +371,14 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                         sLog.outErrorDb("CreatureEventAI:  Creature %u are using repeatable event(%u) with param4 < param3 (RepeatMax < RepeatMin). Event will never repeat.", temp.creature_id, i);
                     break;
                 }
+                case EVENT_T_MOVEMENT_INFORM:
+                {
+                    if (temp.move_inform.motionType > CHARGE_MOTION_TYPE)
+                        sLog.outErrorDb("CreatureEventAI:  Creature %u is using an invalid motion type. Event %u will never trigger! ", temp.creature_id, i);
+                    if (temp.move_inform.repeatMax < temp.move_inform.repeatMin)
+                        sLog.outErrorDb("CreatureEventAI:  Creature %u are using repeatable event(%u) with param4 < param3 (RepeatMax < RepeatMin). Event will never repeat.", temp.creature_id, i);
+                    break;
+                }
                 default:
                     sLog.outErrorDb("CreatureEventAI: Creature %u using not checked at load event (%u) in event %u. Need check code update?", temp.creature_id, temp.event_id, i);
                     break;
