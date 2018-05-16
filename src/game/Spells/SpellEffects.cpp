@@ -1492,15 +1492,6 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
                     }
                     return;
                 }
-                case 17190: // Ras Frostwhisper Visual Dummy
-                {
-                    if (unitTarget)
-                    {
-                        unitTarget->CastSpell(unitTarget, 17186, true);    // Human form
-                        unitTarget->SetHealth(unitTarget->GetMaxHealth()); // Back to full health
-                    }
-                    return;
-                }
                 case 14813: // Dark Iron Drunk Mug
                 {
                     if (unitTarget->HasAura(14823) || unitTarget->GetEntry() == 14871)
@@ -1533,6 +1524,26 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
                     // Trigger 7 day cooldown
                     SpellEntry const *spellInfo = sSpellMgr.GetSpellEntry(23851);
                     unitTarget->AddSpellAndCategoryCooldowns(spellInfo, 19462);
+                    return;
+                }
+                case 17190: // Ras Frostwhisper Visual Dummy
+                {
+                    if (unitTarget)
+                    {
+                        unitTarget->CastSpell(unitTarget, 17186, true);    // Human form
+                        unitTarget->SetHealth(unitTarget->GetMaxHealth()); // Back to full health
+                    }
+                    return;
+                }
+                case 16032: // Merging Oozes
+                {
+                    if (unitTarget && m_caster && unitTarget->IsCreature() && m_caster->IsCreature())
+                    {
+                        // Summon Gargantuan Ooze
+                        m_caster->SummonCreature(9621, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 420000);
+                        ((Creature*)m_caster)->DespawnOrUnsummon();
+                        ((Creature*)unitTarget)->DespawnOrUnsummon();
+                    }
                     return;
                 }
             }
