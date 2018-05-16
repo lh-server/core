@@ -115,7 +115,8 @@ CreatureEventAI::CreatureEventAI(Creature *c) : CreatureAI(c)
     if (!m_bEmptyList)
     {
         for (CreatureEventAIList::iterator i = m_CreatureEventAIList.begin(); i != m_CreatureEventAIList.end(); ++i)
-            ProcessEvent(*i);
+            if (i->Event.event_type == EVENT_T_SPAWNED)
+                ProcessEvent(*i);
     }
     Reset();
 }
@@ -437,7 +438,8 @@ void CreatureEventAI::JustRespawned()
 
     //Handle Spawned Events
     for (CreatureEventAIList::iterator i = m_CreatureEventAIList.begin(); i != m_CreatureEventAIList.end(); ++i)
-        ProcessEvent(*i);
+        if (i->Event.event_type == EVENT_T_SPAWNED)
+            ProcessEvent(*i);
 }
 
 void CreatureEventAI::Reset()
