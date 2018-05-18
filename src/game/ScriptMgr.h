@@ -395,6 +395,17 @@ enum eSetPhaseOptions
     SO_SETPHASE_MAX
 };
 
+// Possible datalong3 values for SCRIPT_COMMAND_REMOVE_MAP_EVENT_TARGET
+enum eRemoveMapEventTargetOptions
+{
+    SO_REMOVETARGET_SELF = 0,
+    SO_REMOVETARGET_ONE_FIT_CONDITION = 1,
+    SO_REMOVETARGET_ALL_FIT_CONDITION = 2,
+    SO_REMOVETARGET_ALL_TARGETS = 3,
+
+    SO_REMOVETARGET_MAX
+};
+
 // Possible datalong4 values for SCRIPT_COMMAND_SET_MAP_EVENT_DATA
 enum eSetMapScriptDataOptions
 {
@@ -413,17 +424,6 @@ enum eSendMapEventOptions
     SO_SENDMAPEVENT_ALL_TARGETS        = 2,
 
     SO_SENDMAPEVENT_MAX
-};
-
-// Possible datalong3 values for SCRIPT_COMMAND_REMOVE_MAP_EVENT_TARGET
-enum eRemoveMapEventTargetOptions
-{
-    SO_REMOVETARGET_SELF              = 0,
-    SO_REMOVETARGET_ONE_FIT_CONDITION = 1,
-    SO_REMOVETARGET_ALL_FIT_CONDITION = 2,
-    SO_REMOVETARGET_ALL_TARGETS       = 3,
-
-    SO_REMOVETARGET_MAX
 };
 
 enum eDataFlags
@@ -807,6 +807,60 @@ struct ScriptInfo
             int32  overwriteEntry;                          // dataint2
         } startWaypoints;
         
+        struct                                              // SCRIPT_COMMAND_START_MAP_EVENT (61)
+        {
+            uint32 eventId;                                 // datalong
+            uint32 timeLimit;                               // datalong2
+            uint32 unused1;                                 // datalong3
+            uint32 unuded2;                                 // datalong4
+            uint32 unused3;                                 // data_flags
+            int32  successCondition;                        // dataint
+            int32  successScript;                           // dataint2
+            int32  failureCondition;                        // dataint3
+            int32  failureScript;                           // dataint4
+        } startMapEvent;
+
+        struct                                              // SCRIPT_COMMAND_END_MAP_EVENT (62)
+        {
+            uint32 eventId;                                 // datalong
+            uint32 success;                                 // datalong2
+        } endMapEvent;
+
+        struct                                              // SCRIPT_COMMAND_ADD_MAP_EVENT_TARGET (63)
+        {
+            uint32 eventId;                                 // datalong
+            uint32 unused1;                                 // datalong2
+            uint32 unuded2;                                 // datalong3
+            uint32 unused3;                                 // datalong4
+            uint32 unused4;                                 // data_flags
+            int32  successCondition;                        // dataint
+            int32  successScript;                           // dataint2
+            int32  failureCondition;                        // dataint3
+            int32  failureScript;                           // dataint4
+        } addMapEventTarget;
+
+        struct                                              // SCRIPT_COMMAND_REMOVE_MAP_EVENT_TARGET (64)
+        {
+            uint32 eventId;                                 // datalong
+            uint32 conditionId;                             // datalong2
+            uint32 option;                                  // datalong3
+        } removeMapEventTarget;
+
+        struct                                              // SCRIPT_COMMAND_SET_MAP_EVENT_DATA (65)
+        {
+            uint32 eventId;                                 // datalong
+            uint32 index;                                   // datalong2
+            uint32 data;                                    // datalong3
+            uint32 type;                                    // datalong4
+        } setMapEventData;
+
+        struct                                              // SCRIPT_COMMAND_SEND_MAP_EVENT (66)
+        {
+            uint32 eventId;                                 // datalong
+            uint32 data;                                    // datalong2
+            uint32 targets;                                 // datalong3
+        } sendMapEvent;
+
         struct
         {
             uint32 data[9];

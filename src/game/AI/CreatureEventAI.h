@@ -287,7 +287,7 @@ class MANGOS_DLL_SPEC CreatureEventAI : public CreatureAI
         void ReceiveEmote(Player* pPlayer, uint32 text_emote) override;
         void SummonedCreatureJustDied(Creature* unit) override;
         void SummonedCreatureDespawn(Creature* unit) override;
-        void MapScriptEventHappened(ScriptEvent* pEvent, uint32 uiData) override;
+        void MapScriptEventHappened(ScriptedEvent* pEvent, uint32 uiData) override;
 
         static int Permissible(const Creature *);
 

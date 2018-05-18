@@ -1015,7 +1015,7 @@ void Map::UpdateScriptedEvents()
     }
 }
 
-ScriptEvent* Map::StartScriptedEvent(uint32 id, WorldObject* source, WorldObject* target, uint32 timelimit, uint32 failureCondition, uint32 failureScript, uint32 successCondition, uint32 successScript)
+ScriptedEvent* Map::StartScriptedEvent(uint32 id, WorldObject* source, WorldObject* target, uint32 timelimit, uint32 failureCondition, uint32 failureScript, uint32 successCondition, uint32 successScript)
 {
     if (m_mScriptedEvents.find(id) != m_mScriptedEvents.end())
         return nullptr;
@@ -1025,7 +1025,7 @@ ScriptEvent* Map::StartScriptedEvent(uint32 id, WorldObject* source, WorldObject
     return &itr.first->second;
 }
 
-bool ScriptEvent::UpdateEvent()
+bool ScriptedEvent::UpdateEvent()
 {
     if (m_uiTimeLeft <= 1000u)
     {
@@ -1063,7 +1063,7 @@ bool ScriptEvent::UpdateEvent()
     return false;
 }
 
-void ScriptEvent::EndEvent(bool bSuccess)
+void ScriptedEvent::EndEvent(bool bSuccess)
 {
     if (bSuccess && m_uiSuccessScript)
         m_pMap->ScriptsStart(sMapEventScripts, m_uiSuccessScript, m_pSource, m_pTarget);
@@ -1079,7 +1079,7 @@ void ScriptEvent::EndEvent(bool bSuccess)
     }
 }
 
-void ScriptEvent::SendEventToMainTargets(uint32 uiData)
+void ScriptedEvent::SendEventToMainTargets(uint32 uiData)
 {
     if (Creature* pCreatureSource = ToCreature(m_pSource))
         if (pCreatureSource->AI())
@@ -1090,16 +1090,21 @@ void ScriptEvent::SendEventToMainTargets(uint32 uiData)
             pCreatureTarget->AI()->MapScriptEventHappened(this, uiData);
 }
 
-void ScriptEvent::SendEventToAllTargets(uint32 uiData)
+void ScriptedEvent::SendEventToAdditionalTargets(uint32 uiData)
 {
-    SendEventToMainTargets(uiData);
-
     for (const auto& target : m_vTargets)
     {
         if (Creature* pCreature = ToCreature(target.pObject))
             if (pCreature->AI())
                 pCreature->AI()->MapScriptEventHappened(this, uiData);
     }
+
+}
+void ScriptedEvent::SendEventToAllTargets(uint32 uiData)
+{
+    SendEventToMainTargets(uiData);
+
+    SendEventToAdditionalTargets(uiData);
 }
 
 void Map::Remove(Player *player, bool remove)

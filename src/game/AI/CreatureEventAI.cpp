@@ -847,7 +847,7 @@ void CreatureEventAI::DamageTaken(Unit* /*done_by*/, uint32& damage)
     }
 }
 
-void CreatureEventAI::MapScriptEventHappened(ScriptEvent* pEvent, uint32 uiData)
+void CreatureEventAI::MapScriptEventHappened(ScriptedEvent* pEvent, uint32 uiData)
 {
     if (m_bEmptyList)
         return;

@@ -172,7 +172,7 @@ class MANGOS_DLL_SPEC CreatureAI
         virtual void UpdateAI_corpse(const uint32 /*uiDiff*/) {}
 
         // Called by scripted map events
-        virtual void MapScriptEventHappened(ScriptEvent* /*pEvent*/, uint32 /*uiData*/) {};
+        virtual void MapScriptEventHappened(ScriptedEvent* /*pEvent*/, uint32 /*uiData*/) {};
 
         ///== State checks =================================
 

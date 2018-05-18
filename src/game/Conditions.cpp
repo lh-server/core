@@ -482,7 +482,7 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
         {
             const Map* pMap = map ? map : (source ? source->GetMap() : target->GetMap());
 
-            if (const ScriptEvent* pEvent = pMap->GetScriptedMapEvent(m_value1))
+            if (const ScriptedEvent* pEvent = pMap->GetScriptedMapEvent(m_value1))
             {
                 switch (m_value4)
                 {
