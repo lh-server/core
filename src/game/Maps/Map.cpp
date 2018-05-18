@@ -1026,7 +1026,7 @@ ScriptedEvent* Map::StartScriptedEvent(uint32 id, WorldObject* source, WorldObje
 
 bool ScriptedEvent::UpdateEvent()
 {
-    if (m_uiExpireTime < sWorld.GetGameTime())
+    if (m_tExpireTime < sWorld.GetGameTime())
     {
         EndEvent(false);
         return true;
