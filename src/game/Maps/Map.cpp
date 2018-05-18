@@ -1008,7 +1008,6 @@ void Map::UpdateScriptedEvents()
     {
         if (itr->second.UpdateEvent())
         {
-            itr->second.EndEvent(false);
             itr = m_mScriptedEvents.erase(itr);
             continue;
         }
@@ -1019,21 +1018,19 @@ ScriptedEvent* Map::StartScriptedEvent(uint32 id, WorldObject* source, WorldObje
 {
     if (m_mScriptedEvents.find(id) != m_mScriptedEvents.end())
         return nullptr;
-
-    auto itr = m_mScriptedEvents.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple(id, source, target, this, timelimit, failureCondition, failureScript, successCondition, successScript));
+    
+    auto itr = m_mScriptedEvents.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple(id, source, target, this, time_t(sWorld.GetGameTime() + timelimit), failureCondition, failureScript, successCondition, successScript));
 
     return &itr.first->second;
 }
 
 bool ScriptedEvent::UpdateEvent()
 {
-    if (m_uiTimeLeft <= 1000u)
+    if (m_uiExpireTime < sWorld.GetGameTime())
     {
         EndEvent(false);
         return true;
     }
-    else
-        m_uiTimeLeft -= 1000u;
 
     if (m_uiFailureCondition && sObjectMgr.IsConditionSatisfied(m_uiFailureCondition, m_pTarget, m_pMap, m_pSource, CONDITION_FROM_MAP_EVENT))
     {

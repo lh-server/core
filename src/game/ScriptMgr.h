@@ -1000,6 +1000,13 @@ enum ScriptTarget
                                                             //Param2 = spell_id
     TARGET_T_FRIENDLY_CC                    = 19,           //Friendly unit under crowd control.
                                                             //Param1 = search_radius
+    TARGET_T_MAP_EVENT_SOURCE               = 20,           //The source WorldObject of a scripted map event.
+                                                            //Param1 = eventId
+    TARGET_T_MAP_EVENT_TARGET               = 21,           //The target WorldObject of a scripted map event.
+                                                            //Param1 = eventId
+    TARGET_T_MAP_EVENT_EXTRA_TARGET         = 22,           //An additional WorldObject target from a scripted map event.
+                                                            //Param1 = eventId
+                                                            //Param2 = creature_entry or gameobject_entry
     TARGET_T_END
 };
 
@@ -1008,67 +1015,7 @@ void DoScriptText(int32 textEntry, WorldObject* pSource, Unit* target = nullptr,
 void DoOrSimulateScriptTextForMap(int32 iTextEntry, uint32 uiCreatureEntry, Map* pMap, Creature* pCreatureSource = nullptr, Unit* pTarget = nullptr);
 
 // Returns a target based on the type specified.
-inline WorldObject* GetTargetByType(WorldObject* pSource, WorldObject* pTarget, uint8 TargetType, uint32 Param1 = 0u, uint32 Param2 = 0u)
-{
-    switch (TargetType)
-    {
-        case TARGET_T_PROVIDED_TARGET:
-            return pTarget;
-        case TARGET_T_HOSTILE:
-            if (Unit* pUnitSource = ToUnit(pSource))
-                return pUnitSource->getVictim();
-            break;
-        case TARGET_T_HOSTILE_SECOND_AGGRO:
-            if (Creature* pCreatureSource = ToCreature(pSource))
-                return pCreatureSource->SelectAttackingTarget(ATTACKING_TARGET_TOPAGGRO, 1);
-            break;
-        case TARGET_T_HOSTILE_LAST_AGGRO:
-            if (Creature* pCreatureSource = ToCreature(pSource))
-                return pCreatureSource->SelectAttackingTarget(ATTACKING_TARGET_BOTTOMAGGRO, 0);
-            break;
-        case TARGET_T_HOSTILE_RANDOM:
-            if (Creature* pCreatureSource = ToCreature(pSource))
-                return pCreatureSource->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
-            break;
-        case TARGET_T_HOSTILE_RANDOM_NOT_TOP:
-            if (Creature* pCreatureSource = ToCreature(pSource))
-                return pCreatureSource->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1);
-            break;
-        case TARGET_T_OWNER_OR_SELF:
-            if (Unit* pUnitSource = ToUnit(pSource))
-                return pUnitSource->GetCharmerOrOwnerOrSelf();
-            break;
-        case TARGET_T_OWNER:
-            if (Unit* pUnitSource = ToUnit(pSource))
-                return pUnitSource->GetOwner();
-            break;
-        case TARGET_T_FRIENDLY:
-            if (Unit* pUnitSource = ToUnit(pSource))
-                return pUnitSource->SelectRandomFriendlyTarget(Param2 ? ToUnit(pTarget) : nullptr, Param1 ? Param1 : 30.0f, true);
-            break;
-        case TARGET_T_FRIENDLY_INJURED:
-            if (Creature* pCreatureSource = ToCreature(pSource))
-                return pCreatureSource->DoSelectLowestHpFriendly(Param1 ? Param1 : 30.0f, Param2 ? Param2 : 50, true);
-            break;
-        case TARGET_T_FRIENDLY_INJURED_EXCEPT:
-            if (Creature* pCreatureSource = ToCreature(pSource))
-                return pCreatureSource->DoSelectLowestHpFriendly(Param1 ? Param1 : 30.0f, Param2 ? Param2 : 50, true, ToUnit(pTarget));
-            break;
-        case TARGET_T_FRIENDLY_MISSING_BUFF:
-            if (Creature* pCreatureSource = ToCreature(pSource))
-                return pCreatureSource->DoFindFriendlyMissingBuff(Param1 ? Param1 : 30.0f, Param2);
-            break;
-        case TARGET_T_FRIENDLY_MISSING_BUFF_EXCEPT:
-            if (Creature* pCreatureSource = ToCreature(pSource))
-                return pCreatureSource->DoFindFriendlyMissingBuff(Param1 ? Param1 : 30.0f, Param2, ToUnit(pTarget));
-            break;
-        case TARGET_T_FRIENDLY_CC:
-            if (Creature* pCreatureSource = ToCreature(pSource))
-                return pCreatureSource->DoFindFriendlyCC(Param1 ? Param1 : 30.0f);
-            break;
-    }
-    return nullptr;
-}
+WorldObject* GetTargetByType(WorldObject* pSource, WorldObject* pTarget, uint8 TargetType, uint32 Param1 = 0u, uint32 Param2 = 0u);
 
 //Spell targets used by SelectSpell
 enum SelectTarget
@@ -1216,6 +1163,7 @@ class ScriptMgr
         void LoadGossipScripts();
         void LoadCreatureMovementScripts();
         void LoadCreatureEventAIScripts();
+        void LoadMapEventScripts();
 
         void CheckAllScriptTexts();
 

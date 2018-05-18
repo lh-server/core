@@ -208,15 +208,15 @@ struct ScriptedEventTarget
 
 struct ScriptedEvent
 {
-    ScriptedEvent(uint32 eventId, WorldObject* source, WorldObject* target, Map* map, uint32 timelimit, uint32 failureCondition, uint32 failureScript, uint32 successCondition, uint32 successScript) :
-        m_uiEventId(eventId), m_pSource(source), m_pTarget(target), m_pMap(map), m_uiTimeLeft(timelimit), m_uiFailureCondition(failureCondition), m_uiFailureScript(failureScript), m_uiSuccessCondition(successCondition), m_uiSuccessScript(successScript) {}
+    ScriptedEvent(uint32 eventId, WorldObject* source, WorldObject* target, Map* map, time_t expireTime, uint32 failureCondition, uint32 failureScript, uint32 successCondition, uint32 successScript) :
+        m_uiEventId(eventId), m_pSource(source), m_pTarget(target), m_pMap(map), m_uiExpireTime(expireTime), m_uiFailureCondition(failureCondition), m_uiFailureScript(failureScript), m_uiSuccessCondition(successCondition), m_uiSuccessScript(successScript) {}
     
     WorldObject* m_pSource;
     WorldObject* m_pTarget;
     Map* const m_pMap;
 
     const uint32 m_uiEventId;
-    uint32 m_uiTimeLeft;
+    time_t m_uiExpireTime;
 
     uint32 m_uiFailureCondition;
     uint32 m_uiFailureScript;
