@@ -1691,7 +1691,7 @@ bool Map::ScriptCommand_RemoveMapEventTarget(const ScriptInfo& script, WorldObje
             if (!source)
                 return ShouldAbortScript(script);
 
-            for (auto& itr = pEvent->m_vTargets.begin(); itr != pEvent->m_vTargets.end(); itr++)
+            for (auto itr = pEvent->m_vTargets.begin(); itr != pEvent->m_vTargets.end(); ++itr)
             {
                 if (itr->pObject == source)
                 {
@@ -1710,7 +1710,7 @@ bool Map::ScriptCommand_RemoveMapEventTarget(const ScriptInfo& script, WorldObje
                 return ShouldAbortScript(script);
             }
 
-            for (auto& itr = pEvent->m_vTargets.begin(); itr != pEvent->m_vTargets.end(); itr++)
+            for (auto itr = pEvent->m_vTargets.begin(); itr != pEvent->m_vTargets.end(); ++itr)
             {
                 if (sObjectMgr.IsConditionSatisfied(script.removeMapEventTarget.conditionId, source, this, itr->pObject, CONDITION_FROM_DBSCRIPTS))
                 {
