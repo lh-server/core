@@ -78,6 +78,7 @@ UPDATE `quest_template` SET `DetailsEmote1`=1, `OfferRewardEmote1`=1 WHERE `entr
 UPDATE `quest_template` SET `DetailsEmote1`=1, `CompleteEmote`=6, `OfferRewardEmote1`=5, `PrevQuestId`=0 WHERE `entry`=7816 AND `patch`=3;
 
 -- Gossip menu for Katoom the Angler
+-- Gossip id from TC but seems plausible
 DELETE FROM `npc_gossip` WHERE `npc_guid`=1182601;
 DELETE FROM `gossip_menu` WHERE `entry`=6087;
 INSERT INTO `gossip_menu` (`entry`, `text_id`) VALUES (6087, 7241);
