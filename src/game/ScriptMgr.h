@@ -843,7 +843,7 @@ struct ScriptInfo
         {
             uint32 eventId;                                 // datalong
             uint32 conditionId;                             // datalong2
-            uint32 option;                                  // datalong3
+            uint32 targets;                                 // datalong3
         } removeMapEventTarget;
 
         struct                                              // SCRIPT_COMMAND_SET_MAP_EVENT_DATA (65)

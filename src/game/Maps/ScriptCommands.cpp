@@ -1684,7 +1684,7 @@ bool Map::ScriptCommand_RemoveMapEventTarget(const ScriptInfo& script, WorldObje
         return ShouldAbortScript(script);
     }
 
-    switch (script.removeMapEventTarget.option)
+    switch (script.removeMapEventTarget.targets)
     {
         case SO_REMOVETARGET_SELF:
         {
@@ -1706,18 +1706,20 @@ bool Map::ScriptCommand_RemoveMapEventTarget(const ScriptInfo& script, WorldObje
         {
             if (!script.removeMapEventTarget.conditionId)
             {
-                sLog.outError("SCRIPT_COMMAND_REMOVE_MAP_EVENT_TARGET (script id %u) call with `datalong3`=%u but without a condition Id, skipping.", script.id, script.removeMapEventTarget.option);
+                sLog.outError("SCRIPT_COMMAND_REMOVE_MAP_EVENT_TARGET (script id %u) call with `datalong3`=%u but without a condition Id, skipping.", script.id, script.removeMapEventTarget.targets);
                 return ShouldAbortScript(script);
             }
 
-            for (auto itr = pEvent->m_vTargets.begin(); itr != pEvent->m_vTargets.end(); ++itr)
+            for (auto itr = pEvent->m_vTargets.begin(); itr != pEvent->m_vTargets.end();)
             {
                 if (sObjectMgr.IsConditionSatisfied(script.removeMapEventTarget.conditionId, source, this, itr->pObject, CONDITION_FROM_DBSCRIPTS))
                 {
                     itr = pEvent->m_vTargets.erase(itr);
-                    if (script.removeMapEventTarget.option == SO_REMOVETARGET_ONE_FIT_CONDITION)
+                    if (script.removeMapEventTarget.targets == SO_REMOVETARGET_ONE_FIT_CONDITION)
                         return false;
+                    continue;
                 }
+                ++itr;
             }
             break;
         }
