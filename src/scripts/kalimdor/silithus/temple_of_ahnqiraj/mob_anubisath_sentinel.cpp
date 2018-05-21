@@ -58,7 +58,6 @@ struct aqsentinelAI;
 struct aqsentinelAI : public ScriptedAI
 {
     uint32 m_abilitySpellId;
-    int abselected;
     uint32 m_uiKnock_Timer;
     bool m_bEnraged;
     bool m_bAlone;
@@ -102,8 +101,9 @@ struct aqsentinelAI : public ScriptedAI
     aqsentinelAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         ClearBuddyList();
-        abselected = 0;                                     // just initialization of variable
         m_bEnraged = false;
+        m_abilitySpellId = 0;
+        m_bAlone = false;
         Reset();
     }
 
@@ -248,7 +248,7 @@ struct aqsentinelAI : public ScriptedAI
         ClearBuddyList();
         gatherOthersWhenAggro = true;
         m_uiKnock_Timer = 13000;
-        m_bEnraged = 0;
+        m_bEnraged = false;
     }
 
     void GainSentinelAbility(uint32 id)
@@ -306,17 +306,6 @@ struct aqsentinelAI : public ScriptedAI
             DoScriptText(EMOTE_TRANSFER, m_creature);
     }
 
-    Unit *GetHatedManaUser()
-    {
-        ThreatList const& tList = m_creature->getThreatManager().getThreatList();
-        for (ThreatList::const_iterator i = tList.begin(); i != tList.end(); ++i)
-        {
-            Unit* pUnit = m_creature->GetMap()->GetUnit((*i)->getUnitGuid());
-            if (pUnit->getPowerType() == POWER_MANA)
-                return pUnit;
-        }
-        return NULL;
-    }
     void UpdateAI(const uint32 uiDiff)
     {
         //Return since we have no target
