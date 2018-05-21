@@ -213,8 +213,6 @@ void Creature::AddToWorld()
 
     if (!i_AI)
         AIM_Initialize();
-    if (i_AI)
-        i_AI->JustRespawned();
     if (!bWasInWorld && m_zoneScript)
         m_zoneScript->OnCreatureCreate(this);
 }

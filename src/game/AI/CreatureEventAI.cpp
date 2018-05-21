@@ -111,6 +111,14 @@ CreatureEventAI::CreatureEventAI(Creature *c) : CreatureAI(c)
 
     m_InvinceabilityHpLevel = 0;
 
+    //Handle Spawned Events
+    c->SetAI(this);
+    if (!m_bEmptyList)
+    {
+        for (CreatureEventAIList::iterator i = m_CreatureEventAIList.begin(); i != m_CreatureEventAIList.end(); ++i)
+            if (i->Event.event_type == EVENT_T_SPAWNED)
+                ProcessEvent(*i);
+    }
     Reset();
 }
 
