@@ -122,9 +122,9 @@ UPDATE `quest_template` SET `StartScript`=2662 WHERE `entry`=2662 AND `patch`=0;
 
 DELETE FROM `quest_start_scripts` WHERE `id`=2662;
 INSERT INTO `quest_start_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
-(2662, 0, 4, 147, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Noggenfogger Elixir - Marin Noggenfogger: npc\_flag questgiver'),
+(2662, 0, 4, 147, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Noggenfogger Elixir - Marin Noggenfogger: npc\_flag questgiver removed'),
 (2662, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4548, 0, 0, 0, 0, 0, 0, 0, 0, 'Noggenfogger Elixir - Marin Noggenfogger: Say text 1'),
-(2662, 5, 4, 147, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Noggenfogger Elixir - Marin Noggenfogger: npc\_flag questgiver');
+(2662, 5, 4, 147, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Noggenfogger Elixir - Marin Noggenfogger: npc\_flag questgiver added');
 
 -- End of migration.
 END IF;
