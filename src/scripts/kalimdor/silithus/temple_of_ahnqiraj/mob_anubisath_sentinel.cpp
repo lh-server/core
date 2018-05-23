@@ -50,6 +50,8 @@ enum
     SPELL_TRANSFER =            2400,
     EMOTE_TRANSFER =            -1388101,
 
+    SPELL_HEAL_BRETHREN =       26565,
+
     NPC_SENTINEL =              15264
 };
 
@@ -288,12 +290,9 @@ struct aqsentinelAI : public ScriptedAI
                     continue;
 
                 m_bAlone = false;
-                DoCastSpellIfCan(buddy, SPELL_TRANSFER, CF_TRIGGERED);
-                uint32 h = buddy->GetHealth() + (buddy->GetMaxHealth() / 2);
-                if (h > buddy->GetMaxHealth())
-                    h = buddy->GetMaxHealth();
 
-                buddy->SetHealth(h);
+                DoCastSpellIfCan(buddy, SPELL_TRANSFER, CF_TRIGGERED);
+                DoCastSpellIfCan(buddy, SPELL_HEAL_BRETHREN, CF_TRIGGERED);
 
                 if (aqsentinelAI* sentinelAI = dynamic_cast<aqsentinelAI*>(buddy->AI()))
                 {
