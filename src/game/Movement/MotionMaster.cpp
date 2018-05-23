@@ -294,7 +294,7 @@ void MotionMaster::MoveRandom(bool use_current_position, float wander_distance)
     else
     {
         DEBUG_FILTER_LOG(LOG_FILTER_AI_AND_MOVEGENSS, "%s move random.", m_owner->GetGuidStr().c_str());
-        Mutate(new RandomMovementGenerator<Creature>(*static_cast<Creature*>(m_owner)));
+        Mutate(new RandomMovementGenerator<Creature>(*static_cast<Creature*>(m_owner), use_current_position, wander_distance));
     }
 }
 
