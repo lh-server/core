@@ -1033,10 +1033,36 @@ bool Map::ScriptCommand_SetHomePosition(const ScriptInfo& script, WorldObject* s
         return ShouldAbortScript(script);
     }
 
-    if (script.setHome.useCurrent)
-        pSource->SaveHomePosition();
-    else
-        pSource->SetHomePosition(script.x, script.y, script.z, script.o);
+    switch (script.setHome.mode)
+    {
+        case SO_SETHOME_PROVIDED_POSITION:
+        {
+            pSource->SetHomePosition(script.x, script.y, script.z, script.o);
+            break;
+        }
+        case SO_SETHOME_CURRENT_POSITION:
+        {
+            pSource->SaveHomePosition();
+            break;
+        }
+        case SO_SETHOME_DEFAULT_POSITION:
+        {
+            if (CreatureData const *data = sObjectMgr.GetCreatureData(pSource->GetGUIDLow()))
+                pSource->SetHomePosition(data->posX, data->posY, data->posZ, data->orientation);
+            else if (pSource->IsTemporarySummon())
+            {
+                float x, y, z, o;
+                pSource->GetSummonPoint(x, y, z, o);
+                pSource->SetHomePosition(x, y, z, o);
+            }
+            else
+            {
+                sLog.outError("SCRIPT_COMMAND_SET_HOME_POSITION (script id %u) call for with datalong = SO_SETHOME_DEFAULT_POSITION but creature has no database spawn data, skipping.");
+                return ShouldAbortScript(script);
+            }
+            break;
+        }
+    }
 
     return false;
 }
@@ -1795,6 +1821,27 @@ bool Map::ScriptCommand_SendMapEvent(const ScriptInfo& script, WorldObject* sour
             break;
         }
     }
+
+    return false;
+}
+
+// SCRIPT_COMMAND_SET_DEFAULT_MOVEMENT (67)
+bool Map::ScriptCommand_SetDefaultMovement(const ScriptInfo& script, WorldObject* source, WorldObject* target)
+{
+    Creature* pSource = ToCreature(source);
+
+    if (!pSource)
+    {
+        sLog.outError("SCRIPT_COMMAND_SET_DEFAULT_MOVEMENT (script id %u) call for a NULL or non-creature source (TypeId: %u), skipping.", script.id, source ? source->GetTypeId() : 0);
+        return ShouldAbortScript(script);
+    }
+
+    pSource->SetDefaultMovementType(MovementGeneratorType(script.setDefaultMovement.movementType));
+
+    if (script.setDefaultMovement.movementType == RANDOM_MOTION_TYPE)
+        pSource->SetRespawnRadius(script.setDefaultMovement.param1);
+    else if (script.setDefaultMovement.movementType == WAYPOINT_MOTION_TYPE)
+        pSource->m_startwaypoint = script.setDefaultMovement.param1;
 
     return false;
 }
