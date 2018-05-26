@@ -1047,19 +1047,7 @@ bool Map::ScriptCommand_SetHomePosition(const ScriptInfo& script, WorldObject* s
         }
         case SO_SETHOME_DEFAULT_POSITION:
         {
-            if (CreatureData const *data = sObjectMgr.GetCreatureData(pSource->GetGUIDLow()))
-                pSource->SetHomePosition(data->posX, data->posY, data->posZ, data->orientation);
-            else if (pSource->IsTemporarySummon())
-            {
-                float x, y, z, o;
-                pSource->GetSummonPoint(x, y, z, o);
-                pSource->SetHomePosition(x, y, z, o);
-            }
-            else
-            {
-                sLog.outError("SCRIPT_COMMAND_SET_HOME_POSITION (script id %u) call for with datalong = SO_SETHOME_DEFAULT_POSITION but creature has no database spawn data, skipping.");
-                return ShouldAbortScript(script);
-            }
+            pSource->ResetHomePosition();
             break;
         }
     }
