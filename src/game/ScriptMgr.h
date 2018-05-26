@@ -283,7 +283,8 @@ enum eScriptCommand
                                                             // datalong3 = eSendMapEventOptions
     SCRIPT_COMMAND_SET_DEFAULT_MOVEMENT     = 67,           // source = Creature
                                                             // datalong = movement_type
-                                                            // datalong2 = param1
+                                                            // datalong = (bool) always_replace
+                                                            // datalong3 = param1
     
     SCRIPT_COMMAND_MAX,
 
@@ -875,7 +876,8 @@ struct ScriptInfo
         struct                                              // SCRIPT_COMMAND_SET_DEFAULT_MOVEMENT (67)
         {
             uint32 movementType;                            // datalong
-            uint32 param1;                                  // datalong2
+            uint32 alwaysReplace;                           // datalong2
+            uint32 param1;                                  // datalong3
         } setDefaultMovement;
 
         struct
