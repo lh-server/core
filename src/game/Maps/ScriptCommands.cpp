@@ -1843,5 +1843,8 @@ bool Map::ScriptCommand_SetDefaultMovement(const ScriptInfo& script, WorldObject
     else if (script.setDefaultMovement.movementType == WAYPOINT_MOTION_TYPE)
         pSource->m_startwaypoint = script.setDefaultMovement.param1;
 
+    if (pSource->isAlive())
+        pSource->GetMotionMaster()->InitializeNewDefault();
+
     return false;
 }
