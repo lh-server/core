@@ -136,6 +136,7 @@ enum eScriptCommand
                                                             // datalong = see enum MovementGeneratorType (not all are supported)
                                                             // datalong2 = bool_param (meaning depends on the motion type)
                                                             // datalong3 = int_param (meaning depends on the motion type)
+                                                            // datalong4 = (bool) clear
                                                             // x = distance (only for some motion types)
                                                             // o = angle (only for some motion types)
     SCRIPT_COMMAND_SET_ACTIVEOBJECT         = 21,           // source = Creature
@@ -598,6 +599,7 @@ struct ScriptInfo
             uint32 movementType;                            // datalong
             uint32 boolParam;                               // datalong2
             uint32 intParam;                                // datalong3
+            uint32 clear;                                   // datalong4
         } movement;
 
         struct                                              // SCRIPT_COMMAND_SET_ACTIVEOBJECT (21)

@@ -700,12 +700,18 @@ bool Map::ScriptCommand_SetMovementType(const ScriptInfo& script, WorldObject* s
     switch (script.movement.movementType)
     {
         case IDLE_MOTION_TYPE:
+            if (script.movement.clear)
+                pSource->GetMotionMaster()->Clear(false, true);
             pSource->GetMotionMaster()->MoveIdle();
             break;
         case RANDOM_MOTION_TYPE:
+            if (script.movement.clear)
+                pSource->GetMotionMaster()->Clear(false, true);
             pSource->GetMotionMaster()->MoveRandom(script.movement.boolParam, script.x);
             break;
         case WAYPOINT_MOTION_TYPE:
+            if (script.movement.clear)
+                pSource->GetMotionMaster()->Clear(false, true);
             pSource->GetMotionMaster()->MoveWaypoint(0, script.movement.intParam, 0, 0, 0, script.movement.boolParam);
             break;
         case CONFUSED_MOTION_TYPE:

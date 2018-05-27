@@ -410,7 +410,13 @@ void MotionMaster::MoveChase(Unit* target, float dist, float angle)
     if (m_owner->GetTypeId() == TYPEID_PLAYER)
         Mutate(new ChaseMovementGenerator<Player>(*target, dist, angle));
     else
+    {
+        // interrupt current movespline
+        if (!m_owner->IsStopped())
+            m_owner->StopMoving();
+
         Mutate(new ChaseMovementGenerator<Creature>(*target, dist, angle));
+    }
 }
 
 void MotionMaster::MoveFollow(Unit* target, float dist, float angle)
