@@ -5331,7 +5331,7 @@ void ObjectMgr::LoadGraveyardZones()
 {
     mGraveYardMap.clear();                                  // need for reload case
 
-    QueryResult *result = WorldDatabase.Query("SELECT id,ghost_zone,faction FROM game_graveyard_zone");
+    QueryResult *result = WorldDatabase.PQuery("SELECT id, ghost_zone, faction FROM game_graveyard_zone WHERE build_min <= %u", SUPPORTED_CLIENT_BUILD);
 
     uint32 count = 0;
 
@@ -7016,7 +7016,7 @@ void ObjectMgr::LoadTaxiPathTransitions()
 
     uint32 count = 0;
 
-    QueryResult *result = WorldDatabase.PQuery("SELECT inPath, outPath, inNode, outNode FROM taxi_path_transitions");
+    QueryResult *result = WorldDatabase.PQuery("SELECT inPath, outPath, inNode, outNode FROM taxi_path_transitions WHERE build_min <= %u", SUPPORTED_CLIENT_BUILD);
 
     if (!result)
     {
