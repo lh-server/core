@@ -10151,11 +10151,15 @@ void Unit::ApplyAttackTimePercentMod(WeaponAttackType att, float val, bool apply
 void Unit::ApplyCastTimePercentMod(float val, bool apply)
 {
 #if SUPPORTED_CLIENT_BUILD >= CLIENT_BUILD_1_12_1
-    ApplyPercentModFloatValue(UNIT_MOD_CAST_SPEED, -val, apply);
+    SetFloatValue(UNIT_MOD_CAST_SPEED, GetFloatValue(UNIT_MOD_CAST_SPEED) * (apply ? 100.0f / (100.0f + val) : (100.0f + val) / 100.0f));
 #else
     val = -val;
-    val = val != -100.0f ? val : -99.9f;
-    SetInt32Value(UNIT_MOD_CAST_SPEED, (int32)round((((1.0f + GetInt32Value(UNIT_MOD_CAST_SPEED)/100.0f) * (apply ? (100.0f + val) / 100.0f : 100.0f / (100.0f + val))) - 1.0f)*100.0f));
+    SetInt32Value(UNIT_MOD_CAST_SPEED, (int32)round((((1.0f + GetInt32Value(UNIT_MOD_CAST_SPEED) / 100.0f) * (apply ? (100.0f + val) / 100.0f : 100.0f / (100.0f + val))) - 1.0f)*100.0f));
+    /*
+    Code below will make a 50% positive effect cancel out a 50% negative one exactly. But it shouldn't before 1.12!
+    int32 intval = round(val);
+    SetInt32Value(UNIT_MOD_CAST_SPEED, (GetInt32Value(UNIT_MOD_CAST_SPEED) + (apply ? -intval : intval)));
+    */
 #endif
 }
 
