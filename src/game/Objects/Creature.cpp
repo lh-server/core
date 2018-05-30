@@ -345,9 +345,11 @@ bool Creature::InitEntry(uint32 Entry, Team team, CreatureData const* data /*=NU
     }
 
     SetName(normalInfo->Name);                              // at normal entry always
-
+#if SUPPORTED_CLIENT_BUILD >= CLIENT_BUILD_1_12_1
     SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);
-
+#else
+    SetInt32Value(UNIT_MOD_CAST_SPEED, 0);
+#endif
     // update speed for the new CreatureInfo base speed mods
     UpdateSpeed(MOVE_WALK, false);
     UpdateSpeed(MOVE_RUN,  false);

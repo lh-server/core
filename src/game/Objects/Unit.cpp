@@ -10150,7 +10150,13 @@ void Unit::ApplyAttackTimePercentMod(WeaponAttackType att, float val, bool apply
 
 void Unit::ApplyCastTimePercentMod(float val, bool apply)
 {
+#if SUPPORTED_CLIENT_BUILD >= CLIENT_BUILD_1_12_1
     ApplyPercentModFloatValue(UNIT_MOD_CAST_SPEED, -val, apply);
+#else
+    val = -val;
+    val = val != -100.0f ? val : -99.9f;
+    SetInt32Value(UNIT_MOD_CAST_SPEED, (int32)round((((1.0f + GetInt32Value(UNIT_MOD_CAST_SPEED)/100.0f) * (apply ? (100.0f + val) / 100.0f : 100.0f / (100.0f + val))) - 1.0f)*100.0f));
+#endif
 }
 
 void Unit::UpdateAuraForGroup(uint8 slot)

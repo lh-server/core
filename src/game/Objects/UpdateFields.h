@@ -133,7 +133,7 @@ enum EUnitFields
     UNIT_FIELD_PETNEXTLEVELEXP                 = 0x88 + OBJECT_END, // Size:1
     UNIT_DYNAMIC_FLAGS                         = 0x89 + OBJECT_END, // Size:1
     UNIT_CHANNEL_SPELL                         = 0x8a + OBJECT_END, // Size:1
-    UNIT_MOD_CAST_SPEED                        = 0x8b + OBJECT_END, // Size:1
+    UNIT_MOD_CAST_SPEED                        = 0x8b + OBJECT_END, // Size:1 Represented as Int32 before 1.12, after that it's Float.
     UNIT_CREATED_BY_SPELL                      = 0x8c + OBJECT_END, // Size:1
     UNIT_NPC_FLAGS                             = 0x8d + OBJECT_END, // Size:1
     UNIT_NPC_EMOTESTATE                        = 0x8e + OBJECT_END, // Size:1
