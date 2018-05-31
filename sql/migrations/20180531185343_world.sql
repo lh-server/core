@@ -197,8 +197,8 @@ INSERT INTO `quest_end_scripts` (`id`, `delay`, `command`, `datalong`, `datalong
 (3741, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4628, 0, 0, 0, 0, 0, 0, 0, 0, 'Hilary\'s Necklace - Hilary: Say text 1');
 
 -- Add gossip menu for Hilary and Shawn
-UPDATE `creature_template` SET `gossip_menu_id`=40000 WHERE `entry`=8962 AND `patch`=0;
-UPDATE `creature_template` SET `gossip_menu_id`=40001 WHERE `entry`=8965 AND `patch`=0;
+UPDATE `creature_template` SET `gossip_menu_id`=1621 WHERE `entry`=8962 AND `patch`=0;
+UPDATE `creature_template` SET `gossip_menu_id`=1622 WHERE `entry`=8965 AND `patch`=0;
 
 -- Add condition for when Hilary's Necklace (3741) is rewarded
 DELETE FROM `conditions` WHERE `condition_entry` IN (40000);
@@ -206,11 +206,11 @@ INSERT INTO `conditions` (`condition_entry`, `type`, `value1`) VALUES (40000, 8,
 
 -- Add gossip
 DELETE FROM `npc_gossip` WHERE `npc_guid` IN (6164, 6165);
-DELETE FROM `gossip_menu` WHERE `entry` IN (40000, 40001);
-INSERT INTO `gossip_menu` (`entry`, `text_id`, `condition_id`) VALUES (40000, 2273, 0);
-INSERT INTO `gossip_menu` (`entry`, `text_id`, `condition_id`) VALUES (40000, 2274, 40000);
-INSERT INTO `gossip_menu` (`entry`, `text_id`, `condition_id`) VALUES (40001, 2276, 0);
-INSERT INTO `gossip_menu` (`entry`, `text_id`, `condition_id`) VALUES (40001, 2277, 40000);
+DELETE FROM `gossip_menu` WHERE `entry` IN (1621, 1622);
+INSERT INTO `gossip_menu` (`entry`, `text_id`, `condition_id`) VALUES (1621, 2273, 0);
+INSERT INTO `gossip_menu` (`entry`, `text_id`, `condition_id`) VALUES (1621, 2274, 40000);
+INSERT INTO `gossip_menu` (`entry`, `text_id`, `condition_id`) VALUES (1622, 2276, 0);
+INSERT INTO `gossip_menu` (`entry`, `text_id`, `condition_id`) VALUES (1622, 2277, 40000);
 
 -- Final gossip for Shawn reverted to pre-Cata state: Nida to Hilary because it was changed to Nida in Cata
 -- http://www.wowhead.com/quest=26508/nidas-necklace
