@@ -83,6 +83,8 @@ enum ConditionType
     CONDITION_IS_HOSTILE_TO         = 44,                   // 0            0
     CONDITION_IS_IN_GROUP           = 45,                   // 0            0
     CONDITION_IS_ALIVE              = 46,                   // 0            0
+    CONDITION_MAP_EVENT_TARGETS     = 47,                   // event_id     cond_id
+
 };
 
 enum ConditionFlags

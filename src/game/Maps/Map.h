@@ -829,6 +829,7 @@ class MANGOS_DLL_SPEC Map : public GridRefManager<NGridType>, public MaNGOS::Obj
         bool ScriptCommand_SendMapEvent(const ScriptInfo& script, WorldObject* source, WorldObject* target);
         bool ScriptCommand_SetDefaultMovement(const ScriptInfo& script, WorldObject* source, WorldObject* target);
         bool ScriptCommand_StartScriptForAll(const ScriptInfo& script, WorldObject* source, WorldObject* target);
+        bool ScriptCommand_EditMapEvent(const ScriptInfo& script, WorldObject* source, WorldObject* target);
 
         // Add any new script command functions to the array.
         const ScriptCommandFunction m_ScriptCommands[SCRIPT_COMMAND_MAX] =
@@ -902,6 +903,7 @@ class MANGOS_DLL_SPEC Map : public GridRefManager<NGridType>, public MaNGOS::Obj
             &Map::ScriptCommand_SendMapEvent,           // 66
             &Map::ScriptCommand_SetDefaultMovement,     // 67
             &Map::ScriptCommand_StartScriptForAll,      // 68
+            &Map::ScriptCommand_EditMapEvent,           // 69
         };
 
     public:

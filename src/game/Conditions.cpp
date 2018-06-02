@@ -93,6 +93,7 @@ uint8 const ConditionTargetsInternal[] =
     CONDITION_REQ_BOTH_UNITS,         //  44
     CONDITION_REQ_TARGET_PLAYER,      //  45
     CONDITION_REQ_TARGET_UNIT,        //  46
+    CONDITION_REQ_MAP_OR_WORLDOBJECT, //  47
 };
 
 // Starts from 4th element so that -3 will return first element.
@@ -574,6 +575,23 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
         case CONDITION_IS_ALIVE:
         {
             return target->ToUnit()->isAlive();
+        }
+        case CONDITION_MAP_EVENT_TARGETS:
+        {
+            bool bSatisfied = true;
+            const Map* pMap = map ? map : (source ? source->GetMap() : target->GetMap());
+            if (const ScriptedEvent* pEvent = pMap->GetScriptedMapEvent(m_value1))
+            {
+                for (const auto& eventTarget : pEvent->m_vTargets)
+                {
+                    if (eventTarget.pObject)
+                        bSatisfied = bSatisfied && sConditionStorage.LookupEntry<ConditionEntry>(m_value2)->Meets(eventTarget.pObject, map, source, conditionSourceType);
+
+                    if (!bSatisfied)
+                        return false;
+                }
+            }
+            return bSatisfied;
         }
     }
     return false;
@@ -1103,6 +1121,16 @@ bool ConditionEntry::IsValid()
             if (m_value2 > 2)
             {
                 sLog.outErrorDb("Health or Mana percent condition (entry %u, type %u) has invalid argument %u (must be 0..2), skipped", m_entry, m_condition, m_value2);
+                return false;
+            }
+            break;
+        }
+        case CONDITION_MAP_EVENT_TARGETS:
+        {
+            const ConditionEntry* condition1 = sConditionStorage.LookupEntry<ConditionEntry>(m_value2);
+            if (!condition1)
+            {
+                sLog.outErrorDb("CONDITION_MAP_EVENT_TARGETS (entry %u, type %d) has value2 %u without proper condition, skipped", m_entry, m_condition, m_value2);
                 return false;
             }
             break;

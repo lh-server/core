@@ -1888,3 +1888,29 @@ bool Map::ScriptCommand_StartScriptForAll(const ScriptInfo& script, WorldObject*
     
     return false;
 }
+
+// SCRIPT_COMMAND_EDIT_MAP_EVENT (69)
+bool Map::ScriptCommand_EditMapEvent(const ScriptInfo& script, WorldObject* source, WorldObject* target)
+{
+    ScriptedEvent* pEvent = GetScriptedMapEvent(script.editMapEvent.eventId);
+
+    if (!pEvent)
+    {
+        sLog.outError("SCRIPT_COMMAND_EDIT_MAP_EVENT (script id %u) call for a non-existing scripted map event (EventId: %u), skipping.", script.id, script.editMapEvent.eventId);
+        return ShouldAbortScript(script);
+    }
+
+    if (script.editMapEvent.successCondition >= 0)
+        pEvent->m_uiSuccessCondition = script.editMapEvent.successCondition;
+
+    if (script.editMapEvent.successScript >= 0)
+        pEvent->m_uiSuccessScript = script.editMapEvent.successScript;
+
+    if (script.editMapEvent.failureCondition >= 0)
+        pEvent->m_uiFailureCondition = script.editMapEvent.failureCondition;
+
+    if (script.editMapEvent.failureScript >= 0)
+        pEvent->m_uiFailureScript = script.editMapEvent.failureScript;
+
+    return false;
+}

@@ -291,6 +291,12 @@ enum eScriptCommand
                                                             // datalong2 = eStartScriptForAllOptions
                                                             // datalong3 = object_entry
                                                             // datalong4 = search_radius
+    SCRIPT_COMMAND_EDIT_MAP_EVENT           = 69,           // source = Map
+                                                            // datalong = event_id
+                                                            // dataint = success_condition
+                                                            // dataint2 = success_script
+                                                            // dataint3 = failure_condition
+                                                            // dataint4 = failure_script
     
     SCRIPT_COMMAND_MAX,
 
@@ -853,7 +859,7 @@ struct ScriptInfo
         {
             uint32 eventId;                                 // datalong
             uint32 unused1;                                 // datalong2
-            uint32 unuded2;                                 // datalong3
+            uint32 unused2;                                 // datalong3
             uint32 unused3;                                 // datalong4
             uint32 unused4;                                 // data_flags
             int32  successCondition;                        // dataint
@@ -898,6 +904,19 @@ struct ScriptInfo
             uint32 objectEntry;                             // datalong3
             uint32 searchRadius;                            // datalong4
         } startScriptForAll;
+
+        struct                                              // SCRIPT_COMMAND_EDIT_MAP_EVENT (69)
+        {
+            uint32 eventId;                                 // datalong
+            uint32 unused1;                                 // datalong2
+            uint32 unused2;                                 // datalong3
+            uint32 unused3;                                 // datalong4
+            uint32 unused4;                                 // data_flags
+            int32  successCondition;                        // dataint
+            int32  successScript;                           // dataint2
+            int32  failureCondition;                        // dataint3
+            int32  failureScript;                           // dataint4
+        } editMapEvent;
 
         struct
         {
