@@ -1915,3 +1915,44 @@ bool Map::ScriptCommand_EditMapEvent(const ScriptInfo& script, WorldObject* sour
 
     return false;
 }
+
+// SCRIPT_COMMAND_FAIL_QUEST (70)
+bool Map::ScriptCommand_FailQuest(const ScriptInfo& script, WorldObject* source, WorldObject* target)
+{
+    Player* pSource;
+
+    // accept player in any one from target/source arg
+    if ((pSource = ToPlayer(target)) || (pSource = ToPlayer(source)))
+        pSource->GroupEventFailHappens(script.failQuest.questId);
+    else
+    {
+        sLog.outError("SCRIPT_COMMAND_FAIL_QUEST (script id %u) call for a NULL object, skipping.", script.id);
+        return ShouldAbortScript(script);
+    }
+
+    return false;
+}
+
+// SCRIPT_COMMAND_RESPAWN_CREATURE (71)
+bool Map::ScriptCommand_RespawnCreature(const ScriptInfo& script, WorldObject* source, WorldObject* target)
+{
+    Creature* pSource = ToCreature(source);
+
+    if (!pSource)
+    {
+        sLog.outError("SCRIPT_COMMAND_RESPAWN_CREATURE (script id %u) call for a NULL or non-creature source (TypeId: %u), skipping.", script.id, source ? source->GetTypeId() : 0);
+        return ShouldAbortScript(script);
+    }
+
+    if (pSource->isAlive())
+    {
+        if (script.respawnCreature.evenAlive)
+            pSource->SetDeathState(JUST_DIED);
+        else
+            return ShouldAbortScript(script);
+    }
+
+    pSource->Respawn();
+
+    return false;
+}

@@ -297,6 +297,10 @@ enum eScriptCommand
                                                             // dataint2 = success_script
                                                             // dataint3 = failure_condition
                                                             // dataint4 = failure_script
+    SCRIPT_COMMAND_FAIL_QUEST               = 70,           // source = Player
+                                                            // datalong = quest_id
+    SCRIPT_COMMAND_RESPAWN_CREATURE         = 71,           // source = Creature
+                                                            // datalong = (bool) even_if_alive
     
     SCRIPT_COMMAND_MAX,
 
@@ -917,6 +921,16 @@ struct ScriptInfo
             int32  failureCondition;                        // dataint3
             int32  failureScript;                           // dataint4
         } editMapEvent;
+
+        struct                                              // SCRIPT_COMMAND_FAIL_QUEST (70)
+        {
+            uint32 questId;                                 // datalong
+        } failQuest;
+
+        struct                                              // SCRIPT_COMMAND_RESPAWN_CREATURE (71)
+        {
+            uint32 evenAlive;                               // datalong
+        } respawnCreature;
 
         struct
         {
