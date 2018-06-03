@@ -145,7 +145,8 @@ bool Map::ScriptCommand_MoveTo(const ScriptInfo& script, WorldObject* source, Wo
                 {
                     // X is distance from the target.
                     float distance = x;
-                    pTarget->GetNearPoint(pSource, x, y, z, 0, distance, frand(0, 2 * M_PI_F));
+                    float angle = script.o < 0.0f ? pTarget->GetAngle(pSource) : frand(0, 2 * M_PI_F);
+                    pTarget->GetNearPoint(pSource, x, y, z, 0, distance, angle);
                     break;
                 }
             }
@@ -162,7 +163,7 @@ bool Map::ScriptCommand_MoveTo(const ScriptInfo& script, WorldObject* source, Wo
         return ShouldAbortScript(script);
 
     float speed = script.moveTo.travelTime != 0 ? pSource->GetDistance(x, y, z) / ((float)script.moveTo.travelTime * 0.001f) : 0.0f;
-    float orientation = script.o ? script.o : -10.0f;
+    float orientation = script.o > 0.0f ? script.o : -10.0f;
 
     if (script.moveTo.flags & SF_MOVETO_POINT_MOVEGEN)
         pSource->GetMotionMaster()->MovePoint(script.moveTo.pointId, x, y, z, script.moveTo.movementOptions, speed, orientation);

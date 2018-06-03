@@ -312,47 +312,24 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
             }
             return false;
         }
-        case CONDITION_DEAD_OR_AWAY:
+        case CONDITION_ESCORT:
         {
-            Player const* pPlayer = (target && (target->GetTypeId() == TYPEID_PLAYER)) ? static_cast<Player const*>(target) : nullptr;
-            switch (m_value1)
-            {
-                case 0:                                     // Player dead or out of range
-                    return !pPlayer || !pPlayer->isAlive() || (m_value2 && source && !source->IsWithinDistInMap(pPlayer, m_value2));
-                case 1:                                     // All players in Group dead or out of range
-                    if (!pPlayer)
-                        return true;
-                    if (Group* grp = ((Player*)pPlayer)->GetGroup())
-                    {
-                        for (GroupReference* itr = grp->GetFirstMember(); itr != nullptr; itr = itr->next())
-                        {
-                            Player* pl = itr->getSource();
-                            if (pl && pl->isAlive() && !pl->isGameMaster() && (!m_value2 || !source || source->IsWithinDistInMap(pl, m_value2)))
-                                return false;
-                        }
-                        return true;
-                    }
-                    else
-                        return !pPlayer->isAlive() || (m_value2 && source && !source->IsWithinDistInMap(pPlayer, m_value2));
-                case 2:                                     // All players in instance dead or out of range
-                    if (!map && (target || source))
-                        map = source ? source->GetMap() : target->GetMap();
-                    if (!map || !map->Instanceable())
-                    {
-                        sLog.outErrorDb("CONDITION_DEAD_OR_AWAY %u (Player in instance case) - called from %s without map param or from non-instanceable map %i", m_entry, conditionSourceToStr[conditionSourceType], map ? map->GetId() : -1);
-                        return false;
-                    }
-                    for (Map::PlayerList::const_iterator itr = map->GetPlayers().begin(); itr != map->GetPlayers().end(); ++itr)
-                    {
-                        Player const* plr = itr->getSource();
-                        if (plr && plr->isAlive() && !plr->isGameMaster() && (!m_value2 || !source || source->IsWithinDistInMap(plr, m_value2)))
-                            return false;
-                    }
+            const Creature* pSource = ToCreature(source);
+            const Player* pTarget = ToPlayer(target);
+
+            if (m_value1 & CF_ESCORT_SOURCE_DEAD)
+                if (pSource && pSource->isDead())
                     return true;
-                case 3:                                     // Creature source is dead
-                    return !source || source->GetTypeId() != TYPEID_UNIT || !((Unit*)source)->isAlive();
-            }
-            break;
+
+            if (m_value1 & CF_ESCORT_TARGET_DEAD)
+                if (pTarget && (pTarget->isDead() || !pTarget->IsInWorld()))
+                    return true;
+
+            if (m_value2)
+                if (pSource && pTarget && !pSource->IsWithinDistInMap(pTarget, m_value2))
+                    return true;
+
+            return false;
         }
         case CONDITION_ACTIVE_HOLIDAY:
         {
@@ -1032,13 +1009,8 @@ bool ConditionEntry::IsValid()
             }
             break;
         }
-        case CONDITION_DEAD_OR_AWAY:
+        case CONDITION_ESCORT:
         {
-            if (m_value1 >= 4)
-            {
-                sLog.outErrorDb("Dead condition (entry %u, type %u) has an invalid value in value1. (Has %u, must be smaller than 4), skipping.", m_entry, m_condition, m_value1);
-                return false;
-            }
             break;
         }
         case CONDITION_WOW_PATCH:
