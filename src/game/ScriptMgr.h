@@ -150,6 +150,7 @@ enum eScriptCommand
     SCRIPT_COMMAND_MOUNT_TO_ENTRY_OR_MODEL  = 24,           // source = Creature
                                                             // datalong = creature entry/modelid (depend on datalong2)
                                                             // datalong2 = (bool) is_display_id
+                                                            // datalong3 = (bool) permanent
     SCRIPT_COMMAND_SET_RUN                  = 25,           // source = Creature
                                                             // datalong = (bool) 0 = off, 1 = on
     SCRIPT_COMMAND_ATTACK_START             = 26,           // source = Creature
@@ -301,6 +302,8 @@ enum eScriptCommand
                                                             // datalong = quest_id
     SCRIPT_COMMAND_RESPAWN_CREATURE         = 71,           // source = Creature
                                                             // datalong = (bool) even_if_alive
+    SCRIPT_COMMAND_ASSIST_UNIT              = 72,           // source = Creature
+                                                            // target = Unit
     
     SCRIPT_COMMAND_MAX,
 
@@ -642,6 +645,7 @@ struct ScriptInfo
         {
             uint32 creatureOrModelEntry;                    // datalong
             uint32 isDisplayId;                             // datalong2
+            uint32 permanent;                               // datalong3
         } mount;
 
         struct                                              // SCRIPT_COMMAND_SET_RUN (25)
@@ -931,6 +935,8 @@ struct ScriptInfo
         {
             uint32 evenAlive;                               // datalong
         } respawnCreature;
+
+                                                            // SCRIPT_COMMAND_ASSIST_UNIT (72)
 
         struct
         {

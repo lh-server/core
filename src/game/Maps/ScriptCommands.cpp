@@ -822,17 +822,15 @@ bool Map::ScriptCommand_Mount(const ScriptInfo& script, WorldObject* source, Wor
         return ShouldAbortScript(script);
     }
 
-    if (!script.mount.creatureOrModelEntry)
-        pSource->Unmount();
-    else if (script.mount.isDisplayId)
-        pSource->Mount(script.mount.creatureOrModelEntry);
-    else
-    {
-        CreatureInfo const* ci = ObjectMgr::GetCreatureTemplate(script.mount.creatureOrModelEntry);
-        uint32 display_id = Creature::ChooseDisplayId(ci);
+    uint32 displayId = script.mount.isDisplayId || !script.mount.creatureOrModelEntry ? script.mount.creatureOrModelEntry : Creature::ChooseDisplayId(ObjectMgr::GetCreatureTemplate(script.mount.creatureOrModelEntry));
 
-        pSource->Mount(display_id);
-    }
+    if (displayId)
+        pSource->Mount(displayId);
+    else
+        pSource->Unmount();
+
+    if (script.mount.permanent)
+        pSource->SetDefaultMount(displayId);
 
     return false;
 }
@@ -1620,6 +1618,7 @@ bool Map::ScriptCommand_StartWaypoints(const ScriptInfo& script, WorldObject* so
         return ShouldAbortScript(script);
     }
 
+    pSource->GetMotionMaster()->Clear(false, true);
     pSource->GetMotionMaster()->MoveWaypoint(script.startWaypoints.pathId, script.startWaypoints.startPoint, script.startWaypoints.wpSource, script.startWaypoints.initialDelay, script.startWaypoints.overwriteEntry, script.startWaypoints.canRepeat);
 
     return false;
@@ -1953,6 +1952,37 @@ bool Map::ScriptCommand_RespawnCreature(const ScriptInfo& script, WorldObject* s
     }
 
     pSource->Respawn();
+
+    return false;
+}
+
+// SCRIPT_COMMAND_ASSIST_UNIT (72)
+bool Map::ScriptCommand_AssistUnit(const ScriptInfo& script, WorldObject* source, WorldObject* target)
+{
+    Creature* pSource = ToCreature(source);
+
+    if (!pSource)
+    {
+        sLog.outError("SCRIPT_COMMAND_ASSIST_UNIT (script id %u) call for a NULL or non-creature source (TypeId: %u), skipping.", script.id, source ? source->GetTypeId() : 0);
+        return ShouldAbortScript(script);
+    }
+
+    if (pSource->getVictim())
+        return false;
+
+    Unit* pTarget = ToUnit(target);
+
+    if (!pTarget)
+    {
+        sLog.outError("SCRIPT_COMMAND_ASSIST_UNIT (script id %u) call for a NULL or non-unit target (TypeId: %u), skipping.", script.id, target ? target->GetTypeId() : 0);
+        return ShouldAbortScript(script);
+    }
+
+    if (Unit* pAttacker = pTarget->getAttackerForHelper())
+    {
+        if (!pSource->IsFriendlyTo(pAttacker) && pSource->IsWithinDistInMap(pAttacker, 40.0f))
+            pSource->AddThreat(pAttacker);
+    }
 
     return false;
 }

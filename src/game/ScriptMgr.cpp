@@ -1057,6 +1057,23 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
                 }
                 break;
             }
+            case SCRIPT_COMMAND_FAIL_QUEST:
+            {
+                if (!sObjectMgr.GetQuestTemplate(tmp.failQuest.questId))
+                {
+                    if (!sObjectMgr.IsExistingQuestId(tmp.failQuest.questId))
+                    {
+                        sLog.outErrorDb("Table `%s` has invalid quest (ID: %u) in SCRIPT_COMMAND_FAIL_QUEST in `datalong` for script id %u", tablename, tmp.failQuest.questId, tmp.id);
+                        continue;
+                    }
+                    else
+                    {
+                        DisableScriptAction(tmp);
+                        break;
+                    }
+                }
+                break;
+            }
         }
 
         if (scripts.find(tmp.id) == scripts.end())
