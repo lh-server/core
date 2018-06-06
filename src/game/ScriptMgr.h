@@ -304,6 +304,7 @@ enum eScriptCommand
                                                             // datalong = (bool) even_if_alive
     SCRIPT_COMMAND_ASSIST_UNIT              = 72,           // source = Creature
                                                             // target = Unit
+    SCRIPT_COMMAND_COMBAT_STOP              = 73,           // source = Unit
     
     SCRIPT_COMMAND_MAX,
 
@@ -937,6 +938,8 @@ struct ScriptInfo
         } respawnCreature;
 
                                                             // SCRIPT_COMMAND_ASSIST_UNIT (72)
+
+                                                            // SCRIPT_COMMAND_COMBAT_STOP (73)
 
         struct
         {

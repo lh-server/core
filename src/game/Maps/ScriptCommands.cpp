@@ -1986,3 +1986,23 @@ bool Map::ScriptCommand_AssistUnit(const ScriptInfo& script, WorldObject* source
 
     return false;
 }
+
+// SCRIPT_COMMAND_COMBAT_STOP (73)
+bool Map::ScriptCommand_CombatStop(const ScriptInfo& script, WorldObject* source, WorldObject* target)
+{
+    Unit* pSource = ToUnit(source);
+
+    if (!pSource)
+    {
+        sLog.outError("SCRIPT_COMMAND_COMBAT_STOP (script id %u) call for a NULL or non-unit source (TypeId: %u), skipping.", script.id, source ? source->GetTypeId() : 0);
+        return ShouldAbortScript(script);
+    }
+
+    if (pSource->isInCombat())
+    {
+        pSource->CombatStop(true);
+        pSource->DeleteThreatList();
+    }  
+
+    return false;
+}

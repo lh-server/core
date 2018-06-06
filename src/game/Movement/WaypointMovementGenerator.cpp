@@ -232,7 +232,7 @@ void WaypointMovementGenerator<Creature>::StartMove(Creature &creature)
 
     creature.addUnitState(UNIT_STAT_ROAMING_MOVE);
 
-    WaypointNode const& nextNode = currPoint->second;;
+    WaypointNode const& nextNode = currPoint->second;
     creature.SetWalk(!creature.hasUnitState(UNIT_STAT_RUNNING) && !creature.IsLevitating(), false);
     Movement::MoveSplineInit init(creature, "WaypointMovementGenerator<Creature>::StartMove");
     init.MoveTo(nextNode.x, nextNode.y, nextNode.z, (m_PathOrigin == PATH_FROM_SPECIAL) ? MOVE_STRAIGHT_PATH : MOVE_PATHFINDING);
