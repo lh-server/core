@@ -85,6 +85,7 @@ enum eScriptCommand
                                                             // target = WorldObject (from provided source or target)
                                                             // datalong = quest_id
                                                             // datalong2 = distance or 0
+                                                            // datalong3 = (bool) group
     SCRIPT_COMMAND_KILL_CREDIT              = 8,            // source = Player (from provided source or target)
                                                             // datalong = creature entry
                                                             // datalong2 = bool (0=personal credit, 1=group credit)
@@ -538,6 +539,7 @@ struct ScriptInfo
         {
             uint32 questId;                                 // datalong
             uint32 distance;                                // datalong2
+            uint32 group;                                   // datalong3
         } questExplored;
 
         struct                                              // SCRIPT_COMMAND_KILL_CREDIT (8)

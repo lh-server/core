@@ -245,25 +245,29 @@ bool Map::ScriptCommand_TeleportTo(const ScriptInfo& script, WorldObject* source
 // SCRIPT_COMMAND_QUEST_EXPLORED (7)
 bool Map::ScriptCommand_QuestExplored(const ScriptInfo& script, WorldObject* source, WorldObject* target)
 {
-    // when script called for item spell casting then target == (unit or GO) and source is player
     Player* pPlayer;
-    WorldObject* pWorldObject;
 
-    if (!(((pPlayer = ToPlayer(target)) && (pWorldObject = source)) || ((pPlayer = ToPlayer(source)) && (pWorldObject = target))))
+    if (!((pPlayer = ToPlayer(target)) || (pPlayer = ToPlayer(source))))
     {
         sLog.outError("SCRIPT_COMMAND_QUEST_EXPLORED (script id %u) call for a NULL player, skipping.", script.id);
         return ShouldAbortScript(script);
     }
 
-    if (pWorldObject->GetTypeId() != TYPEID_UNIT && pWorldObject->GetTypeId() != TYPEID_GAMEOBJECT && pWorldObject->GetTypeId() != TYPEID_PLAYER)
-    {
-        sLog.outError("SCRIPT_COMMAND_QUEST_EXPLORED (script id %u) call for a non-creature, non-gameobject or non-player (TypeId: %u), skipping.", script.id, pWorldObject->GetTypeId());
-        return ShouldAbortScript(script);
-    }
+    WorldObject* pWorldObject = source && !source->IsPlayer() ? source : (target && !target->IsPlayer() ? target : nullptr);
+    Group* pGroup = pPlayer->GetGroup();
 
-    // quest id and flags checked at script loading
-    if ((pWorldObject->GetTypeId() != TYPEID_UNIT || (static_cast<Unit*>(pWorldObject))->isAlive()) &&
-        (script.questExplored.distance == 0 || pWorldObject->IsWithinDistInMap(pPlayer, float(script.questExplored.distance))))
+    if (script.questExplored.group && pGroup)
+    {
+        for (GroupReference* itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next())
+        {
+            Player* pGroupMember = itr->getSource();
+            if (pGroupMember && (script.questExplored.distance == 0 || !pWorldObject || pWorldObject->IsWithinDistInMap(pGroupMember, float(script.questExplored.distance))))
+                pGroupMember->AreaExploredOrEventHappens(script.questExplored.questId);
+            else
+                pGroupMember->FailQuest(script.questExplored.questId);
+        }
+    }
+    else if ((script.questExplored.distance == 0 || !pWorldObject || pWorldObject->IsWithinDistInMap(pPlayer, float(script.questExplored.distance))))
         pPlayer->AreaExploredOrEventHappens(script.questExplored.questId);
     else
         pPlayer->FailQuest(script.questExplored.questId);
