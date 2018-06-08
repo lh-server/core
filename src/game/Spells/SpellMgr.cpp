@@ -37,8 +37,9 @@ SpellMgr::SpellMgr()
 
 SpellMgr::~SpellMgr()
 {
-    for (SpellEntryMap::iterator it = mSpellEntryMap.begin(); it != mSpellEntryMap.end(); ++it)
-        delete *it;
+    // Using unique pointer so not needed.
+    //for (SpellEntryMap::iterator it = mSpellEntryMap.begin(); it != mSpellEntryMap.end(); ++it)
+    //    delete *it;
 }
 
 SpellMgr& SpellMgr::Instance()
@@ -4355,13 +4356,13 @@ void SpellMgr::LoadSpells()
         return;
     }
     
-    mSpellEntryMap.resize(maxEntry, nullptr);
+    mSpellEntryMap.resize(maxEntry);
 
     do
     {
         fields = result->Fetch();
 
-        SpellEntry* spell = new SpellEntry();
+        std::unique_ptr<SpellEntry> spell = std::make_unique<SpellEntry>();
 
         uint32 spellId = fields[0].GetUInt32();
 
@@ -4574,7 +4575,7 @@ void SpellMgr::LoadSpells()
         spell->Custom = fields[172].GetUInt32();
 
         spell->InitCachedValues();
-        mSpellEntryMap[spellId] = spell;
+        mSpellEntryMap[spellId] = std::move(spell);
 
     } while (result->NextRow());
 

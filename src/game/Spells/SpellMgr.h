@@ -35,6 +35,7 @@
 #include "Utilities/UnorderedMapSet.h"
 
 #include <map>
+#include <memory>
 
 class Player;
 class Spell;
@@ -939,7 +940,7 @@ inline bool IsProfessionOrRidingSkill(uint32 skill)
     return  IsProfessionSkill(skill) || skill == SKILL_RIDING;
 }
 
-typedef std::vector<SpellEntry*> SpellEntryMap;
+typedef std::vector<std::unique_ptr<SpellEntry>> SpellEntryMap;
 
 class SpellMgr
 {
@@ -1353,17 +1354,27 @@ class SpellMgr
         void LoadSpellGroupStackRules();
         // SpellEntry
         void LoadSpells();
-        SpellEntry const* GetSpellEntry(uint32 spellId) const { return spellId < GetMaxSpellId() ? mSpellEntryMap[spellId] : NULL; }
+        SpellEntry const* GetSpellEntry(uint32 spellId) const { return spellId < GetMaxSpellId() ? mSpellEntryMap[spellId].get() : nullptr; }
         uint32 GetMaxSpellId() const { return mSpellEntryMap.size(); }
             // spell_mod
-        bool SetSpellEntry(uint32 id, SpellEntry* ptr)
+        SpellEntry const*  OverwriteSpellEntry(uint32 id)
         {
             if (id < GetMaxSpellId())
             {
-                mSpellEntryMap[id] = ptr;
-                return true;
+                std::unique_ptr<SpellEntry> newSpell = std::make_unique<SpellEntry>();
+                newSpell->EquippedItemClass = -1;
+                for (uint32 i = 0; i < 8; ++i)
+                {
+                    std::stringstream name;
+                    name << "CustomSpell";
+                    newSpell->SpellName[i] = new char[name.str().size() + 1];
+                    strcpy(newSpell->SpellName[i], name.str().c_str());
+                }
+                newSpell->InitCachedValues();
+                mSpellEntryMap[id] = std::move(newSpell);
+                return mSpellEntryMap[id].get();
             }
-            return false;
+            return nullptr;
         }
 
     private:
