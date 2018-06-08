@@ -53,7 +53,8 @@ enum SpellAttributeCustom
     SPELL_CUSTOM_CHAN_NO_DIST_LIMIT         = 0x008,
     SPELL_CUSTOM_FIXED_DAMAGE               = 0x010,
     SPELL_CUSTOM_IGNORE_ARMOR               = 0x020,
-    SPELL_CUSTOM_FROM_BEHIND                = 0x040     // For spells that require the caster to be behind the target
+    SPELL_CUSTOM_FROM_BEHIND                = 0x040,     // For spells that require the caster to be behind the target
+    SPELL_CUSTOM_FROM_FRONT                 = 0x080,     // For spells that require the target to be in front of the caster
 };
 
 // only used in code
@@ -938,7 +939,6 @@ inline bool IsProfessionOrRidingSkill(uint32 skill)
     return  IsProfessionSkill(skill) || skill == SKILL_RIDING;
 }
 
-typedef std::map<uint32, uint32> SpellFacingFlagMap;
 typedef std::vector<SpellEntry*> SpellEntryMap;
 
 class SpellMgr
@@ -1140,14 +1140,6 @@ class SpellMgr
                 return &itr->second;
 
             return NULL;
-        }
-
-        uint32 GetSpellFacingFlag(uint32 spellId) const
-        {
-            SpellFacingFlagMap::const_iterator itr =  mSpellFacingFlagMap.find(spellId);
-            if(itr != mSpellFacingFlagMap.end())
-                return itr->second;
-            return 0x0;
         }
 
         // Spell target coordinates
@@ -1355,7 +1347,6 @@ class SpellMgr
         void LoadSkillRaceClassInfoMap();
         void LoadSpellPetAuras();
         void LoadSpellAreas();
-        void LoadFacingCasterFlags();
 
         // SPELL GROUPS
         void LoadSpellGroups();
@@ -1397,7 +1388,6 @@ class SpellMgr
         SpellAreaForQuestMap mSpellAreaForQuestEndMap;
         SpellAreaForAuraMap  mSpellAreaForAuraMap;
         SpellAreaForAreaMap  mSpellAreaForAreaMap;
-        SpellFacingFlagMap  mSpellFacingFlagMap;
 
         // SPELL GROUPS
         SpellSpellGroupMap mSpellSpellGroup;

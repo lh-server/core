@@ -1180,7 +1180,7 @@ void SpellMgr::LoadSpellTargetPositions()
     uint32 count = 0;
 
     //                                                0   1           2                  3                  4                  5
-    QueryResult *result = WorldDatabase.Query("SELECT id, target_map, target_position_x, target_position_y, target_position_z, target_orientation FROM spell_target_position");
+    QueryResult *result = WorldDatabase.PQuery("SELECT id, target_map, target_position_x, target_position_y, target_position_z, target_orientation FROM spell_target_position WHERE (build_min <= %u) && (build_max >= %u)", SUPPORTED_CLIENT_BUILD, SUPPORTED_CLIENT_BUILD);
     if (!result)
     {
         BarGoLink bar(1);
@@ -1451,7 +1451,7 @@ void SpellMgr::LoadSpellProcEvents()
     mSpellProcEventMap.clear();                             // need for reload case
 
     //                                                0      1           2                3                 4                 5                 6          7       8        9             10
-    QueryResult *result = WorldDatabase.Query("SELECT entry, SchoolMask, SpellFamilyName, SpellFamilyMask0, SpellFamilyMask1, SpellFamilyMask2, procFlags, procEx, ppmRate, CustomChance, Cooldown FROM spell_proc_event");
+    QueryResult *result = WorldDatabase.PQuery("SELECT entry, SchoolMask, SpellFamilyName, SpellFamilyMask0, SpellFamilyMask1, SpellFamilyMask2, procFlags, procEx, ppmRate, CustomChance, Cooldown FROM spell_proc_event WHERE (build_min <= %u) && (build_max >= %u)", SUPPORTED_CLIENT_BUILD, SUPPORTED_CLIENT_BUILD);
     if (!result)
     {
         BarGoLink bar(1);
@@ -2895,7 +2895,7 @@ void SpellMgr::LoadSpellChains()
     }
 
     // load custom case
-    QueryResult *result = WorldDatabase.Query("SELECT spell_id, prev_spell, first_spell, rank, req_spell FROM spell_chain");
+    QueryResult *result = WorldDatabase.PQuery("SELECT spell_id, prev_spell, first_spell, rank, req_spell FROM spell_chain WHERE (build_min <= %u) && (build_max >= %u)", SUPPORTED_CLIENT_BUILD, SUPPORTED_CLIENT_BUILD);
     if (!result)
     {
         BarGoLink bar(1);
@@ -3166,7 +3166,7 @@ void SpellMgr::LoadSpellLearnSpells()
     mSpellLearnSpells.clear();                              // need for reload case
 
     //                                                0      1        2
-    QueryResult *result = WorldDatabase.Query("SELECT entry, SpellID, Active FROM spell_learn_spell");
+    QueryResult *result = WorldDatabase.PQuery("SELECT entry, SpellID, Active FROM spell_learn_spell WHERE (build_min <= %u) && (build_max >= %u)", SUPPORTED_CLIENT_BUILD, SUPPORTED_CLIENT_BUILD);
     if (!result)
     {
         BarGoLink bar(1);
@@ -4233,7 +4233,7 @@ void SpellMgr::LoadSpellAffects()
     uint32 count = 0;
 
     //                                                0      1         2
-    QueryResult *result = WorldDatabase.Query("SELECT entry, effectId, SpellFamilyMask FROM spell_affect");
+    QueryResult *result = WorldDatabase.PQuery("SELECT entry, effectId, SpellFamilyMask FROM spell_affect WHERE (build_min <= %u) && (build_max >= %u)", SUPPORTED_CLIENT_BUILD, SUPPORTED_CLIENT_BUILD);
     if (!result)
     {
 
@@ -4329,58 +4329,13 @@ void SpellMgr::LoadSpellAffects()
     }
 }
 
-void SpellMgr::LoadFacingCasterFlags()
-{
-    mSpellFacingFlagMap.clear();
-    uint32 count = 0;
-
-    //                                                0              1
-    QueryResult *result = WorldDatabase.Query("SELECT entry, facingcasterflag FROM spell_facing");
-    if (!result)
-    {
-        BarGoLink bar(1);
-        bar.step();
-        sLog.outString();
-        sLog.outString(">> Loaded %u facing caster flags", count);
-        return;
-    }
-
-    BarGoLink bar(result->GetRowCount());
-
-    do
-    {
-        Field *fields = result->Fetch();
-
-        bar.step();
-
-        uint32 entry              = fields[0].GetUInt32();
-        uint32 FacingCasterFlags  = fields[1].GetUInt32();
-
-        SpellEntry const* spellInfo = sSpellMgr.GetSpellEntry(entry);
-        if (!spellInfo)
-        {
-            sLog.outErrorDb("Spell %u listed in `spell_facing` does not exist", entry);
-            continue;
-        }
-        mSpellFacingFlagMap[entry]    = FacingCasterFlags;
-
-        ++count;
-    }
-    while (result->NextRow());
-
-    delete result;
-
-    sLog.outString();
-    sLog.outString(">> Loaded %u facing caster flags", count);
-}
-
 void SpellMgr::LoadSpells()
 {
     uint32 oldMSTime = WorldTimer::getMSTime();
     sLog.outString("Loading spells ...");
 
     // Getting the maximum ID.
-    QueryResult* result = WorldDatabase.PQuery("SELECT MAX(ID) FROM spell_template WHERE build=%u", SUPPORTED_CLIENT_BUILD);
+    QueryResult* result = WorldDatabase.Query("SELECT MAX(ID) FROM spell_template");
 
     if (!result)
     {
@@ -4616,7 +4571,7 @@ void SpellMgr::LoadSpells()
         //spell->MinFactionId = fields[169].GetUInt32();
         //spell->MinReputation = fields[170].GetUInt32();
         //spell->RequiredAuraVision = fields[171].GetUInt32();
-        spell->Custom = 0;
+        spell->Custom = fields[172].GetUInt32();
 
         spell->InitCachedValues();
         mSpellEntryMap[spellId] = spell;
