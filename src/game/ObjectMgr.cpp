@@ -6423,7 +6423,7 @@ void ObjectMgr::LoadFactions()
     sLog.outString("Loading factions ...");
 
     // Getting the maximum ID.
-    QueryResult* result = WorldDatabase.Query("SELECT MAX(ID) FROM faction");
+    QueryResult* result = WorldDatabase.PQuery("SELECT MAX(ID) FROM faction WHERE build=%u", SUPPORTED_CLIENT_BUILD);
 
     if (!result)
     {
@@ -6435,7 +6435,7 @@ void ObjectMgr::LoadFactions()
     delete result;
 
     // Actually loading the factions.
-    result = WorldDatabase.Query("SELECT * FROM faction");
+    result = WorldDatabase.PQuery("SELECT * FROM faction WHERE build=%u", SUPPORTED_CLIENT_BUILD);
 
     if (!result)
     {
@@ -6496,7 +6496,7 @@ void ObjectMgr::LoadFactions()
     delete result;
 
     // Getting the maximum ID.
-    result = WorldDatabase.Query("SELECT MAX(ID) FROM faction_template");
+    result = WorldDatabase.PQuery("SELECT MAX(ID) FROM faction_template WHERE build=%u", SUPPORTED_CLIENT_BUILD);
 
     if (!result)
     {
@@ -6508,7 +6508,7 @@ void ObjectMgr::LoadFactions()
     delete result;
 
     // Actually loading the faction templates.
-    result = WorldDatabase.Query("SELECT * FROM faction_template");
+    result = WorldDatabase.PQuery("SELECT * FROM faction_template WHERE build=%u", SUPPORTED_CLIENT_BUILD);
 
     if (!result)
     {

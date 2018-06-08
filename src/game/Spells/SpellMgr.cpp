@@ -4380,7 +4380,7 @@ void SpellMgr::LoadSpells()
     sLog.outString("Loading spells ...");
 
     // Getting the maximum ID.
-    QueryResult* result = WorldDatabase.Query("SELECT MAX(ID) FROM spell_template");
+    QueryResult* result = WorldDatabase.PQuery("SELECT MAX(ID) FROM spell_template WHERE build=%u", SUPPORTED_CLIENT_BUILD);
 
     if (!result)
     {
@@ -4392,7 +4392,7 @@ void SpellMgr::LoadSpells()
     delete result;
 
     // Actually loading the spells.
-    result = WorldDatabase.Query("SELECT * FROM spell_template");
+    result = WorldDatabase.PQuery("SELECT * FROM spell_template WHERE build=%u", SUPPORTED_CLIENT_BUILD);
 
     if (!result)
     {
