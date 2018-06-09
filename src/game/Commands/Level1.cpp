@@ -28,6 +28,8 @@
 #include "World.h"
 #include "ObjectMgr.h"
 #include "Player.h"
+#include "Guild.h"
+#include "GuildMgr.h"
 #include "Opcodes.h"
 #include "Chat.h"
 #include "Log.h"
@@ -46,7 +48,6 @@
 #include "VMapFactory.h"
 #endif
 #include <regex>
-#include "Guild.h"
 
 //-----------------------Npc Commands-----------------------
 bool ChatHandler::HandleNpcSayCommand(char* args)
