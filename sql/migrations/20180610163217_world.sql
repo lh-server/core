@@ -49,12 +49,12 @@ DELETE FROM `npc_gossip` WHERE `npc_guid`=50014;
 DELETE FROM `gossip_menu` WHERE `entry` IN (11361);
 INSERT INTO `gossip_menu` (`entry`, `text_id`, `condition_id`) VALUES 
 (11361, 7114, 0),
-(11361, 7116, 40020);
+(11361, 7116, 60020);
 
 DELETE FROM `gossip_menu_option` WHERE `menu_id` in (11361);
 INSERT INTO `gossip_menu_option` (`menu_id`, `id`, `option_icon`, `option_text`, `OptionBroadcastTextID`, `option_id`, `npc_option_npcflag`, `action_menu_id`, `action_poi_id`, `action_script_id`, `box_coded`, `box_money`, `box_text`, `BoxBroadcastTextID`, `condition_id`) VALUES 
 (11361, 0, 0, 'GOSSIP_OPTION_QUESTGIVER', 0, 2, 2, 0, 0, 0, 0, 0, '', 0, 0),
-(11361, 1, 1, 'Got anything interesting for sale, Zorbin?', 9817, 3, 4, 0, 0, 0, 0, 0, '', 0, 40020);
+(11361, 1, 1, 'Got anything interesting for sale, Zorbin?', 9817, 3, 4, 0, 0, 0, 0, 0, '', 0, 60020);
 
 DELETE FROM `npc_text` WHERE `ID` in (7114);
 INSERT INTO `npc_text` (`ID`, `BroadcastTextID0`, `Probability0`) VALUES (7114, 100004, 1);
@@ -66,11 +66,10 @@ DELETE FROM `broadcast_text` WHERE `ID` in (100004);
 INSERT INTO `broadcast_text` (`ID`, `MaleText`, `EmoteId0`) VALUES (100004, 'Maybe this wasn\'t the best place for a shop after all...', 274);
 
 -- Add needed conditions
-DELETE FROM `conditions` WHERE `condition_entry` IN (40018, 40019, 40020);
 INSERT INTO `conditions` (`condition_entry`, `type`, `value1`, `value2`) VALUES 
-(40018, 8, 7721, 0),
-(40019, 8, 7003, 0),
-(40020, -1, 40018, 40019);
+(60018, 8, 7721, 0),
+(60019, 8, 7003, 0),
+(60020, -1, 60018, 60019);
 
 
 -- Thousand Needles - Wizzle Brassbolts vendor issue - ok
@@ -85,6 +84,31 @@ INSERT INTO `quest_greeting` (`entry`, `content_default`, `content_loc1`, `conte
 -- Add missing quest greeting from TC - check
 INSERT INTO `quest_greeting` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`) VALUES 
 (2546, 'Yarrr... ye best not be trifling with my time, matey!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+
+-- Accidentally broke a few conditions :(
+REPLACE INTO `conditions` (`condition_entry`, `type`, `value1`, `value2`, `flags`) VALUES 
+(40000, 23, 11482, 1, 1),        -- Has no Crystal Pylon User's Manual
+(40001, -1, 40000, 4321, 0),     -- Quest complete and has item
+(40002, 23, 17691, 1, 1),
+(40003, 8, 7162, 0, 0);
+
+-- 40000 --> 60000
+UPDATE `gossip_menu` SET `condition_id`=60000 WHERE `entry`=1621 AND `text_id`=2274;
+UPDATE `gossip_menu` SET `condition_id`=60000 WHERE `entry`=1622 AND `text_id`=2277;
+INSERT INTO `conditions` (`condition_entry`, `type`, `value1`) VALUES (60000, 8, 3741);
+
+-- 40001 --> 60001
+INSERT INTO `conditions` (`condition_entry`, `type`, `value1`) VALUES (60001, 8, 3845);
+UPDATE `gossip_menu` SET `condition_id`=60001 WHERE `entry`=1961 AND `text_id`=2634;
+
+-- 40002 --> 60002
+UPDATE `gossip_menu_option` SET `condition_id`=60002 WHERE `menu_id`=1629 AND `id`=1;
+INSERT INTO `conditions` (`condition_entry`, `type`, `value1`) VALUES (60002, 8, 3761);
+
+-- 40003 --> 60003
+UPDATE `gossip_menu_option` SET `condition_id`=60003 WHERE `menu_id`=2189 AND `id`=1;
+INSERT INTO `conditions` (`condition_entry`, `type`, `value1`) VALUES (60003, 9, 4300);
 
 -- End of migration.
 END IF;
