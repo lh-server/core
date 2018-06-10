@@ -21,44 +21,18 @@ INSERT INTO `quest_template` (`entry`, `patch`, `Method`, `ZoneOrSort`, `MinLeve
 -- NPC's with missing combat behavior - ok
 -- https://github.com/LightsHope/issues/issues/129
 
--- Events list for Brainwashed Noble
-UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=596 AND `patch`=0;
-
+-- Brainwashed Noble - Same AI and spells as Marisa du'Paige
 DELETE FROM `creature_ai_events` WHERE `creature_id`=596;
-INSERT INTO `creature_ai_events` (`id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES 
-(59602, 596, 0, 4, 0, 100, 0, 0, 0, 0, 0, 59602, 0, 0, 'Brainwashed Noble - Cast Fireball and Set Phase 1 on Aggro'),
-(59603, 596, 0, 9, 13, 100, 1, 0, 40, 3400, 5400, 59603, 0, 0, 'Brainwashed Noble - Cast Fireball (Phase 1)'),
-(59604, 596, 0, 3, 13, 100, 0, 15, 0, 0, 0, 59604, 0, 0, 'Brainwashed Noble - Start Combat Movement and Set Phase 2 when Mana is at 15\% (Phase 1)'),
-(59605, 596, 0, 9, 13, 100, 0, 35, 80, 0, 0, 59605, 0, 0, 'Brainwashed Noble - Start Combat Movement at 35 Yards (Phase 1)'),
-(59606, 596, 0, 9, 13, 100, 0, 5, 15, 0, 0, 59606, 0, 0, 'Brainwashed Noble - Prevent Combat Movement at 15 Yards (Phase 1)'),
-(59607, 596, 0, 9, 13, 100, 0, 0, 5, 0, 0, 59607, 0, 0, 'Brainwashed Noble - Start Combat Movement Below 5 Yards'),
-(59608, 596, 0, 3, 11, 100, 1, 100, 30, 100, 100, 59608, 0, 0, 'Brainwashed Noble - Set Phase 1 when Mana is above 30\% (Phase 2)'),
-(59609, 596, 0, 0, 0, 100, 1, 12000, 19000, 35000, 48000, 59609, 0, 0, 'Brainwashed Noble - Cast Sleep'),
-(59610, 596, 0, 0, 0, 80, 1, 18000, 25000, 25000, 35000, 59610, 0, 0, 'Brainwashed Noble - Cast Polymorph Chicken'),
-(59611, 596, 0, 2, 0, 100, 1, 50, 0, 35000, 35000, 59611, 0, 0, 'Brainwashed Noble - Cast Chains of Ice at 50\% HP'),
-(59612, 596, 0, 2, 0, 100, 0, 15, 0, 0, 0, 59612, 0, 0, 'Brainwashed Noble - Set Phase 3 at 15\% HP'),
-(59613, 596, 0, 2, 7, 100, 0, 15, 0, 0, 0, 59613, 0, 0, 'Brainwashed Noble - Start Combat Movement and Flee at 15\% HP (Phase 3)'),
-(59614, 596, 0, 7, 0, 100, 0, 0, 0, 0, 0, 59614, 0, 0, 'Brainwashed Noble - Set Phase to 0 on Evade');
-
-DELETE FROM `creature_ai_scripts` WHERE `id` IN (59602, 59603, 59604, 59605, 59606, 59607, 59607, 59608, 59609, 59610, 59611, 59612, 59613, 59614);
-INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES 
-(59602, 0, 15, 9053, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Cast Spell Fireball'),
-(59602, 0, 44, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Increment Phase'),
-(59603, 0, 15, 9053, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Cast Spell Fireball'),
-(59604, 0, 43, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Enable Combat Movement'),
-(59604, 0, 44, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Increment Phase'),
-(59605, 0, 43, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Enable Combat Movement'),
-(59606, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Disable Combat Movement'),
-(59607, 0, 43, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Enable Combat Movement'),
-(59608, 0, 44, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Decrement Phase'),
-(59609, 0, 15, 700, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Cast Spell Sleep'),
-(59610, 0, 15, 228, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Cast Spell Polymorph: Chicken'),
-(59611, 0, 15, 512, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Cast Spell Chains of Ice'),
-(59612, 0, 44, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Set Phase to 3'),
-(59613, 0, 43, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Enable Combat Movement'),
-(59613, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Flee'),
-(59614, 0, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Brainwashed Noble - Set Phase to 0');
-
+INSERT INTO `creature_ai_events` (`id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES (59601, 596, 0, 24, 0, 100, 1, 512, 1, 30000, 30000, 59601, 0, 0, 'Brainwashed Noble - Run Away on Target Frozen');
+INSERT INTO `creature_ai_events` (`id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES (59602, 596, 0, 2, 0, 100, 1, 50, 0, 35000, 35000, 59602, 0, 0, 'Brainwashed Noble - Cast Chains of Ice at 50\% HP');
+INSERT INTO `creature_ai_events` (`id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES (59603, 596, 0, 2, 0, 100, 0, 15, 0, 0, 0, 59603, 0, 0, 'Brainwashed Noble - Flee at 15% HP');
+DELETE FROM `creature_ai_scripts` WHERE `id`=59601;
+INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (59601, 0, 3, 2, 0, 133, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 2428, 'Brainwashed Noble - Run Away from Target');
+DELETE FROM `creature_ai_scripts` WHERE `id`=59602;
+INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (59602, 0, 15, 512, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Marisa du Paige - Cast Spell Chains of Ice');
+DELETE FROM `creature_ai_scripts` WHERE `id`=59603;
+INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (59603, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Marisa du Paige - Flee');
+UPDATE `creature_template` SET `AIName`='EventAI', `spells_template`=5990 WHERE `entry`=596;
 
 -- Feralas - Incorrect shop + gossip - ok
 -- https://github.com/LightsHope/issues/issues/314
