@@ -34,6 +34,12 @@ DELETE FROM `creature_ai_scripts` WHERE `id`=59603;
 INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (59603, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Marisa du Paige - Flee');
 UPDATE `creature_template` SET `AIName`='EventAI', `spells_template`=5990 WHERE `entry`=596;
 
+-- Zorbin Fandazzle was added in patch 1.5.
+UPDATE `creature` SET `patch_min`=3 WHERE `id`=14637;
+UPDATE `creature_addon` SET `patch`=3 WHERE `guid`=50014;
+UPDATE `creature_template` SET `patch`=3 WHERE `entry`=14637;
+UPDATE `gameobject` SET `patch_min`=3 WHERE `guid` IN (49884, 50055);
+
 -- Feralas - Incorrect shop + gossip - ok
 -- https://github.com/LightsHope/issues/issues/314
 -- gossip id from TC 11361
