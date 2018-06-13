@@ -13,8 +13,6 @@ enum
     TYPE_NANDOS       = 4,
     TYPE_INTRO        = 5,
     TYPE_VOIDWALKER   = 6,
-    DATA_LIGHTNING    = 7,
-    DEAD_WOLF         = 8
 };
 
 #endif
