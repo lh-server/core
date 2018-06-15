@@ -5257,7 +5257,7 @@ public:
 
 typedef std::list<RemovedSpellData> RemoveSpellList;
 
-void Unit::ProcDamageAndSpell(Unit *pVictim, uint32 procAttacker, uint32 procVictim, uint32 procExtra, uint32 amount, WeaponAttackType attType, SpellEntry const *procSpell, Spell* spell)
+void Unit::ProcDamageAndSpell(Unit *pVictim, uint32 procAttacker, uint32 procVictim, uint32 procExtra, uint32 amount, WeaponAttackType attType, SpellEntry const *procSpell, Spell* spell, uint32 absorbed)
 {
     if (!IsInWorld())
         return;
@@ -5273,10 +5273,10 @@ void Unit::ProcDamageAndSpell(Unit *pVictim, uint32 procAttacker, uint32 procVic
     if (pVictim && pVictim->isAlive() && procVictim)
         pVictim->ProcDamageAndSpellFor(true, this, procVictim, procExtra, attType, procSpell, amount, procTriggered, spell);
 
-    HandleTriggers(pVictim, procExtra, amount, procSpell, procTriggered);
+    HandleTriggers(pVictim, procExtra, amount, absorbed, procSpell, procTriggered);
 }
 
-void Unit::HandleTriggers(Unit *pVictim, uint32 procExtra, uint32 amount, SpellEntry const *procSpell, ProcTriggeredList const& procTriggered)
+void Unit::HandleTriggers(Unit *pVictim, uint32 procExtra, uint32 amount, uint32 absorbed, SpellEntry const *procSpell, ProcTriggeredList const& procTriggered)
 {
     RemoveSpellList removedSpells;
     // Nothing found
@@ -5340,7 +5340,7 @@ void Unit::HandleTriggers(Unit *pVictim, uint32 procExtra, uint32 amount, SpellE
             if ((triggeredByAura->GetSpellProto()->TargetAuraState == AURA_STATE_HEALTHLESS_20_PERCENT) && (!itr->target || !itr->target->HasAuraState(AURA_STATE_HEALTHLESS_20_PERCENT)))
                 continue;
 
-            SpellAuraProcResult procResult = (*caster.*AuraProcHandler[auraModifier->m_auraname])(itr->target, amount, triggeredByAura, procSpell, itr->procFlag, procExtra, cooldown);
+            SpellAuraProcResult procResult = (*caster.*AuraProcHandler[auraModifier->m_auraname])(itr->target, amount, absorbed, triggeredByAura, procSpell, itr->procFlag, procExtra, cooldown);
             switch (procResult)
             {
                 case SPELL_AURA_PROC_CANT_TRIGGER:
