@@ -93,6 +93,11 @@ UPDATE `pickpocketing_loot_template` SET `patch_min`=10 WHERE `item`=24231;
 -- All items in this reference loot template are from 1.11 or later.
 UPDATE `item_loot_template` SET `patch_min`=9 WHERE `item`=1001;
 
+-- Correct gossip menu id for Marduk Blackpool.
+UPDATE `creature_template` SET `gossip_menu_id`=3649 WHERE `entry`=10433;
+INSERT INTO `gossip_menu` VALUES (3649, 4447, 0);
+UPDATE `npc_text` SET `Probability0`=5, `Probability1`=5, `Probability2`=5, `Probability3`=5 WHERE `ID`=4447;
+
 -- These tables should be in the Logs database.
 DROP TABLE `instance_creature_kills`;
 DROP TABLE `instance_custom_counters`;
