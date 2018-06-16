@@ -193,14 +193,10 @@ namespace MaNGOS
             // [-PROGRESSIVE] Total kills per day cahnged in 1.12 (http://wow.gamepedia.com/Patch_1.12.0#General)
             // Honorable Kills now diminish at a rate 10% per kill rather than 25% per kill.
             float penalty = 4.0f;
-            int penaltyThreshold = 5;
             if (sWorld.GetWowPatch() >= WOW_PATCH_112 && sWorld.getConfig(CONFIG_BOOL_ACCURATE_PVP_REWARDS))
-            {
                 penalty = 10.0f;
-                penaltyThreshold = 10;
-            }
 
-            double sameVictimPenalty = totalKills >= penaltyThreshold ? 0 : 1 - double(totalKills) / penalty;
+            double sameVictimPenalty = totalKills >= penalty ? 0 : 1 - totalKills / penalty;
 
             // Level related coefficient
             double levelCoeff;
