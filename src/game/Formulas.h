@@ -189,13 +189,18 @@ namespace MaNGOS
             // Penalty due to level diff
             float diffLevelPenalty = XP::BaseGainLevelFactor(killerLevel, victimLevel);
 
-            double sameVictimPenalty = totalKills >= 10 ? 0 : 1 - double(totalKills) / 10;
-
             // Same unit killing penalty
             // [-PROGRESSIVE] Total kills per day cahnged in 1.12 (http://wow.gamepedia.com/Patch_1.12.0#General)
             // Honorable Kills now diminish at a rate 10% per kill rather than 25% per kill.
-            if (sWorld.GetWowPatch() < WOW_PATCH_112)
-                sameVictimPenalty = totalKills >= 5 ? 0 : 1 - double(totalKills) / 4;
+            float penalty = 4.0f;
+            int penaltyThreshold = 5;
+            if (sWorld.GetWowPatch() >= WOW_PATCH_112 && sWorld.getConfig(CONFIG_BOOL_ACCURATE_PVP_REWARDS))
+            {
+                penalty = 10.0f;
+                penaltyThreshold = 10;
+            }
+
+            double sameVictimPenalty = totalKills >= penaltyThreshold ? 0 : 1 - double(totalKills) / penalty;
 
             // Level related coefficient
             double levelCoeff;
@@ -219,7 +224,7 @@ namespace MaNGOS
 
             // [-PROGRESSIVE] Honor gain per victim rank changed in 1.8
             // Values from http://www.wowwiki.com/Honor_system_(pre-2.0_formulas)
-            if (sWorld.GetWowPatch() < WOW_PATCH_108)
+            if (sWorld.GetWowPatch() < WOW_PATCH_108 && sWorld.getConfig(CONFIG_BOOL_ACCURATE_PVP_REWARDS))
                 expFactor = 157.4f;
 
             return levelCoeff * sameVictimPenalty * (expFactor * exp(0.05331 * victimRank)) * diffLevelPenalty / groupSize;
