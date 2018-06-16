@@ -730,16 +730,8 @@ void World::LoadConfigSettings(bool reload)
 
     setConfig(CONFIG_BOOL_PET_UNSUMMON_AT_MOUNT,      "PetUnsummonAtMount", false);
 
-    if (GetWowPatch() >= WOW_PATCH_112)
-    {
-        setConfig(CONFIG_BOOL_OUTDOORPVP_EP_ENABLE, "OutdoorPvP.EP.Enable", true);
-        setConfig(CONFIG_BOOL_OUTDOORPVP_SI_ENABLE, "OutdoorPvP.SI.Enable", true);
-    }
-    else
-    {
-        setConfig(CONFIG_BOOL_OUTDOORPVP_EP_ENABLE, false);
-        setConfig(CONFIG_BOOL_OUTDOORPVP_SI_ENABLE, false);
-    }
+    setConfig(CONFIG_BOOL_OUTDOORPVP_EP_ENABLE, "OutdoorPvP.EP.Enable", true);
+    setConfig(CONFIG_BOOL_OUTDOORPVP_SI_ENABLE, "OutdoorPvP.SI.Enable", true);
 
     setConfig(CONFIG_UINT32_ANTIFLOOD_SANCTION,       "Antiflood.Sanction", CHEAT_ACTION_KICK);
 
