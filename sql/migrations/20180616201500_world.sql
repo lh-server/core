@@ -124,7 +124,7 @@ INSERT INTO `quest_end_scripts` (`id`, `delay`, `command`, `datalong`, `datalong
 (8282, 1, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Noggle\'s Last Hope - Noggle Ficklespragg: State stand'),
 (8282, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10676, 0, 0, 0, 0, 0, 0, 0, 0, 'Noggle\'s Last Hope - Noggle Ficklespragg: Say text 1'),
 (8282, 3, 28, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Noggle\'s Last Hope - Noggle Ficklespragg: State sit'),
-(8282, 9, 28, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Noggle\'s Last Hope - Noggle Ficklespragg: State sleep');
+(8282, 9, 28, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Noggle\'s Last Hope - Noggle Ficklespragg: State dead');
 
 -- The Twilight Lexicon
 UPDATE `quest_template` SET `DetailsEmote1`=0 WHERE `entry`=8279 AND `patch`=6;
