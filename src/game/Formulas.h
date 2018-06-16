@@ -196,7 +196,7 @@ namespace MaNGOS
             if (sWorld.GetWowPatch() >= WOW_PATCH_112 && sWorld.getConfig(CONFIG_BOOL_ACCURATE_PVP_REWARDS))
                 penalty = 10.0f;
 
-            double sameVictimPenalty = totalKills >= penalty ? 0 : 1 - totalKills / penalty;
+            double sameVictimPenalty = totalKills >= static_cast<uint32>(penalty) ? 0 : 1 - totalKills / penalty;
 
             // Level related coefficient
             double levelCoeff;
