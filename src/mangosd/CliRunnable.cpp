@@ -113,7 +113,7 @@ bool ChatHandler::HandleAccountDeleteCommand(char* args)
  */
 bool ChatHandler::GetDeletedCharacterInfoList(DeletedInfoList& foundList, bool useName, std::string searchString)
 {
-    QueryResult* resultChar;
+    QueryResult* resultChar = nullptr;
     if (!searchString.empty())
     {
         if (useName)
