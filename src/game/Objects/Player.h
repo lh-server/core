@@ -2179,6 +2179,9 @@ class MANGOS_DLL_SPEC Player final: public Unit
 
         inline bool HasScheduledEvent() const { return m_Events.HasScheduledEvent(); }
         void SetAutoInstanceSwitch(bool v) { m_enableInstanceSwitch = v; }
+
+        void SetEscortingGuid(const ObjectGuid& guid) { _escortingGuid = guid; }
+        const ObjectGuid& GetEscortingGuid() const { return _escortingGuid; }
     protected:
         bool   m_enableInstanceSwitch;
         uint32 m_skippedUpdateTime;
@@ -2472,6 +2475,8 @@ class MANGOS_DLL_SPEC Player final: public Unit
         int32 m_cannotBeDetectedTimer;
 
         uint32 m_bNextRelocationsIgnored;
+
+        ObjectGuid _escortingGuid;
 
 public:
         /**
