@@ -2304,15 +2304,6 @@ public:
             return;
 
         ++_count;
-        /*else if (!_hasNearbyEscort) // If we've found an escort this is unnecessary
-        {
-            auto creature = static_cast<Creature*>(unit);
-            if (creature->GetSubtype() == CREATURE_SUBTYPE_PET || creature->GetSubtype() == CREATURE_SUBTYPE_TOTEM)
-                return;
-
-            if (creature->IsEscortable())
-                _hasNearbyEscort = true;
-        }*/
     }
     uint32 GetCount() const { return _count; }
     bool HasNearbyEscort() const { return _hasNearbyEscort; }
