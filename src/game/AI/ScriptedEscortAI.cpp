@@ -275,6 +275,9 @@ void npc_escortAI::UpdateAI(const uint32 uiDiff)
                 m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
                 m_creature->DisappearAndDie();
 
+                if (Player* player = GetPlayerForEscort())
+                    player->SetEscortingGuid(ObjectGuid());
+
                 if (m_bCanInstantRespawn)
                     m_creature->Respawn();
                 return;
@@ -517,9 +520,7 @@ void npc_escortAI::Start(bool bRun, uint64 uiPlayerGUID, const Quest* pQuest, bo
     AddEscortState(STATE_ESCORT_ESCORTING);
 
     if (Player* player = GetPlayerForEscort())
-    {
         player->SetEscortingGuid(m_creature->GetObjectGuid());
-    }
 
     JustStartedEscort();
 }
@@ -527,9 +528,7 @@ void npc_escortAI::Start(bool bRun, uint64 uiPlayerGUID, const Quest* pQuest, bo
 void npc_escortAI::Stop()
 {
     if (Player* player = GetPlayerForEscort())
-    {
         player->SetEscortingGuid(ObjectGuid());
-    }
 
     RemoveEscortState(STATE_ESCORT_ESCORTING);
     RemoveEscortState(STATE_ESCORT_PAUSED);
