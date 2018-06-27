@@ -2364,7 +2364,7 @@ void Creature::ApplyDynamicRespawnDelay(uint32& delay, CreatureData const* data)
 
     uint32 reduction = static_cast<uint32>(reductionRate * originalDelay);
     if (reduction >= delay)
-        delay = reduction;
+        delay = 0;
     else
         delay -= reduction;
 
