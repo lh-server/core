@@ -2294,9 +2294,10 @@ public:
     }
     void operator()(Player* player)
     {
-        if (player->GetEscortingGuid())
+        if (_hasNearbyEscort || player->GetEscortingGuid())
         {
             _hasNearbyEscort = true;
+            return;
         }
 
         if (uint32(abs(int32(player->getLevel()) - (int32)_myLevel)) > _maxLevelDiff)
@@ -2332,7 +2333,7 @@ void Creature::ApplyDynamicRespawnDelay(uint32& delay, CreatureData const* data)
         return;
 
     // Only affects rares and above with the forced flag
-    if (GetCreatureInfo()->rank >= CREATURE_ELITE_RAREELITE)
+    if (GetCreatureInfo()->rank > CREATURE_ELITE_ELITE)
         if (data && !(data->spawnFlags & SPAWN_FLAG_FORCE_DYNAMIC_ELITE) || !data)
             return;
 
@@ -2346,7 +2347,6 @@ void Creature::ApplyDynamicRespawnDelay(uint32& delay, CreatureData const* data)
     if (delay < sWorld.getConfig(CONFIG_UINT32_DYN_RESPAWN_MIN_RESPAWN_TIME))
         return;
 
-    uint32 originalDelay = delay;
     DynamicRespawnRatesChecker check(this);
     MaNGOS::PlayerWorker<DynamicRespawnRatesChecker> searcher(check);
     Cell::VisitWorldObjects(this, searcher, checkRange);
@@ -2360,9 +2360,11 @@ void Creature::ApplyDynamicRespawnDelay(uint32& delay, CreatureData const* data)
     if (count <= 0)
         return;
 
+    uint32 originalDelay = delay;
+
     float maxReductionRate = sWorld.getConfig(CONFIG_FLOAT_DYN_RESPAWN_MAX_REDUCTION_RATE);
     float reductionRate = count * sWorld.getConfig(CONFIG_FLOAT_DYN_RESPAWN_PERCENT_PER_PLAYER) / 100.0f;
-    if (reductionRate < maxReductionRate)
+    if (reductionRate > maxReductionRate)
         reductionRate = maxReductionRate;
 
     // Invalid configuration
@@ -2376,13 +2378,16 @@ void Creature::ApplyDynamicRespawnDelay(uint32& delay, CreatureData const* data)
         delay -= reduction;
 
     uint32 minimum = sWorld.getConfig(CONFIG_UINT32_DYN_RESPAWN_MIN_RESPAWN_TIME);
+    uint32 indoorMinimum = sWorld.getConfig(CONFIG_UINT32_DYN_RESPAWN_MIN_RESPAWN_TIME_INDOORS);
     if (GetCreatureInfo()->rank >= CREATURE_ELITE_ELITE)
     {
-        minimum = sWorld.getConfig(CONFIG_UINT32_DYN_RESPAWN_MIN_RESPAWN_TIME_ELITE);
+        uint32 eliteMin = sWorld.getConfig(CONFIG_UINT32_DYN_RESPAWN_MIN_RESPAWN_TIME_ELITE);
+        if (minimum < eliteMin)
+            minimum = eliteMin;
     }
-    else if (!GetTerrain()->IsOutdoors(GetPositionX(), GetPositionY(), GetPositionZ()))
+    else if (indoorMinimum > 0 && !GetTerrain()->IsOutdoors(GetPositionX(), GetPositionY(), GetPositionZ()))
     {
-        minimum = sWorld.getConfig(CONFIG_UINT32_DYN_RESPAWN_MIN_RESPAWN_TIME_INDOORS);
+        minimum = indoorMinimum;
     }
 
     // Cap the lower-end reduction at the chosen minimum
