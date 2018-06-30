@@ -612,7 +612,8 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
                 return SPELL_NEGATIVE_HASTE;
 
     // Movement speed reduction
-    if (IsSpellHaveSingleAura(spellInfo, SPELL_AURA_MOD_DECREASE_SPEED))
+    // Concussive Shot is not affected
+    if (IsSpellHaveSingleAura(spellInfo, SPELL_AURA_MOD_DECREASE_SPEED) && spellInfo->DmgClass != SPELL_DAMAGE_CLASS_RANGED)
         return SPELL_SNARE;
 
     return SPELL_NORMAL;
