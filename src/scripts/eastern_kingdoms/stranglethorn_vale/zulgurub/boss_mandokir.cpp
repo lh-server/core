@@ -264,7 +264,6 @@ struct boss_mandokirAI : public ScriptedAI
             {
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, START_FLAGS);
                 m_creature->SetHomePosition(-12195.0f, -1948.0f, 130.0f, 3.14f);
-                m_creature->GetMotionMaster()->MoveTargetedHome();
             }
             else
             {
