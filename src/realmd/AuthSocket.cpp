@@ -424,13 +424,13 @@ bool AuthSocket::_HandleLogonChallenge()
 
             // Prevent login if the user's email address has not been verified
             bool requireVerification = sConfig.GetBoolDefault("ReqEmailVerification", false);
-            uint32 requireEmailSince = sConfig.GetIntDefault("ReqEmailSince", 0);
+            int32 requireEmailSince = sConfig.GetIntDefault("ReqEmailSince", 0);
             bool verified = (*result)[7].GetBool();
             
             // Prevent login if the user's join date is bigger than the timestamp in configuration
             if (requireEmailSince > 0)
             {
-                uint32 t = (*result)[10].GetInt32();
+                uint32 t = (*result)[10].GetUInt32();
                 requireVerification = requireVerification && (t >= requireEmailSince);
             }
 
