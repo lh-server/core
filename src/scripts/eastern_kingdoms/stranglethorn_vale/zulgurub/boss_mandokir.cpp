@@ -255,7 +255,7 @@ struct boss_mandokirAI : public ScriptedAI
     void CheckVilebranchState(bool reset = false)
     {
         // If Vilebranch dies and group wipes, boss should start at the bottom of the stairs
-        // Video: https://www.youtube.com/watch?v=LYq8w4zy3jQ
+        // Video: https://www.youtube.com/watch?v=joaWY0wjOXI
         Creature* vileBranch = m_creature->FindNearestCreature(11391, 100.0f, true);
         bool isVilebranchDead = !vileBranch || !vileBranch->isAlive();
         if (reset || m_VilebranchDead != isVilebranchDead)
