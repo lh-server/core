@@ -5683,9 +5683,10 @@ bool ChatHandler::HandleUnBanHelper(BanMode mode, char* args)
     std::string nameOrIP = cnameOrIP;
 
     char* message = ExtractQuotedOrLiteralArg(&args);
-    std::string unbanMessage;
-    if (message)
-        unbanMessage = message;
+    if (!message)
+        return false;
+
+    std::string unbanMessage(message);
 
     switch (mode)
     {
