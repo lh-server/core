@@ -29,6 +29,7 @@
 #include <list>
 #include <vector>
 #include "Util.h"
+#include "World.h"
 
 struct EnchStoreItem
 {
