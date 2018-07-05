@@ -4707,6 +4707,17 @@ void Unit::RemoveNotOwnSingleTargetAuras()
 
 }
 
+void Unit::DeleteAuraHolder(SpellAuraHolder *holder)
+{
+    if (holder->IsInUse())
+    {
+        holder->SetDeleted();
+        m_deletedHolders.push_back(holder);
+    }
+    else
+        delete holder;
+}
+
 void Unit::RemoveSpellAuraHolder(SpellAuraHolder *holder, AuraRemoveMode mode)
 {
     // Statue unsummoned at holder remove
@@ -4756,13 +4767,7 @@ void Unit::RemoveSpellAuraHolder(SpellAuraHolder *holder, AuraRemoveMode mode)
 
     // If holder in use (removed from code that plan access to it data after return)
     // store it in holder list with delayed deletion
-    if (holder->IsInUse())
-    {
-        holder->SetDeleted();
-        m_deletedHolders.push_back(holder);
-    }
-    else
-        delete holder;
+    DeleteAuraHolder(holder);
 
     if (isChanneled && caster)
     {
