@@ -59,32 +59,6 @@ UPDATE `quest_template` SET `OfferRewardText`='We will leave this place on our o
 
 UPDATE `quest_template` SET `RequestItemsText`='$GLord:Lady; $N! It is over...' WHERE `entry`=8802 AND `patch`=7;
 
-
--- Warlord's Command - Giving quest requirement out when quest started. - ok
--- https://github.com/LightsHope/issues/issues/285
-UPDATE `quest_template` SET `SrcItemId`=0, `SrcItemCount`=0 WHERE `entry`=4903 AND `patch`=0;
-
--- Lootable by everyone: 300sec --> 0 sec
--- https://vanillawowdb.com/?item=12562#comments
-UPDATE `gameobject` SET `spawntimesecsmin`=0, `spawntimesecsmax`=0 WHERE `guid`=35860;
-
--- Add alternative spawns
-INSERT INTO `gameobject` (`guid`, `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation2`, `rotation3`, `animprogress`, `state`) VALUES 
-(210000, 175785, 229, -32.3, -490.2, 90.6, 3.23389, 0.998935, -0.0461342, 100, 1),
-(210001, 175785, 229, -17.3, -299.9, 31.6, 3.23389, 0.998935, -0.0461342, 100, 1),
-(210002, 175785, 229, -10.2, -400.1, 48.5, 3.23389, 0.998935, -0.0461342, 100, 1);
-
--- Add pool
-INSERT INTO `pool_template` (`entry`, `max_limit`, `description`) VALUES 
-(40000, 1, 'Inconspicuous Documents q4903');
-
--- Add guids to pool
-INSERT INTO `pool_gameobject` (`guid`, `pool_entry`, `description`) VALUES 
-(35860, 40000, 'Inconspicuous Documents location: Voone'),
-(210000, 40000, 'Inconspicuous Documents location: Wyrmthalak'),
-(210001, 40000, 'Inconspicuous Documents location: Omokk'),
-(210002, 40000, 'Inconspicuous Documents location: Urok\'s Tribute Pile');
-
 -- End of migration.
 END IF;
 END??
