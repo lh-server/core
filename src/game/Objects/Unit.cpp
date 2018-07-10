@@ -463,14 +463,14 @@ bool Unit::UpdateMeleeAttackingState()
             }
             case ATTACK_RESULT_DEAD:
             {
-                AttackStop(false);
-                if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_CANT_ATTACK)
+                AttackStop(true);
+                if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_DEAD)
                     pPlayer->SendAttackSwingDeadTarget();
                 break;
             }
             case ATTACK_RESULT_FRIENDLY_TARGET:
             {
-                AttackStop(false);
+                AttackStop(true);
                 if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_FRIENDLY_TARGET)
                     pPlayer->SendAttackSwingCantAttack();
                 break;
