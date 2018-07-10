@@ -322,7 +322,7 @@ void Unit::Update(uint32 update_diff, uint32 p_time)
 
     // extra attack
     Unit* victim = getVictim();
-    if (isInCombat() && m_doExtraAttacks && GetExtraAttacks() && victim && CanReachWithMeleeAttack(victim))
+    if (isInCombat() && m_doExtraAttacks && GetExtraAttacks() && victim && (CanAutoAttackTarget(victim) == ATTACK_RESULT_OK))
     {
         m_doExtraAttacks = false;
 
@@ -376,34 +376,44 @@ void Unit::Update(uint32 update_diff, uint32 p_time)
         _damageTakenHistory.clear();
 }
 
+AutoAttackCheckResult Unit::CanAutoAttackTarget(Unit const* pVictim) const
+{
+    if (hasUnitState(UNIT_STAT_CAN_NOT_REACT) || HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED))
+        return ATTACK_RESULT_CANT_ATTACK;
+
+    if (!pVictim->isAlive() || !isAlive())
+        return ATTACK_RESULT_DEAD;
+
+    if (!CanReachWithMeleeAttack(pVictim) || (!IsWithinLOSInMap(pVictim) && !hasUnitState(UNIT_STAT_ALLOW_LOS_ATTACK)))
+        return  ATTACK_RESULT_NOT_IN_RANGE;
+
+    if (!HasInArc(2 * M_PI_F / 3, pVictim))
+        return ATTACK_RESULT_BAD_FACING;
+
+    return ATTACK_RESULT_OK;
+}
+
+void Unit::DelayAutoAttacks()
+{
+    if (isAttackReady(BASE_ATTACK))
+        setAttackTimer(BASE_ATTACK, 100);
+    if (haveOffhandWeapon() && isAttackReady(OFF_ATTACK))
+        setAttackTimer(OFF_ATTACK, 100);
+}
+
 bool Unit::UpdateMeleeAttackingState()
 {
-    Unit* victim = getVictim();
-    if (!victim || IsNonMeleeSpellCasted(false))
+    Unit* pVictim = getVictim();
+
+    if (!pVictim || IsNonMeleeSpellCasted(false))
         return false;
 
     if (!isAttackReady(BASE_ATTACK) && !(isAttackReady(OFF_ATTACK) && haveOffhandWeapon()))
         return false;
 
-    uint8 swingError = 0;
-    if (!CanReachWithMeleeAttack(victim) || (!IsWithinLOSInMap(victim) && !hasUnitState(UNIT_STAT_ALLOW_LOS_ATTACK)))
-    {
-        if (isAttackReady(BASE_ATTACK))
-            setAttackTimer(BASE_ATTACK, 100);
-        if (haveOffhandWeapon() && isAttackReady(OFF_ATTACK))
-            setAttackTimer(OFF_ATTACK, 100);
-        swingError = 1;
-    }
-    // 120 degrees of radiant range
-    else if (!HasInArc(2 * M_PI_F / 3, victim))
-    {
-        if (isAttackReady(BASE_ATTACK))
-            setAttackTimer(BASE_ATTACK, 100);
-        if (haveOffhandWeapon() && isAttackReady(OFF_ATTACK))
-            setAttackTimer(OFF_ATTACK, 100);
-        swingError = 2;
-    }
-    else
+    AutoAttackCheckResult swingError = CanAutoAttackTarget(pVictim);
+
+    if (swingError == ATTACK_RESULT_OK)
     {
         if (isAttackReady(BASE_ATTACK))
         {
@@ -413,7 +423,7 @@ bool Unit::UpdateMeleeAttackingState()
                 if (getAttackTimer(OFF_ATTACK) < ATTACK_DISPLAY_DELAY)
                     setAttackTimer(OFF_ATTACK, ATTACK_DISPLAY_DELAY);
             }
-            AttackerStateUpdate(victim, BASE_ATTACK, false);
+            AttackerStateUpdate(pVictim, BASE_ATTACK, false);
             resetAttackTimer(BASE_ATTACK);
         }
         if (haveOffhandWeapon() && isAttackReady(OFF_ATTACK))
@@ -423,22 +433,55 @@ bool Unit::UpdateMeleeAttackingState()
             if (base_att < ATTACK_DISPLAY_DELAY)
                 setAttackTimer(BASE_ATTACK, ATTACK_DISPLAY_DELAY);
             // do attack
-            AttackerStateUpdate(victim, OFF_ATTACK, false);
+            AttackerStateUpdate(pVictim, OFF_ATTACK, false);
             resetAttackTimer(OFF_ATTACK);
         }
     }
-
-    Player* player = (GetTypeId() == TYPEID_PLAYER ? (Player*)this : NULL);
-    if (player && swingError != player->LastSwingErrorMsg())
+    else
     {
-        if (swingError == 1)
-            player->SendAttackSwingNotInRange();
-        else if (swingError == 2)
-            player->SendAttackSwingBadFacingAttack();
-        player->SwingErrorMsg(swingError);
+        Player* pPlayer = ToPlayer();
+        switch (swingError)
+        {
+            case ATTACK_RESULT_NOT_IN_RANGE:
+            {
+                DelayAutoAttacks();
+                if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_NOT_IN_RANGE)
+                    pPlayer->SendAttackSwingNotInRange();
+                break;
+            }
+            case ATTACK_RESULT_BAD_FACING:
+            {
+                DelayAutoAttacks();
+                if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_BAD_FACING)
+                    pPlayer->SendAttackSwingBadFacingAttack();
+                break;
+            }
+            case ATTACK_RESULT_CANT_ATTACK:
+            {
+                DelayAutoAttacks();
+                break;
+            }
+            case ATTACK_RESULT_DEAD:
+            {
+                AttackStop(false);
+                if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_CANT_ATTACK)
+                    pPlayer->SendAttackSwingDeadTarget();
+                break;
+            }
+            case ATTACK_RESULT_FRIENDLY_TARGET:
+            {
+                AttackStop(false);
+                if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_FRIENDLY_TARGET)
+                    pPlayer->SendAttackSwingCantAttack();
+                break;
+            }
+        }
+        
+        if (pPlayer)
+            pPlayer->SetSwingErrorMsg(swingError); 
     }
 
-    return swingError == 0;
+    return swingError == ATTACK_RESULT_OK;
 }
 
 bool Unit::haveOffhandWeapon() const
@@ -2475,12 +2518,6 @@ void Unit::CalculateAbsorbResistBlock(Unit *pCaster, SpellNonMeleeDamage *damage
 
 void Unit::AttackerStateUpdate(Unit *pVictim, WeaponAttackType attType, bool checkLoS, bool extra)
 {
-    if (hasUnitState(UNIT_STAT_CAN_NOT_REACT) || HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED))
-        return;
-
-    if (!pVictim->isAlive() || !isAlive())
-        return;
-
     if (!extra && IsNonMeleeSpellCasted(false))
         return;
 
@@ -7508,13 +7545,8 @@ bool Unit::isTargetableForAttack(bool inverseAlive /*=false*/, bool isAttackerPl
     return IsInWorld() && !hasUnitState(UNIT_STAT_DIED) && !IsTaxiFlying();
 }
 
-bool Unit::IsValidAttackTarget(Unit const* target) const
-{
-    return _IsValidAttackTarget(target, nullptr);
-}
-
 // function based on function Unit::CanAttack from 13850 client
-bool Unit::_IsValidAttackTarget(Unit const* target, SpellEntry const* bySpell, WorldObject const* obj) const
+bool Unit::IsValidAttackTarget(Unit const* target) const
 {
     ASSERT(target);
     // can't attack self
@@ -7532,6 +7564,9 @@ bool Unit::_IsValidAttackTarget(Unit const* target, SpellEntry const* bySpell, W
     if (target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_TAXI_FLIGHT | UNIT_FLAG_NOT_ATTACKABLE_1 | UNIT_FLAG_UNK_16))
         return false;
 
+    if (IsPlayer() && target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PLAYER))
+        return false;
+
     // CvC case - can attack each other only when one of them is hostile
     if (!HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) && !target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE))
         return GetReactionTo(target) <= REP_HOSTILE || target->GetReactionTo(this) <= REP_HOSTILE;
@@ -7542,8 +7577,8 @@ bool Unit::_IsValidAttackTarget(Unit const* target, SpellEntry const* bySpell, W
             || target->GetReactionTo(this) > REP_NEUTRAL)
         return false;
 
-    Player const* playerAffectingAttacker = HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) ? GetAffectingPlayer() : NULL;
-    Player const* playerAffectingTarget = target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) ? target->GetAffectingPlayer() : NULL;
+    Player const* playerAffectingAttacker = HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) ? GetAffectingPlayer() : nullptr;
+    Player const* playerAffectingTarget = target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) ? target->GetAffectingPlayer() : nullptr;
 
     // Not all neutral creatures can be attacked
     if (GetReactionTo(target) == REP_NEUTRAL &&
