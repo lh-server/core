@@ -24,6 +24,9 @@ UPDATE `creature_template` SET `speed_walk`=(6.0 / 2.5), `speed_run`=(12.0 / 7.0
 UPDATE `creature_template` SET `speed_walk`=(6.0 / 2.5), `speed_run`=(12.0 / 7.0), `baseattacktime`='2800', `rangeattacktime`='2800' WHERE `entry`='6499';
 UPDATE `creature_template` SET `speed_walk`=(6.0 / 2.5), `speed_run`=(12.0 / 7.0), `baseattacktime`='2800', `rangeattacktime`='2800' WHERE `entry`='6500';
 
+-- Prince Nazjak on a 32-48h respawn timer
+UPDATE `creature` SET `spawntimesecsmin`='115200', `spawntimesecsmax`='172800' WHERE `id`='2779';
+
 -- End of migration.
 END IF;
 END??
