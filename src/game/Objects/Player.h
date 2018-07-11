@@ -1574,8 +1574,8 @@ class MANGOS_DLL_SPEC Player final: public Unit
 
         uint32 GetSpellByProto(ItemPrototype *proto);
 
-        float GetHealthBonusFromStamina();
-        float GetManaBonusFromIntellect();
+        float GetHealthBonusFromStamina(float stamina);
+        float GetManaBonusFromIntellect(float intellect);
 
         bool UpdateStats(Stats stat);
         bool UpdateAllStats();
