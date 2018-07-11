@@ -413,73 +413,71 @@ bool Unit::UpdateMeleeAttackingState()
 
     AutoAttackCheckResult swingError = CanAutoAttackTarget(pVictim);
 
-    if (swingError == ATTACK_RESULT_OK)
+    Player* pPlayer = ToPlayer();
+    switch (swingError)
     {
-        if (isAttackReady(BASE_ATTACK))
+        case ATTACK_RESULT_OK:
         {
-            // prevent base and off attack in same time, delay attack at 0.2 sec
-            if (haveOffhandWeapon())
+            if (isAttackReady(BASE_ATTACK))
             {
-                if (getAttackTimer(OFF_ATTACK) < ATTACK_DISPLAY_DELAY)
-                    setAttackTimer(OFF_ATTACK, ATTACK_DISPLAY_DELAY);
+                // prevent base and off attack in same time, delay attack at 0.2 sec
+                if (haveOffhandWeapon())
+                {
+                    if (getAttackTimer(OFF_ATTACK) < ATTACK_DISPLAY_DELAY)
+                        setAttackTimer(OFF_ATTACK, ATTACK_DISPLAY_DELAY);
+                }
+                AttackerStateUpdate(pVictim, BASE_ATTACK, false);
+                resetAttackTimer(BASE_ATTACK);
             }
-            AttackerStateUpdate(pVictim, BASE_ATTACK, false);
-            resetAttackTimer(BASE_ATTACK);
+            if (haveOffhandWeapon() && isAttackReady(OFF_ATTACK))
+            {
+                // prevent base and off attack in same time, delay attack at 0.2 sec
+                uint32 base_att = getAttackTimer(BASE_ATTACK);
+                if (base_att < ATTACK_DISPLAY_DELAY)
+                    setAttackTimer(BASE_ATTACK, ATTACK_DISPLAY_DELAY);
+                // do attack
+                AttackerStateUpdate(pVictim, OFF_ATTACK, false);
+                resetAttackTimer(OFF_ATTACK);
+            }
+            break;
         }
-        if (haveOffhandWeapon() && isAttackReady(OFF_ATTACK))
+        case ATTACK_RESULT_NOT_IN_RANGE:
         {
-            // prevent base and off attack in same time, delay attack at 0.2 sec
-            uint32 base_att = getAttackTimer(BASE_ATTACK);
-            if (base_att < ATTACK_DISPLAY_DELAY)
-                setAttackTimer(BASE_ATTACK, ATTACK_DISPLAY_DELAY);
-            // do attack
-            AttackerStateUpdate(pVictim, OFF_ATTACK, false);
-            resetAttackTimer(OFF_ATTACK);
+            DelayAutoAttacks();
+            if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_NOT_IN_RANGE)
+                pPlayer->SendAttackSwingNotInRange();
+            break;
+        }
+        case ATTACK_RESULT_BAD_FACING:
+        {
+            DelayAutoAttacks();
+            if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_BAD_FACING)
+                pPlayer->SendAttackSwingBadFacingAttack();
+            break;
+        }
+        case ATTACK_RESULT_CANT_ATTACK:
+        {
+            DelayAutoAttacks();
+            break;
+        }
+        case ATTACK_RESULT_DEAD:
+        {
+            AttackStop(true);
+            if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_DEAD)
+                pPlayer->SendAttackSwingDeadTarget();
+            break;
+        }
+        case ATTACK_RESULT_FRIENDLY_TARGET:
+        {
+            AttackStop(true);
+            if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_FRIENDLY_TARGET)
+                pPlayer->SendAttackSwingCantAttack();
+            break;
         }
     }
-    else
-    {
-        Player* pPlayer = ToPlayer();
-        switch (swingError)
-        {
-            case ATTACK_RESULT_NOT_IN_RANGE:
-            {
-                DelayAutoAttacks();
-                if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_NOT_IN_RANGE)
-                    pPlayer->SendAttackSwingNotInRange();
-                break;
-            }
-            case ATTACK_RESULT_BAD_FACING:
-            {
-                DelayAutoAttacks();
-                if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_BAD_FACING)
-                    pPlayer->SendAttackSwingBadFacingAttack();
-                break;
-            }
-            case ATTACK_RESULT_CANT_ATTACK:
-            {
-                DelayAutoAttacks();
-                break;
-            }
-            case ATTACK_RESULT_DEAD:
-            {
-                AttackStop(true);
-                if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_DEAD)
-                    pPlayer->SendAttackSwingDeadTarget();
-                break;
-            }
-            case ATTACK_RESULT_FRIENDLY_TARGET:
-            {
-                AttackStop(true);
-                if (pPlayer && pPlayer->GetLastSwingErrorMsg() != ATTACK_RESULT_FRIENDLY_TARGET)
-                    pPlayer->SendAttackSwingCantAttack();
-                break;
-            }
-        }
         
-        if (pPlayer)
-            pPlayer->SetSwingErrorMsg(swingError); 
-    }
+    if (pPlayer)
+        pPlayer->SetSwingErrorMsg(swingError); 
 
     return swingError == ATTACK_RESULT_OK;
 }
