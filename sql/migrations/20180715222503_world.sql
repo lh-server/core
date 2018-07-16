@@ -15,14 +15,14 @@ INSERT INTO `migrations` VALUES ('20180715222503');
 
 -- Assign the scripts.
 UPDATE `creature_template` SET `AIName`='EventAI', `ScriptName`='' WHERE `entry`=4983;
+UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=4980;
 UPDATE `quest_template` SET `StartScript`=1273 WHERE `entry`=1273;
 
--- Correct faction and equipment of theramore npcs.
+-- Correct faction and equipment of involved NPCs.
 UPDATE `creature_template` SET `faction_A`=35, `faction_H`=35, `AIName`='EventAI', `equipment_id`=`entry` WHERE `entry` IN (5044, 5045, 5046);
 INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `equipentry3`) VALUES (5044, 1899, 1984, 0);
 INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `equipentry3`) VALUES (5045, 1896, 0, 5258);
 INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `equipentry3`) VALUES (5046, 3364, 0, 0);
-UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=4980;
 
 -- Add emotes to texts.
 UPDATE `broadcast_text` SET `EmoteId0`=1 WHERE `ID`=1675;
@@ -33,6 +33,12 @@ UPDATE `broadcast_text` SET `EmoteId0`=1 WHERE `ID`=1731;
 UPDATE `broadcast_text` SET `EmoteId0`=5 WHERE `ID`=1714;
 UPDATE `broadcast_text` SET `EmoteId0`=1 WHERE `ID`=1720;
 UPDATE `broadcast_text` SET `EmoteId0`=25 WHERE `ID`=1723;
+
+-- Delete custom text entries for old hardcoded script.
+DELETE FROM `script_texts` WHERE `entry` IN (-1000452, -1000453, -1000454, -1000455, -1000456, -1000457, -1000458, -1000459, -1000460, -1000461, -1000462, -1000463, -1000464, -1000465, -1000466, -1000467, -1000468, -1000469, -1000470, -1000471);
+
+-- Delete waypoints for old hardcoded script.
+DELETE FROM `script_waypoint` WHERE `entry`=4983;
 
 -- Waypoints for Ogron when Questioning Reethe starts.
 INSERT INTO `creature_movement_special` (`id`, `point`, `position_x`, `position_y`, `position_z`, `waittime`, `script_id`, `textid1`, `textid2`, `textid3`, `textid4`, `textid5`, `emote`, `spell`, `orientation`, `model1`, `model2`) VALUES
@@ -67,22 +73,29 @@ INSERT INTO `creature_movement_special` (`id`, `point`, `position_x`, `position_
 -- Events list for Theramore Skirmisher
 DELETE FROM `creature_ai_events` WHERE `creature_id`=5044;
 INSERT INTO `creature_ai_events` (`id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES (504401, 5044, 0, 31, 0, 100, 0, 1273, 1, 0, 0, 504401, 0, 0, 'Theramore Skirmisher - Start Attack on Map Event');
+INSERT INTO `creature_ai_events` (`id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES (504402, 5044, 0, 2, 0, 100, 0, 20, 1, 0, 0, 504402, 0, 0, 'Theramore Skirmisher - Flee at 20% HP');
 DELETE FROM `creature_ai_scripts` WHERE `id`=504401;
 INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (504401, 0, 22, 151, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Lieutenant Caldwell - Set Faction to Theramore');
 INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (504401, 0, 26, 0, 0, 0, 0, 1273, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Lieutenant Caldwell - Attack Ogron');
+DELETE FROM `creature_ai_scripts` WHERE `id`=504402;
+INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (504402, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Theramore Skirmisher - Flee');
 
 -- Events list for Private Hallan
 DELETE FROM `creature_ai_events` WHERE `creature_id`=5045;
 INSERT INTO `creature_ai_events` (`id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES (504501, 5045, 0, 31, 0, 100, 0, 1273, 1, 0, 0, 504501, 0, 0, 'Private Hallan - Start Attack on Map Event');
+INSERT INTO `creature_ai_events` (`id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES (504502, 5045, 0, 2, 0, 100, 0, 20, 1, 0, 0, 504502, 0, 0, 'Private Hallan - Flee at 20% HP');
 DELETE FROM `creature_ai_scripts` WHERE `id`=504501;
 INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (504501, 0, 22, 151, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Lieutenant Caldwell - Set Faction to Theramore');
 INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (504501, 0, 26, 0, 0, 0, 0, 1273, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Lieutenant Caldwell - Attack Ogron');
+DELETE FROM `creature_ai_scripts` WHERE `id`=504502;
+INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (504502, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Private Hallan - Flee');
 
 -- Events list for Lieutenant Caldwell
 DELETE FROM `creature_ai_events` WHERE `creature_id`=5046;
 INSERT INTO `creature_ai_events` (`id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES (504601, 5046, 0, 29, 0, 100, 0, 8, 1, 0, 0, 504601, 0, 0, 'Lieutenant Caldwell - Start Script on Reached Point');
 INSERT INTO `creature_ai_events` (`id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES (504602, 5046, 0, 31, 0, 100, 0, 1273, 1, 0, 0, 504602, 0, 0, 'Lieutenant Caldwell - Start Attack on Map Event');
 INSERT INTO `creature_ai_events` (`id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES (504603, 5046, 0, 6, 0, 100, 0, 0, 0, 0, 0, 504603, 0, 0, 'Lieutenant Caldwell - Complete Event on Death');
+INSERT INTO `creature_ai_events` (`id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES (504604, 5046, 0, 2, 0, 100, 0, 20, 1, 0, 0, 504604, 0, 0, 'Lieutenant Caldwell - Flee at 20% HP');
 DELETE FROM `creature_ai_scripts` WHERE `id`=504601;
 INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (504601, 0, 39, 12738, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 'Lieutenant Caldwell - Start Script');
 DELETE FROM `creature_ai_scripts` WHERE `id`=504602;
@@ -90,6 +103,8 @@ INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalo
 INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (504602, 0, 26, 0, 0, 0, 0, 1273, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Lieutenant Caldwell - Attack Ogron');
 DELETE FROM `creature_ai_scripts` WHERE `id`=504603;
 INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (504603, 0, 62, 1273, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Lieutenant Caldwell - Complete Event');
+DELETE FROM `creature_ai_scripts` WHERE `id`=504604;
+INSERT INTO `creature_ai_scripts` (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES (504604, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Lieutenant Caldwell - Flee');
 
 -- Events list for Paval Reethe
 DELETE FROM `creature_ai_events` WHERE `creature_id`=4980;
