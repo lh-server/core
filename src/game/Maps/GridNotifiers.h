@@ -845,8 +845,7 @@ namespace MaNGOS
             bool operator()(Unit* u)
             {
                 if (i_obj->IsWithinDistInMap(u, i_range) && i_funit->IsValidAttackTarget(u) &&
-                    u->isVisibleForOrDetect(i_funit, i_funit, false) &&
-                    (i_funit->GetCharmerOrOwnerOrSelf()->isInCombatWith(u) || i_funit->IsHostileTo(u)))
+                    u->isVisibleForOrDetect(i_funit, i_funit, false) && i_funit->IsHostileTo(u))
                 {
                     i_range = i_obj->GetDistance(u);        // use found unit range as new range limit for next check
                     return true;

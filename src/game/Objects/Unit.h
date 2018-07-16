@@ -1262,7 +1262,6 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         bool IsTaxiFlying() const { return hasUnitState(UNIT_STAT_TAXI_FLIGHT); }
 
         bool isInCombat() const { return HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT); }
-        bool isInCombatWith(Unit const* who) const;
         void SetInCombatState(bool PvP, Unit* enemy = nullptr);
         void SetInCombatWith(Unit* enemy);
         void ClearInCombat();

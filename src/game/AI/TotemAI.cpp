@@ -71,6 +71,13 @@ TotemAI::UpdateAI(const uint32 /*diff*/)
     // pointer to appropriate target if found any
     Unit* victim = m_creature->GetMap()->GetUnit(i_victimGuid);
 
+    // Check owner's attackers for victims
+    if (!victim)
+    {
+        if (Unit* owner = m_creature->GetCharmerOrOwner())
+            victim = owner->getAttackerForHelper();
+    }
+
     // Search victim if no, not attackable, or out of range, or friendly (possible in case duel end)
     if (!victim || !m_creature->IsWithinDistInMap(victim, max_range) ||
             !m_creature->IsValidAttackTarget(victim) || !victim->isVisibleForOrDetect(m_creature, m_creature, false))
