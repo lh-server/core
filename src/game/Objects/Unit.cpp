@@ -7513,6 +7513,27 @@ void Unit::ClearInCombat()
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT);
 }
 
+// Check if unit in combat with specific unit
+bool Unit::isInCombatWith(Unit const* who) const
+{
+    // Check target exists
+    if (!who)
+        return false;
+
+    // Search in attackers list
+    ObjectGuid guid = who->GetGUID();
+    Unit::AttackerSet attackers = getAttackers();
+    for (Unit::AttackerSet::const_iterator itr = attackers.begin(); itr != attackers.end(); ++itr)
+    {
+        // Return true if the unit matches
+        if ((*itr) && (*itr)->GetObjectGuid() == guid)
+            return true;
+    }
+
+    // Nothing found, false.
+    return false;
+}
+
 bool Unit::isTargetableForAttack(bool inverseAlive /*=false*/, bool isAttackerPlayer /*=false*/) const
 {
     if (!CanBeDetected())
