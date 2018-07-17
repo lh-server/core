@@ -6861,6 +6861,7 @@ SpellCastResult Spell::CheckRange(bool strict)
 
         if (dist > max_range)
             return SPELL_FAILED_OUT_OF_RANGE;
+            
         if (min_range && dist < min_range)
             return SPELL_FAILED_TOO_CLOSE;
         if (m_caster->GetTypeId() == TYPEID_PLAYER &&
