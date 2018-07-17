@@ -1201,6 +1201,9 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
                         owner->SetInCombatWith(unit);
                 }
             }
+
+            if (real_caster && m_spellInfo->Attributes & SPELL_ATTR_DISABLED_WHILE_ACTIVE)
+                real_caster->CooldownEvent(m_spellInfo);
         }
     }
 

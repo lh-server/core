@@ -1220,6 +1220,7 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         SpellMissInfo SpellHitResult(Unit *pVictim, SpellEntry const *spell, SpellEffectIndex effIndex, bool canReflect = false, Spell* spellPtr = nullptr);
         // Nostalrius : SPELL_AURA_MOD_MECHANIC_RESISTANCE
         bool IsEffectResist(SpellEntry const* spell, int eff);
+        SpellMissInfo FeignDeathHitResult(SpellEntry const *spell, Spell* spellPtr);
 
         float GetUnitDodgeChance()    const;
         float GetUnitParryChance()    const;

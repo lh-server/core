@@ -3170,6 +3170,10 @@ SpellMissInfo Unit::SpellHitResult(Unit *pVictim, SpellEntry const *spell, Spell
     if (pVictim != this && pVictim->IsImmuneToSpell(spell, pVictim == this))
         return SPELL_MISS_IMMUNE;
 
+    // Feign Death
+    if (spell->Id == 5384)
+        return FeignDeathHitResult(spell, spellPtr);
+
     // All positive spells can`t miss
     // TODO: client not show miss log for this spells - so need find info for this in dbc and use it!
     if (IsPositiveSpell(spell->Id, this, pVictim) || IsPositiveEffect(spell, effIndex, this, pVictim))
@@ -3281,6 +3285,21 @@ float Unit::MeleeMissChanceCalc(const Unit *pVictim, WeaponAttackType attType) c
         return 60.0f;
 
     return missChance;
+}
+
+SpellMissInfo Unit::FeignDeathHitResult(SpellEntry const *spell, Spell* spellPtr)
+{
+    HostileReference* pReference = getHostileRefManager().getFirst();
+    while (pReference)
+    {
+        if (Unit* pTarget = pReference->getSourceUnit())
+        {
+            if (!pTarget->IsPlayer() && MagicSpellHitResult(pTarget, spell, spellPtr) == SPELL_MISS_RESIST)
+                return SPELL_MISS_RESIST;
+        }
+        pReference = pReference->next();
+    }
+    return SPELL_MISS_NONE;
 }
 
 uint32 Unit::GetDefenseSkillValue(Unit const* target) const
