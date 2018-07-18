@@ -3253,12 +3253,32 @@ void Aura::HandleFeignDeath(bool apply, bool Real)
     if (!Real)
         return;
 
+    bool success = true;
     Unit* pTarget = GetTarget();
-    // Toutes les personnes qui castent sur le casteur de FD doivent etre interrompues.
+    
     if (apply)
-        pTarget->InterruptSpellsCastedOnMe();
+    {
+        HostileReference* pReference = pTarget->getHostileRefManager().getFirst();
+        while (pReference)
+        {
+            if (Unit* refTarget = pReference->getSourceUnit())
+            {
+                if (!refTarget->IsPlayer() && pTarget->MagicSpellHitResult(refTarget, GetHolder()->GetSpellProto(), nullptr) != SPELL_MISS_NONE)
+                    success = false;
+            }
+            pReference = pReference->next();
+        }
 
-    pTarget->SetFeignDeath(apply, GetCasterGuid(), GetId());
+        // Interrupt everyone casting on feign caster
+        if (success)
+            pTarget->InterruptSpellsCastedOnMe();
+    }
+
+    pTarget->SetFeignDeath(apply, GetCasterGuid(), GetId(), success);
+
+    // Remove aura if spell resisted
+    if (apply && !success)
+        GetHolder()->SetAuraDuration(0);
 }
 
 void Aura::HandleAuraModDisarm(bool apply, bool Real)

@@ -3170,10 +3170,6 @@ SpellMissInfo Unit::SpellHitResult(Unit *pVictim, SpellEntry const *spell, Spell
     if (pVictim != this && pVictim->IsImmuneToSpell(spell, pVictim == this))
         return SPELL_MISS_IMMUNE;
 
-    // Feign Death
-    if (spell->Id == 5384)
-        return FeignDeathHitResult(spell, spellPtr);
-
     // All positive spells can`t miss
     // TODO: client not show miss log for this spells - so need find info for this in dbc and use it!
     if (IsPositiveSpell(spell->Id, this, pVictim) || IsPositiveEffect(spell, effIndex, this, pVictim))
@@ -3285,21 +3281,6 @@ float Unit::MeleeMissChanceCalc(const Unit *pVictim, WeaponAttackType attType) c
         return 60.0f;
 
     return missChance;
-}
-
-SpellMissInfo Unit::FeignDeathHitResult(SpellEntry const *spell, Spell* spellPtr)
-{
-    HostileReference* pReference = getHostileRefManager().getFirst();
-    while (pReference)
-    {
-        if (Unit* pTarget = pReference->getSourceUnit())
-        {
-            if (!pTarget->IsPlayer() && MagicSpellHitResult(pTarget, spell, spellPtr) == SPELL_MISS_RESIST)
-                return SPELL_MISS_RESIST;
-        }
-        pReference = pReference->next();
-    }
-    return SPELL_MISS_NONE;
 }
 
 uint32 Unit::GetDefenseSkillValue(Unit const* target) const
@@ -9863,28 +9844,39 @@ void Unit::ModConfuseSpell(bool apply, ObjectGuid casterGuid, uint32 spellID, Mo
     }
 }
 
-void Unit::SetFeignDeath(bool apply, ObjectGuid casterGuid, uint32 /*spellID*/)
+void Unit::SetFeignDeath(bool apply, ObjectGuid casterGuid, uint32 spellID, bool success)
 {
     // [TODO] SMSG_FEIGN_DEATH_RESISTED sert a quoi ? - il affiche 'Resiste' en notify.
     if (apply)
     {
-        m_movementInfo.RemoveMovementFlag(MOVEFLAG_MASK_MOVING_OR_TURN);
-        if (GetTypeId() != TYPEID_PLAYER)
-            StopMoving();
+        if (!success)
+        {
+            if (Player* plr = ToPlayer())
+            {
+                plr->SendFeignDeathResisted();
+                plr->SendAttackSwingCancelAttack();
+            }
+        }
+        else
+        {
+            m_movementInfo.RemoveMovementFlag(MOVEFLAG_MASK_MOVING_OR_TURN);
+            if (GetTypeId() != TYPEID_PLAYER)
+                StopMoving();
 
+            SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_29);
+            SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
 
-        SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_29);
-        SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
+            addUnitState(UNIT_STAT_DIED);
+            CombatStop();
+            RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_IMMUNE_OR_LOST_SELECTION);
 
-        addUnitState(UNIT_STAT_DIED);
-        CombatStop();
-        RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_IMMUNE_OR_LOST_SELECTION);
+            getHostileRefManager().deleteReferences();
+        }
 
         // prevent interrupt message
         if (casterGuid == GetObjectGuid())
             FinishSpell(CURRENT_GENERIC_SPELL, false);
         InterruptNonMeleeSpells(true);
-        getHostileRefManager().deleteReferences();
     }
     else
     {

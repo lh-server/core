@@ -1220,7 +1220,6 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         SpellMissInfo SpellHitResult(Unit *pVictim, SpellEntry const *spell, SpellEffectIndex effIndex, bool canReflect = false, Spell* spellPtr = nullptr);
         // Nostalrius : SPELL_AURA_MOD_MECHANIC_RESISTANCE
         bool IsEffectResist(SpellEntry const* spell, int eff);
-        SpellMissInfo FeignDeathHitResult(SpellEntry const *spell, Spell* spellPtr);
 
         float GetUnitDodgeChance()    const;
         float GetUnitParryChance()    const;
@@ -1779,7 +1778,7 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         void SetFleeing(bool apply, ObjectGuid casterGuid = ObjectGuid(), uint32 spellID = 0, uint32 time = 0);
         void SetFeared(bool apply, ObjectGuid casterGuid = ObjectGuid(), uint32 spellID = 0, uint32 time = 0);/*DEPRECATED METHOD*/
         void SetConfused(bool apply, ObjectGuid casterGuid = ObjectGuid(), uint32 spellID = 0);/*DEPRECATED METHOD*/
-        void SetFeignDeath(bool apply, ObjectGuid casterGuid = ObjectGuid(), uint32 spellID = 0);/*DEPRECATED METHOD*/
+        void SetFeignDeath(bool apply, ObjectGuid casterGuid = ObjectGuid(), uint32 spellID = 0, bool success = true);/*DEPRECATED METHOD*/
 
         void InterruptSpellsCastedOnMe(bool killDelayed = false, bool interruptPositiveSpells = false);
         uint32 DespawnNearCreaturesByEntry(uint32 entry, float range);
