@@ -3264,7 +3264,10 @@ void Aura::HandleFeignDeath(bool apply, bool Real)
             if (Unit* refTarget = pReference->getSourceUnit())
             {
                 if (!refTarget->IsPlayer() && pTarget->MagicSpellHitResult(refTarget, GetHolder()->GetSpellProto(), nullptr) != SPELL_MISS_NONE)
+                {
                     success = false;
+                    break;
+                }
             }
             pReference = pReference->next();
         }
@@ -3274,11 +3277,26 @@ void Aura::HandleFeignDeath(bool apply, bool Real)
             pTarget->InterruptSpellsCastedOnMe();
     }
 
-    pTarget->SetFeignDeath(apply, GetCasterGuid(), GetId(), success);
-
-    // Remove aura if spell resisted
+    // Send error to client and remove aura if spell resisted
     if (apply && !success)
+    {
+        if (Player* plr = pTarget->ToPlayer())
+        {
+            plr->SendFeignDeathResisted();
+            plr->SendAttackSwingCancelAttack();
+        }
+
+        // prevent interrupt message
+        if (GetCasterGuid() == pTarget->GetObjectGuid())
+            pTarget->FinishSpell(CURRENT_GENERIC_SPELL, false);
+        pTarget->InterruptNonMeleeSpells(true);
+
         GetHolder()->SetAuraDuration(0);
+    }
+    else
+    {
+        pTarget->SetFeignDeath(apply, GetCasterGuid(), GetId());
+    }
 }
 
 void Aura::HandleAuraModDisarm(bool apply, bool Real)

@@ -9844,33 +9844,21 @@ void Unit::ModConfuseSpell(bool apply, ObjectGuid casterGuid, uint32 spellID, Mo
     }
 }
 
-void Unit::SetFeignDeath(bool apply, ObjectGuid casterGuid, uint32 spellID, bool success)
+void Unit::SetFeignDeath(bool apply, ObjectGuid casterGuid, uint32 spellID)
 {
     if (apply)
     {
-        if (!success)
-        {
-            if (Player* plr = ToPlayer())
-            {
-                plr->SendFeignDeathResisted();
-                plr->SendAttackSwingCancelAttack();
-            }
-        }
-        else
-        {
-            m_movementInfo.RemoveMovementFlag(MOVEFLAG_MASK_MOVING_OR_TURN);
-            if (GetTypeId() != TYPEID_PLAYER)
-                StopMoving();
+        m_movementInfo.RemoveMovementFlag(MOVEFLAG_MASK_MOVING_OR_TURN);
+        if (GetTypeId() != TYPEID_PLAYER)
+            StopMoving();
 
-            SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_29);
-            SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
 
-            addUnitState(UNIT_STAT_DIED);
-            CombatStop();
-            RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_IMMUNE_OR_LOST_SELECTION);
+        SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_29);
+        SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
 
-            getHostileRefManager().deleteReferences();
-        }
+        addUnitState(UNIT_STAT_DIED);
+        CombatStop();
+        RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_IMMUNE_OR_LOST_SELECTION);
 
         // prevent interrupt message
         if (casterGuid == GetObjectGuid())
