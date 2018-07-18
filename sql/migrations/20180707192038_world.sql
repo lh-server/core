@@ -59,6 +59,11 @@ UPDATE `quest_template` SET `OfferRewardText`='We will leave this place on our o
 
 UPDATE `quest_template` SET `RequestItemsText`='$GLord:Lady; $N! It is over...' WHERE `entry`=8802 AND `patch`=7;
 
+
+-- Shriveled heart dropped by level 23
+-- https://github.com/LightsHope/issues/issues/641
+DELETE FROM `creature_loot_template` WHERE `entry`=232 AND `item`=9243 AND `groupid`=0;
+
 -- End of migration.
 END IF;
 END??
