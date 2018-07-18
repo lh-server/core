@@ -9846,7 +9846,6 @@ void Unit::ModConfuseSpell(bool apply, ObjectGuid casterGuid, uint32 spellID, Mo
 
 void Unit::SetFeignDeath(bool apply, ObjectGuid casterGuid, uint32 spellID, bool success)
 {
-    // [TODO] SMSG_FEIGN_DEATH_RESISTED sert a quoi ? - il affiche 'Resiste' en notify.
     if (apply)
     {
         if (!success)
