@@ -3272,31 +3272,31 @@ void Aura::HandleFeignDeath(bool apply, bool Real)
             pReference = pReference->next();
         }
 
-        // Interrupt everyone casting on feign caster
         if (success)
-            pTarget->InterruptSpellsCastedOnMe();
-    }
-
-    // Send error to client and remove aura if spell resisted
-    if (apply && !success)
-    {
-        if (Player* plr = pTarget->ToPlayer())
         {
-            plr->SendFeignDeathResisted();
-            plr->SendAttackSwingCancelAttack();
+            // Interrupt everyone casting on feign caster
+            pTarget->InterruptSpellsCastedOnMe();
         }
+        else
+        {
+            // Send error to client and remove aura if spell resisted
+            if (Player* plr = pTarget->ToPlayer())
+            {
+                plr->SendFeignDeathResisted();
+                plr->SendAttackSwingCancelAttack();
+            }
 
-        // prevent interrupt message
-        if (GetCasterGuid() == pTarget->GetObjectGuid())
-            pTarget->FinishSpell(CURRENT_GENERIC_SPELL, false);
-        pTarget->InterruptNonMeleeSpells(true);
+            // prevent interrupt message
+            if (GetCasterGuid() == pTarget->GetObjectGuid())
+                pTarget->FinishSpell(CURRENT_GENERIC_SPELL, false);
+            pTarget->InterruptNonMeleeSpells(true);
 
-        GetHolder()->SetAuraDuration(0);
+            GetHolder()->SetAuraDuration(0);
+        }
     }
-    else
-    {
+
+    if (success)
         pTarget->SetFeignDeath(apply, GetCasterGuid(), GetId());
-    }
 }
 
 void Aura::HandleAuraModDisarm(bool apply, bool Real)
