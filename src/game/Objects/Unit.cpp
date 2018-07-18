@@ -9844,7 +9844,7 @@ void Unit::ModConfuseSpell(bool apply, ObjectGuid casterGuid, uint32 spellID, Mo
     }
 }
 
-void Unit::SetFeignDeath(bool apply, ObjectGuid casterGuid, uint32 spellID)
+void Unit::SetFeignDeath(bool apply, ObjectGuid casterGuid, uint32 /*spellID*/)
 {
     if (apply)
     {
@@ -9864,6 +9864,7 @@ void Unit::SetFeignDeath(bool apply, ObjectGuid casterGuid, uint32 spellID)
         if (casterGuid == GetObjectGuid())
             FinishSpell(CURRENT_GENERIC_SPELL, false);
         InterruptNonMeleeSpells(true);
+        getHostileRefManager().deleteReferences();
     }
     else
     {
