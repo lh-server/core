@@ -27,9 +27,7 @@ REPLACE INTO `item_enchantment_template` (`entry`, `ench`, `patch_min`, `patch_m
 ('8652', '543', '0', '0'),
 ('8652', '544', '0', '0'),
 ('8652', '341', '0', '0'),
-('8652', '342', '0', '0'),
-('8652', '1936', '1', '1'),
-('8652', '1937', '1', '1');
+('8652', '342', '0', '0');
 UPDATE `item_enchantment_template` SET `chance`='1' WHERE `entry`=8652;
 
 
