@@ -56,6 +56,7 @@ enum SpellAttributeCustom
     SPELL_CUSTOM_IGNORE_ARMOR               = 0x020,
     SPELL_CUSTOM_FROM_BEHIND                = 0x040,     // For spells that require the caster to be behind the target
     SPELL_CUSTOM_FROM_FRONT                 = 0x080,     // For spells that require the target to be in front of the caster
+    SPELL_CUSTOM_DAZE                       = 0x100,     // For all daze spells
 };
 
 // only used in code
