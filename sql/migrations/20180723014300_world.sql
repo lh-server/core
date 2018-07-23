@@ -1193,9 +1193,9 @@ UPDATE `creature_template` SET `modelid_3`=6965 WHERE `entry`=7901;
 
 UPDATE `creature_template` SET `modelid_4`=6966 WHERE `entry`=7901;
 
-UPDATE `creature_template` SET `modelid_2`=6957 WHERE `entry`=7902;
+UPDATE `creature_template` SET `modelid_1`=6957 WHERE `entry`=7902;
 
-UPDATE `creature_template` SET `modelid_3`=6958 WHERE `entry`=7902;
+UPDATE `creature_template` SET `modelid_2`=6958 WHERE `entry`=7902;
 
 UPDATE `creature_template` SET `modelid_3`=7013 WHERE `entry`=7939;
 
@@ -1395,15 +1395,7 @@ UPDATE `creature_template` SET `modelid_3`=9031 WHERE `entry`=8925;
 
 UPDATE `creature_template` SET `modelid_4`=9032 WHERE `entry`=8925;
 
-UPDATE `creature_template` SET `modelid_2`=7347 WHERE `entry`=8926;
-
-UPDATE `creature_template` SET `modelid_3`=3247 WHERE `entry`=8926;
-
-UPDATE `creature_template` SET `modelid_4`=2489 WHERE `entry`=8926;
-
-UPDATE `creature_template` SET `modelid_2`=1955 WHERE `entry`=8927;
-
-UPDATE `creature_template` SET `modelid_3`=1954 WHERE `entry`=8927;
+UPDATE `creature_template` SET `modelid_1`=7347 WHERE `entry`=8926;
 
 UPDATE `creature_template` SET `modelid_2`=9033 WHERE `entry`=8928;
 
@@ -2189,11 +2181,13 @@ UPDATE `creature_template` SET `modelid_3`=10513 WHERE `entry`=12128;
 
 UPDATE `creature_template` SET `modelid_4`=10515 WHERE `entry`=12128;
 
-UPDATE `creature_template` SET `modelid_2`=14017 WHERE `entry`=12156;
+UPDATE `creature_template` SET `modelid_1`=14017 WHERE `entry`=12156;
 
-UPDATE `creature_template` SET `modelid_3`=14019 WHERE `entry`=12156;
+UPDATE `creature_template` SET `modelid_2`=14019 WHERE `entry`=12156;
 
-UPDATE `creature_template` SET `modelid_4`=14018 WHERE `entry`=12156;
+UPDATE `creature_template` SET `modelid_3`=14018 WHERE `entry`=12156;
+
+UPDATE `creature_template` SET `modelid_4`=14020 WHERE `entry`=12156;
 
 UPDATE `creature_template` SET `modelid_2`=14061 WHERE `entry`=12157;
 
@@ -2201,11 +2195,13 @@ UPDATE `creature_template` SET `modelid_3`=14062 WHERE `entry`=12157;
 
 UPDATE `creature_template` SET `modelid_4`=14063 WHERE `entry`=12157;
 
-UPDATE `creature_template` SET `modelid_2`=14021 WHERE `entry`=12158;
+UPDATE `creature_template` SET `modelid_1`=14021 WHERE `entry`=12158;
 
-UPDATE `creature_template` SET `modelid_3`=14023 WHERE `entry`=12158;
+UPDATE `creature_template` SET `modelid_2`=14023 WHERE `entry`=12158;
 
-UPDATE `creature_template` SET `modelid_4`=14022 WHERE `entry`=12158;
+UPDATE `creature_template` SET `modelid_3`=14022 WHERE `entry`=12158;
+
+UPDATE `creature_template` SET `modelid_4`=14024 WHERE `entry`=12158;
 
 UPDATE `creature_template` SET `modelid_3`=4842 WHERE `entry`=12160;
 
@@ -3095,6 +3091,8 @@ UPDATE `creature_template` SET `modelid_4`=15283 WHERE `entry`=15130;
 
 UPDATE `creature_template` SET `modelid_2`=4035 WHERE `entry`=15136;
 
+UPDATE `creature_template` SET `modelid_1`=5240 WHERE `entry`=15163;
+
 UPDATE `creature_template` SET `modelid_2`=15301 WHERE `entry`=15163;
 
 UPDATE `creature_template` SET `modelid_3`=15296 WHERE `entry`=15163;
@@ -3285,10 +3283,6 @@ UPDATE `creature_template` SET `modelid_4`=15798 WHERE `entry`=15838;
 
 UPDATE `creature_template` SET `modelid_2`=15810 WHERE `entry`=15839;
 
-UPDATE `creature_template` SET `modelid_2`=15821 WHERE `entry`=15852;
-
-UPDATE `creature_template` SET `modelid_3`=15855 WHERE `entry`=15852;
-
 UPDATE `creature_template` SET `modelid_3`=15851 WHERE `entry`=15853;
 
 UPDATE `creature_template` SET `modelid_4`=15852 WHERE `entry`=15853;
@@ -3413,19 +3407,7 @@ UPDATE `creature_template` SET `modelid_4`=5265 WHERE `entry`=16360;
 
 UPDATE `creature_template` SET `modelid_2`=16161 WHERE `entry`=16368;
 
-UPDATE `creature_template` SET `modelid_2`=16358 WHERE `entry`=16371;
-
-UPDATE `creature_template` SET `modelid_3`=16357 WHERE `entry`=16371;
-
-UPDATE `creature_template` SET `modelid_4`=16356 WHERE `entry`=16371;
-
 UPDATE `creature_template` SET `modelid_2`=857 WHERE `entry`=16372;
-
-UPDATE `creature_template` SET `modelid_2`=16361 WHERE `entry`=16377;
-
-UPDATE `creature_template` SET `modelid_3`=16360 WHERE `entry`=16377;
-
-UPDATE `creature_template` SET `modelid_4`=16359 WHERE `entry`=16377;
 
 UPDATE `creature_template` SET `modelid_3`=16148 WHERE `entry`=16378;
 
