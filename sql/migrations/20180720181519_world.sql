@@ -118,6 +118,8 @@ UPDATE `spell_template` SET `customFlags`= `customFlags` + 256 WHERE `ID`=28456;
 UPDATE `spell_template` SET `customFlags`= `customFlags` + 256 WHERE `ID`=29124;
 UPDATE `spell_template` SET `customFlags`= `customFlags` + 256 WHERE `ID`=29848;
 
+UPDATE `spell_mod` SET `Custom`=`Custom`+256 WHERE `ID` IN (23603, 27565);
+
 
 -- End of migration.
 END IF;
