@@ -306,6 +306,9 @@ enum eScriptCommand
     SCRIPT_COMMAND_ASSIST_UNIT              = 72,           // source = Creature
                                                             // target = Unit
     SCRIPT_COMMAND_COMBAT_STOP              = 73,           // source = Unit
+    SCRIPT_COMMAND_ADD_AURA                 = 74,           // source = Unit
+                                                            // datalong = spell_id
+                                                            // datalong2 = flags
     
     SCRIPT_COMMAND_MAX,
 
@@ -942,6 +945,12 @@ struct ScriptInfo
                                                             // SCRIPT_COMMAND_ASSIST_UNIT (72)
 
                                                             // SCRIPT_COMMAND_COMBAT_STOP (73)
+
+        struct                                              // SCRIPT_COMMAND_ADD_AURA (74)
+        {
+            uint32 spellId;                                 // datalong
+            uint32 flags;                                   // datalong2
+        } addAura;
 
         struct
         {
