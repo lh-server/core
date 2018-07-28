@@ -724,9 +724,9 @@ class MANGOS_DLL_SPEC Creature : public Unit
 
         void SetInCombatWithZone(bool initialPulse = true);
         bool canStartAttack(Unit const* who, bool force) const;
-        Unit *SelectVictim();
         bool _IsTargetAcceptable(Unit const *target) const;
         bool canCreatureAttack(Unit const *pVictim, bool force) const;
+        bool CantPathToVictim() const;
 
         // Smartlog
         time_t GetCombatTime(bool total) const;

@@ -3648,6 +3648,17 @@ SpellCastResult Creature::TryToCast(Unit* pTarget, const SpellEntry* pSpellInfo,
     return spell->prepare(std::move(targets), nullptr, uiChance);
 }
 
+bool Creature::CantPathToVictim() const
+{
+    if (!getVictim())
+        return false;
+
+    if (GetMotionMaster()->GetCurrentMovementGeneratorType() != CHASE_MOTION_TYPE)
+        return false;
+
+    return !GetMotionMaster()->GetCurrent()->IsReachable();
+}
+
 // use this function to avoid having hostile creatures attack
 // friendlies and other mobs they shouldn't attack
 bool Creature::_IsTargetAcceptable(Unit const *target) const
