@@ -3546,12 +3546,14 @@ bool ChatHandler::ExtractPlayerTarget(char** args, Player** player /*= NULL*/, O
     // some from req. data must be provided (note: name is empty if player not exist)
     if ((!player || !*player) && (!player_guid || !*player_guid) && (!player_name || player_name->empty()))
     {
-        if (use_extended_response && !name.empty()) {
+        if (use_extended_response && !name.empty())
+        {
             std::string message(GetMangosString(LANG_PLAYER_NOT_FOUND));
             message.append(" (" + name + ")");
             SendSysMessage(message.c_str());
         }
-        else {
+        else
+        {
             SendSysMessage(LANG_PLAYER_NOT_FOUND);
         }
         SetSentErrorMessage(true);
