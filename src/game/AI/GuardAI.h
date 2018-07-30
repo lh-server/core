@@ -36,6 +36,9 @@ class MANGOS_DLL_DECL GuardAI : public CreatureAI
         void AttackStart(Unit *) override;
         void JustDied(Unit *) override;
         bool IsVisible(Unit *) const override;
+        void EnterCombat(Unit *) override;
+
+        bool IsAttackingPlayerOrFriendly(Unit* pWho) const;
 
         void UpdateAI(const uint32) override;
         static int Permissible(const Creature *);
