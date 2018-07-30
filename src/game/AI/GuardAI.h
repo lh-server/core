@@ -29,7 +29,6 @@ class Creature;
 class MANGOS_DLL_DECL GuardAI : public CreatureAI
 {
     public:
-
         explicit GuardAI(Creature *c);
 
         void MoveInLineOfSight(Unit *) override;
@@ -37,10 +36,9 @@ class MANGOS_DLL_DECL GuardAI : public CreatureAI
         void JustDied(Unit *) override;
         bool IsVisible(Unit *) const override;
         void EnterCombat(Unit *) override;
-
-        bool IsAttackingPlayerOrFriendly(Unit* pWho) const;
-
         void UpdateAI(const uint32) override;
         static int Permissible(const Creature *);
+    private:
+        bool IsAttackingPlayerOrFriendly(const Unit *) const;
 };
 #endif

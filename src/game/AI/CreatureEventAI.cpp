@@ -522,13 +522,6 @@ void CreatureEventAI::JustDied(Unit* killer)
 {
     Reset();
 
-    if (m_creature->IsGuard())
-    {
-        //Send Zone Under Attack message to the LocalDefense and WorldDefense Channels
-        if (Player* pKiller = killer->GetCharmerOrOwnerPlayerOrPlayerItself())
-            m_creature->SendZoneUnderAttackMessage(pKiller);
-    }
-
     if (m_bEmptyList)
         return;
 

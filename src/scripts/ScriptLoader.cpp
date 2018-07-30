@@ -38,7 +38,6 @@ void AddSC_dragons_of_nightmare();
 void AddSC_boss_lord_kazzak();
 void AddSC_generic_creature();
 void AddSC_go_scripts();
-void AddSC_guards();
 void AddSC_npc_professions();
 void AddSC_npcs_special();
 void AddSC_Totems();
@@ -308,7 +307,6 @@ void AddScripts()
     AddSC_boss_lord_kazzak();
     AddSC_generic_creature();
     AddSC_go_scripts();
-    AddSC_guards();
     AddSC_npc_professions();
     AddSC_npcs_special();
     AddSC_Totems();
