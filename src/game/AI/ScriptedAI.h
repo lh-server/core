@@ -26,7 +26,7 @@ struct MANGOS_DLL_DECL ScriptedAI : CreatureAI
     //CreatureAI Functions
     //*************
 
-    // Called when an unit moves within visability distance
+    // Called when an unit moves within visibility distance
     void MoveInLineOfSight(Unit*) override;
 
     // Called at each attack of m_creature by any victim
