@@ -87,12 +87,6 @@ void GuardAI::EnterCombat(Unit *)
     m_creature->CallForHelp(30.0f);
 }
 
-bool GuardAI::IsVisible(Unit *pl) const
-{
-    return m_creature->IsWithinDist(pl, sWorld.getConfig(CONFIG_FLOAT_SIGHT_GUARDER))
-        && pl->isVisibleForOrDetect(m_creature, m_creature, true);
-}
-
 void GuardAI::UpdateAI(const uint32 uiDiff)
 {
     if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())

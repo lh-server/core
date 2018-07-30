@@ -53,14 +53,6 @@ void npc_escortAI::setCurrentWP (uint32 idx)
     m_currentWaypointIdx = idx;
 }
 
-bool npc_escortAI::IsVisible(Unit* pWho) const
-{
-    if (!pWho)
-        return false;
-
-    return m_creature->IsWithinDist(pWho, VISIBLE_RANGE) && pWho->isVisibleForOrDetect(m_creature, m_creature, true);
-}
-
 void npc_escortAI::AttackStart(Unit* pWho)
 {
     if (!pWho)

@@ -412,6 +412,10 @@ UPDATE `creature_template` SET `AIName`='GuardAI', `ScriptName`='' WHERE `entry`
 -- Fix instance reset message.
 INSERT INTO `mangos_string` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`) VALUES (70, 'The party leader has attempted to reset the instance you are in. Please zone out to allow the instance to reset.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
+-- Text used by Jin'do.
+DELETE FROM `script_texts` WHERE `entry`=-1309014;
+UPDATE `broadcast_text` SET `Sound`=8425, `Type`=1 WHERE `ID`=10449;
+
 
 -- End of migration.
 END IF;

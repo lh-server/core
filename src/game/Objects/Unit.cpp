@@ -523,6 +523,20 @@ void Unit::RemoveSpellsCausingAura(AuraType auraType)
     }
 }
 
+void Unit::RemoveNonPassiveSpellsCausingAura(AuraType auraType)
+{
+    for (AuraList::const_iterator iter = m_modAuras[auraType].begin(); iter != m_modAuras[auraType].end();)
+    {
+        if (!((*iter)->GetSpellProto()->Attributes & SPELL_ATTR_PASSIVE))
+        {
+            RemoveAurasDueToSpell((*iter)->GetId());
+            iter = m_modAuras[auraType].begin();
+        }
+        else
+            iter++;
+    }
+}
+
 bool Unit::HasAuraTypeByCaster(AuraType auraType, ObjectGuid casterGuid) const
 {
     for (AuraList::const_iterator iter = m_modAuras[auraType].begin(); iter != m_modAuras[auraType].end(); ++iter)
@@ -709,7 +723,7 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
         RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
 
         if (pVictim != this)
-            RemoveSpellsCausingAura(SPELL_AURA_MOD_INVISIBILITY);
+            RemoveNonPassiveSpellsCausingAura(SPELL_AURA_MOD_INVISIBILITY);
 
         if (pVictim->GetTypeId() == TYPEID_PLAYER && !pVictim->IsMounted() && !pVictim->IsStandState())
             pVictim->SetStandState(UNIT_STAND_STATE_STAND);
@@ -7741,13 +7755,6 @@ bool Unit::isVisibleForOrDetect(Unit const* u, WorldObject const* viewPoint, boo
     // redundant phasing
     //if (!u->CanSeeInWorld(this))
     //    return false;
-
-    if (Creature* pCreature = (Creature*)ToCreature())
-    {
-        bool bVisible = false;
-        if (pCreature->AI() && pCreature->AI()->IsVisibleFor(u, bVisible))
-            return bVisible;
-    }
 
     // Visible units are always visible for all units
     if (m_Visibility == VISIBILITY_ON)

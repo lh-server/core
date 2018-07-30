@@ -85,7 +85,7 @@ class MANGOS_DLL_SPEC CreatureAI
 
         ///== Reactions At =================================
 
-        // Called if IsVisible(Unit *who) is true at each *who move, reaction at visibility zone enter
+        // Called when an unit moves within visability distance
         virtual void MoveInLineOfSight(Unit *) {}
 
         // Called for reaction at enter to combat if not in combat yet (enemy can be NULL)
@@ -193,14 +193,6 @@ class MANGOS_DLL_SPEC CreatureAI
 
         // Does creature chase its target ?
         bool IsCombatMovement() const { return m_CombatMovementEnabled; }
-
-        /**
-        * Check if unit is visible for MoveInLineOfSight
-        * Note: This check is by default only the state-depending (visibility, range), NOT LineOfSight
-        * @param pWho Unit* who is checked if it is visible for the creature
-        */
-        virtual bool IsVisible(Unit* /* pWho */) const { return false; }
-        virtual bool IsVisibleFor(Unit const* /* pWho */, bool & /* isVisible */) const { return false; }
 
         /**
          * @brief Triggers an alert when a Unit moves near stealth detection range
