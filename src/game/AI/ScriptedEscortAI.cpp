@@ -67,7 +67,7 @@ void npc_escortAI::AttackStart(Unit* pWho)
         m_creature->SetInCombatWith(pWho);
         pWho->SetInCombatWith(m_creature);
 
-        if (IsCombatMovement())
+        if (IsCombatMovementEnabled())
             m_creature->GetMotionMaster()->MoveChase(pWho);
     }
 }
@@ -181,7 +181,7 @@ void npc_escortAI::JustRespawned()
 {
     m_uiEscortState = STATE_ESCORT_NONE;
 
-    if (!IsCombatMovement())
+    if (!IsCombatMovementEnabled())
         SetCombatMovement(true);
 
     //add a small delay before going to first waypoint.

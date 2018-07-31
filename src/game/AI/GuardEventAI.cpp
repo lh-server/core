@@ -37,7 +37,7 @@ bool GuardEventAI::IsAttackingPlayerOrFriendly(const Unit* pWho) const
 
     if (Unit* pVictim = pWho->getVictim())
     {
-        if (m_creature->IsFriendlyTo(pVictim))
+        if (m_creature->IsFriendlyTo(pVictim) || pVictim->isTaxi())
             return true;
     }
 
@@ -57,7 +57,7 @@ void GuardEventAI::MoveInLineOfSight(Unit *pWho)
         UpdateEventsOn_MoveInLineOfSight(pWho);
 
     // Ignore Z for flying creatures
-    if (!m_creature->CanFly() && m_creature->GetDistanceZ(pWho) > CREATURE_Z_ATTACK_RANGE)
+    if (!m_creature->CanFly() && pWho->IsCreature() && m_creature->GetDistanceZ(pWho) > CREATURE_Z_ATTACK_RANGE)
         return;
 
     float attackRadius = m_creature->GetAttackDistance(pWho);

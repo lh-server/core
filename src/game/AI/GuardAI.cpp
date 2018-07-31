@@ -43,7 +43,7 @@ bool GuardAI::IsAttackingPlayerOrFriendly(const Unit* pWho) const
 
     if (Unit* pVictim = pWho->getVictim())
     {
-        if (m_creature->IsFriendlyTo(pVictim))
+        if (m_creature->IsFriendlyTo(pVictim) || pVictim->isTaxi())
             return true;
     }
 
@@ -56,7 +56,7 @@ void GuardAI::MoveInLineOfSight(Unit *pWho)
         return;
 
     // Ignore Z for flying creatures
-    if (!m_creature->CanFly() && m_creature->GetDistanceZ(pWho) > CREATURE_Z_ATTACK_RANGE)
+    if (!m_creature->CanFly() && pWho->IsCreature() && m_creature->GetDistanceZ(pWho) > CREATURE_Z_ATTACK_RANGE)
         return;
 
     float attackRadius = m_creature->GetAttackDistance(pWho);
@@ -103,13 +103,13 @@ void GuardAI::AttackStart(Unit *pWho)
     if (!pWho)
         return;
 
-    if (m_creature->Attack(pWho, m_MeleeEnabled))
+    if (m_creature->Attack(pWho, m_bMeleeAttack))
     {
         m_creature->AddThreat(pWho);
         m_creature->SetInCombatWith(pWho);
         pWho->SetInCombatWith(m_creature);
 
-        if (m_CombatMovementEnabled)
+        if (m_bCombatMovement)
             m_creature->GetMotionMaster()->MoveChase(pWho);
     }
 }

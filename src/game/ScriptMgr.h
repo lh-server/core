@@ -1107,31 +1107,6 @@ void DoOrSimulateScriptTextForMap(int32 iTextEntry, uint32 uiCreatureEntry, Map*
 // Returns a target based on the type specified.
 WorldObject* GetTargetByType(WorldObject* pSource, WorldObject* pTarget, uint8 TargetType, uint32 Param1 = 0u, uint32 Param2 = 0u);
 
-//Spell targets used by SelectSpell
-enum SelectTarget
-{
-    SELECT_TARGET_DONTCARE = 0,                             //All target types allowed
-
-    SELECT_TARGET_SELF,                                     //Only Self casting
-
-    SELECT_TARGET_SINGLE_ENEMY,                             //Only Single Enemy
-    SELECT_TARGET_AOE_ENEMY,                                //Only AoE Enemy
-    SELECT_TARGET_ANY_ENEMY,                                //AoE or Single Enemy
-
-    SELECT_TARGET_SINGLE_FRIEND,                            //Only Single Friend
-    SELECT_TARGET_AOE_FRIEND,                               //Only AoE Friend
-    SELECT_TARGET_ANY_FRIEND,                               //AoE or Single Friend
-};
-
-//Spell Effects used by SelectSpell
-enum SelectEffect
-{
-    SELECT_EFFECT_DONTCARE = 0,                             //All spell effects allowed
-    SELECT_EFFECT_DAMAGE,                                   //Spell does damage
-    SELECT_EFFECT_HEALING,                                  //Spell does healing
-    SELECT_EFFECT_AURA,                                     //Spell applies an aura
-};
-
 //TODO: find better namings and definitions.
 //N=Neutral, A=Alliance, H=Horde.
 //NEUTRAL or FRIEND = Hostility to player surroundings (not a good definition)
@@ -1180,12 +1155,6 @@ struct CreatureEscortData
     uint32 uiQuestEntry;
     uint32 uiEscortFaction;
     uint32 uiLastWaypointEntry;
-};
-
-struct TSpellSummary
-{
-    uint8 Targets;                                          // set of enum SelectTarget
-    uint8 Effects;                                          // set of enum SelectEffect
 };
 
 struct Script
@@ -1259,10 +1228,6 @@ class ScriptMgr
         void LoadScriptNames();
         void LoadAreaTriggerScripts();
         void LoadEventIdScripts();
-        
-        void FillSpellSummary();
-
-        TSpellSummary* GetSpellSummary() const { return m_spellSummary; }
 
         uint32 GetAreaTriggerScriptId(uint32 triggerId) const;
         uint32 GetEventIdScriptId(uint32 eventId) const;
@@ -1360,8 +1325,6 @@ class ScriptMgr
         EventIdScriptMap        m_EventIdScripts;
 
         ScriptNameMap           m_scriptNames;
-
-        TSpellSummary* m_spellSummary;
         
         TextDataMap     m_mTextDataMap;                     //additional data for text strings
         PointMoveMap    m_mPointMoveMap;                    //coordinates for waypoints

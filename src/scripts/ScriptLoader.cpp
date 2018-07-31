@@ -36,7 +36,6 @@ void AddSC_npc_king_gordok();
 void AddSC_areatrigger_scripts();
 void AddSC_dragons_of_nightmare();
 void AddSC_boss_lord_kazzak();
-void AddSC_generic_creature();
 void AddSC_go_scripts();
 void AddSC_npc_professions();
 void AddSC_npcs_special();
@@ -305,7 +304,6 @@ void AddScripts()
     AddSC_areatrigger_scripts();
     AddSC_dragons_of_nightmare();
     AddSC_boss_lord_kazzak();
-    AddSC_generic_creature();
     AddSC_go_scripts();
     AddSC_npc_professions();
     AddSC_npcs_special();
