@@ -3230,7 +3230,6 @@ void Creature::OnEnterCombat(Unit* pWho, bool notInCombat)
     if (_creatureGroup)
         _creatureGroup->OnMemberAttackStart(this, pWho);
 
-    // Pas encore en combat.
     if (notInCombat)
     {
         ResetCombatTime();
@@ -3252,7 +3251,8 @@ void Creature::OnEnterCombat(Unit* pWho, bool notInCombat)
         if (GetReputationId() >= 0)
         {
             if (Player* pPlayer = pWho->ToPlayer())
-                pPlayer->SendFactionAtWar(GetReputationId(), true);
+                if (pPlayer->GetReputationMgr().SetAtWar(GetReputationId(), true))
+                    pPlayer->SendFactionAtWar(GetReputationId(), true);
         }
     }
 }
