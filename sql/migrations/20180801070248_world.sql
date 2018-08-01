@@ -14,6 +14,9 @@ DELETE FROM `pool_template` WHERE `entry`=35701;
 DELETE FROM `pool_gameobject` WHERE `pool_entry`=35701;
 DELETE FROM `gameobject` WHERE `id`=144064;
 
+-- Fix respawn speed of Gordunni Trap. Same as spawntimesecs.
+UPDATE `gameobject_template` SET `data5`=900 WHERE `entry`=144050;
+
 
 -- End of migration.
 END IF;
