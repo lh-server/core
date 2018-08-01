@@ -554,7 +554,7 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
                 {
                     if (unitTarget && unitTarget->GetTypeId() == TYPEID_PLAYER)
                     {
-						// If GameObject casting was implemented, or activating a trap actually despawned it, this wouldn't be needed.
+                        // If GameObject casting was implemented, or activating a trap actually despawned it, this wouldn't be needed.
                         if (GameObject* pObject = unitTarget->FindNearestGameObject(144050, INTERACTION_DISTANCE))
                         {
                             unitTarget->CastSpell(unitTarget, urand(0, 1) ? 19394 : 11756, true);
