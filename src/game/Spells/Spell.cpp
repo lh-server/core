@@ -5291,6 +5291,13 @@ SpellCastResult Spell::CheckCast(bool strict)
         if ((m_spellInfo->MaxTargetLevel > 0) && (int32(target->getLevel()) > m_spellInfo->MaxTargetLevel))
             return SPELL_FAILED_HIGHLEVEL;
 
+#if SUPPORTED_CLIENT_BUILD <= CLIENT_BUILD_1_11_2
+        // World of Warcraft Client Patch 1.12.0 (2006-08-22)
+        // - Pickpocket can now be used on targets that are in combat, as long as the rogue remains stealthed.
+        if ((m_spellInfo->AttributesEx & SPELL_ATTR_EX_IS_PICKPOCKET) && target->isInCombat())
+            return SPELL_FAILED_TARGET_IN_COMBAT;
+#endif
+
         bool non_caster_target = target != m_caster && !IsSpellWithCasterSourceTargetsOnly(m_spellInfo);
 
         if (non_caster_target)
