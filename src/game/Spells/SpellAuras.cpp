@@ -3263,10 +3263,14 @@ void Aura::HandleFeignDeath(bool apply, bool Real)
         {
             if (Unit* refTarget = pReference->getSourceUnit())
             {
-                if (!refTarget->GetCharmerOrOwnerOrSelf()->IsPlayer() && pTarget->MagicSpellHitResult(refTarget, GetHolder()->GetSpellProto(), nullptr) != SPELL_MISS_NONE)
+                if (Creature* creature = refTarget->ToCreature())
                 {
-                    success = false;
-                    break;
+                    if (!creature->GetCharmerOrOwnerOrSelf()->IsPlayer() && creature->IsWithinDistInMap(pTarget, creature->GetAttackDistance(pTarget))
+                        && pTarget->MagicSpellHitResult(creature, GetHolder()->GetSpellProto(), nullptr) != SPELL_MISS_NONE)
+                    {
+                        success = false;
+                        break;
+                    }
                 }
             }
             pReference = pReference->next();
