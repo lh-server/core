@@ -263,7 +263,8 @@ void WorldSession::HandleSendMailCallback(WorldSession::AsyncMailSendRequest* re
         }
 
         // prevent sending item from bank slot
-        if (_player->IsBankPos(item->GetPos())) {
+        if (_player->IsBankPos(item->GetPos())) 
+        {
             pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_MAIL_ATTACHMENT_INVALID);
             return;
         }

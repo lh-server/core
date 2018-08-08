@@ -538,7 +538,8 @@ void WorldSession::HandleSellItemOpcode(WorldPacket & recv_data)
     }
 
     // prevent selling item in bank slot
-    if (_player->IsBankPos(pItem->GetPos())) {
+    if (_player->IsBankPos(pItem->GetPos())) 
+    {
         _player->SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
         return;
     }

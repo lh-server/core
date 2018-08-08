@@ -706,7 +706,8 @@ void WorldSession::HandleSetTradeItemOpcode(WorldPacket& recvPacket)
     }
 
     // prevent trading item from bank slot
-    if (_player->IsBankPos(bag, slot)) {
+    if (_player->IsBankPos(bag, slot)) 
+    {
         SendTradeStatus(TRADE_STATUS_TRADE_CANCELED);
         return;
     }
