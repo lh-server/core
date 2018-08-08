@@ -6828,8 +6828,8 @@ SpellCastResult Spell::CheckRange(bool strict)
         }
     }
 
-    // Add up to ~5 yds "give" for non strict (landing) check
-    float range_mod = strict ? 1.25f : GetRangeExtensionForCaster();
+    //add radius of caster and ~5 yds "give" for non stricred (landing) check
+    float range_mod = strict ? 1.25f : 6.25;
 
     // Add leeway bonus if both units are moving
     range_mod += m_caster->GetLeewayBonusRange(target);
@@ -6843,17 +6843,18 @@ SpellCastResult Spell::CheckRange(bool strict)
 
     max_range += range_mod;
 
-    GameObject* go = m_targets.getGOTarget(); // Check range for gobjects (lock picking)
+    GameObject* go = m_targets.getGOTarget(); // Check range d'un gobj pour crochetage
     if (go)
     {
+        // distance from target in checks
         float dist = m_caster->GetDistance(go);
 
         if (dist > max_range)
             return SPELL_FAILED_OUT_OF_RANGE;
     }
-
     if (target && target != m_caster)
     {
+        // distance from target in checks
         float dist = m_caster->GetCombatDistance(target);
 
         if (dist > max_range)
