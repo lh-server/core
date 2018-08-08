@@ -537,11 +537,11 @@ void WorldSession::HandleSellItemOpcode(WorldPacket & recv_data)
         return;
     }
 
-	// prevent selling item in bank slot
-	if (_player->IsBankPos(pItem->GetPos())) {
-		_player->SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
-		return;
-	}
+    // prevent selling item in bank slot
+    if (_player->IsBankPos(pItem->GetPos())) {
+        _player->SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
+        return;
+    }
 
     // prevent sell non empty bag by drag-and-drop at vendor's item list
     if (pItem->IsBag() && !((Bag*)pItem)->IsEmpty())
@@ -861,11 +861,11 @@ void WorldSession::HandleAutoStoreBagItemOpcode(WorldPacket & recv_data)
     }
 
     // cheating: check if source bag / item or destination bag is in bank and player can't use bank
-	if (_player->IsBankPos(srcbag, srcslot) || dstbag >= BANK_SLOT_BAG_START && dstbag < BANK_SLOT_BAG_END)
-	{
-		if (!CanUseBank())
-			return;
-	}
+    if (_player->IsBankPos(srcbag, srcslot) || dstbag >= BANK_SLOT_BAG_START && dstbag < BANK_SLOT_BAG_END)
+    {
+        if (!CanUseBank())
+        return;
+    }
 
     uint16 src = pItem->GetPos();
 
