@@ -261,14 +261,6 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                         return;
                     }
 
-                    if (auto cooldown = ChatCooldown())
-                    {
-                        ChatHandler(this).PSendSysMessage(
-                            "Please wait %u seconds before sending another message.", cooldown
-                        );
-                        return;
-                    }
-
                     // Public channels restrictions
                     if (!chn->HasFlag(Channel::CHANNEL_FLAG_CUSTOM))
                     {
@@ -296,6 +288,14 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                                     }
                                 }
                             }
+                        }
+
+                        if (auto cooldown = ChatCooldown())
+                        {
+                            ChatHandler(this).PSendSysMessage(
+                                "Please wait %u seconds before sending another message.", cooldown
+                            );
+                            return;
                         }
                     }
 
