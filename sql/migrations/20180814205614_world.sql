@@ -486,7 +486,7 @@ UPDATE `creature_template` SET `equipment_id`=701 WHERE `entry`=701;
 UPDATE `creature_template` SET `equipment_id`=703 WHERE `entry`=703;
 UPDATE `creature_template` SET `equipment_id`=1062 WHERE `entry`=1062;
 UPDATE `creature_template` SET `equipment_id`=836 WHERE `entry`=836;
-UPDATE `creature_template` SET `equipment_id`=1783 WHERE `entry`=1783;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=1783;
 UPDATE `creature_template` SET `equipment_id`=8016 WHERE `entry`=8016;
 UPDATE `creature_template` SET `equipment_id`=709 WHERE `entry`=709;
 UPDATE `creature_template` SET `equipment_id`=888 WHERE `entry`=888;
@@ -699,7 +699,7 @@ UPDATE `creature_template` SET `equipment_id`=984 WHERE `entry`=984;
 UPDATE `creature_template` SET `equipment_id`=985 WHERE `entry`=985;
 UPDATE `creature_template` SET `equipment_id`=986 WHERE `entry`=986;
 UPDATE `creature_template` SET `equipment_id`=2360 WHERE `entry`=2360;
-UPDATE `creature_template` SET `equipment_id`=3752 WHERE `entry`=3752;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3752;
 UPDATE `creature_template` SET `equipment_id`=3385 WHERE `entry`=3385;
 UPDATE `creature_template` SET `equipment_id`=987 WHERE `entry`=987;
 UPDATE `creature_template` SET `equipment_id`=3378 WHERE `entry`=3378;
@@ -740,7 +740,7 @@ UPDATE `creature_template` SET `equipment_id`=1045 WHERE `entry`=1045;
 UPDATE `creature_template` SET `equipment_id`=2950 WHERE `entry`=2950;
 UPDATE `creature_template` SET `equipment_id`=1047 WHERE `entry`=1047;
 UPDATE `creature_template` SET `equipment_id`=1050 WHERE `entry`=1050;
-UPDATE `creature_template` SET `equipment_id`=6549 WHERE `entry`=6549;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=6549;
 UPDATE `creature_template` SET `equipment_id`=1052 WHERE `entry`=1052;
 UPDATE `creature_template` SET `equipment_id`=1053 WHERE `entry`=1053;
 UPDATE `creature_template` SET `equipment_id`=1054 WHERE `entry`=1054;
@@ -759,7 +759,7 @@ UPDATE `creature_template` SET `equipment_id`=2477 WHERE `entry`=2477;
 UPDATE `creature_template` SET `equipment_id`=2780 WHERE `entry`=2780;
 UPDATE `creature_template` SET `equipment_id`=1960 WHERE `entry`=1960;
 UPDATE `creature_template` SET `equipment_id`=2779 WHERE `entry`=2779;
-UPDATE `creature_template` SET `equipment_id`=2501 WHERE `entry`=2501;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=2501;
 UPDATE `creature_template` SET `equipment_id`=1089 WHERE `entry`=1089;
 UPDATE `creature_template` SET `equipment_id`=1090 WHERE `entry`=1090;
 UPDATE `creature_template` SET `equipment_id`=2557 WHERE `entry`=2557;
@@ -995,7 +995,7 @@ UPDATE `creature_template` SET `equipment_id`=1499 WHERE `entry`=1499;
 UPDATE `creature_template` SET `equipment_id`=2216 WHERE `entry`=2216;
 UPDATE `creature_template` SET `equipment_id`=1500 WHERE `entry`=1500;
 UPDATE `creature_template` SET `equipment_id`=1506 WHERE `entry`=1506;
-UPDATE `creature_template` SET `equipment_id`=2080 WHERE `entry`=2080;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=2080;
 UPDATE `creature_template` SET `equipment_id`=1507 WHERE `entry`=1507;
 UPDATE `creature_template` SET `equipment_id`=1653 WHERE `entry`=1653;
 UPDATE `creature_template` SET `equipment_id`=1657 WHERE `entry`=1657;
@@ -1066,7 +1066,7 @@ UPDATE `creature_template` SET `equipment_id`=1742 WHERE `entry`=1742;
 UPDATE `creature_template` SET `equipment_id`=6495 WHERE `entry`=6495;
 UPDATE `creature_template` SET `equipment_id`=1743 WHERE `entry`=1743;
 UPDATE `creature_template` SET `equipment_id`=1746 WHERE `entry`=1746;
-UPDATE `creature_template` SET `equipment_id`=2832 WHERE `entry`=2832;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=2832;
 UPDATE `creature_template` SET `equipment_id`=1747 WHERE `entry`=1747;
 UPDATE `creature_template` SET `equipment_id`=1749 WHERE `entry`=1749;
 UPDATE `creature_template` SET `equipment_id`=1750 WHERE `entry`=1750;
@@ -1155,10 +1155,10 @@ UPDATE `creature_template` SET `equipment_id`=1959 WHERE `entry`=1959;
 UPDATE `creature_template` SET `equipment_id`=14848 WHERE `entry`=14848;
 UPDATE `creature_template` SET `equipment_id`=1973 WHERE `entry`=1973;
 UPDATE `creature_template` SET `equipment_id`=2055 WHERE `entry`=2055;
-UPDATE `creature_template` SET `equipment_id`=1975 WHERE `entry`=1975;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=1975;
 UPDATE `creature_template` SET `equipment_id`=1977 WHERE `entry`=1977;
 UPDATE `creature_template` SET `equipment_id`=1978 WHERE `entry`=1978;
-UPDATE `creature_template` SET `equipment_id`=1981 WHERE `entry`=1981;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=1981;
 UPDATE `creature_template` SET `equipment_id`=2562 WHERE `entry`=2562;
 UPDATE `creature_template` SET `equipment_id`=2618 WHERE `entry`=2618;
 UPDATE `creature_template` SET `equipment_id`=6069 WHERE `entry`=6069;
@@ -1183,7 +1183,7 @@ UPDATE `creature_template` SET `equipment_id`=2014 WHERE `entry`=2014;
 UPDATE `creature_template` SET `equipment_id`=6768 WHERE `entry`=6768;
 UPDATE `creature_template` SET `equipment_id`=2167 WHERE `entry`=2167;
 UPDATE `creature_template` SET `equipment_id`=2119 WHERE `entry`=2119;
-UPDATE `creature_template` SET `equipment_id`=2046 WHERE `entry`=2046;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=2046;
 UPDATE `creature_template` SET `equipment_id`=2996 WHERE `entry`=2996;
 UPDATE `creature_template` SET `equipment_id`=2053 WHERE `entry`=2053;
 UPDATE `creature_template` SET `equipment_id`=2054 WHERE `entry`=2054;
@@ -1230,7 +1230,7 @@ UPDATE `creature_template` SET `equipment_id`=3875 WHERE `entry`=3875;
 UPDATE `creature_template` SET `equipment_id`=2130 WHERE `entry`=2130;
 UPDATE `creature_template` SET `equipment_id`=2131 WHERE `entry`=2131;
 UPDATE `creature_template` SET `equipment_id`=2132 WHERE `entry`=2132;
-UPDATE `creature_template` SET `equipment_id`=3364 WHERE `entry`=3364;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3364;
 UPDATE `creature_template` SET `equipment_id`=2135 WHERE `entry`=2135;
 UPDATE `creature_template` SET `equipment_id`=3374 WHERE `entry`=3374;
 UPDATE `creature_template` SET `equipment_id`=3016 WHERE `entry`=3016;
@@ -1239,7 +1239,7 @@ UPDATE `creature_template` SET `equipment_id`=2861 WHERE `entry`=2861;
 UPDATE `creature_template` SET `equipment_id`=2140 WHERE `entry`=2140;
 UPDATE `creature_template` SET `equipment_id`=3529 WHERE `entry`=3529;
 UPDATE `creature_template` SET `equipment_id`=2142 WHERE `entry`=2142;
-UPDATE `creature_template` SET `equipment_id`=2149 WHERE `entry`=2149;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=2149;
 UPDATE `creature_template` SET `equipment_id`=2968 WHERE `entry`=2968;
 UPDATE `creature_template` SET `equipment_id`=2153 WHERE `entry`=2153;
 UPDATE `creature_template` SET `equipment_id`=3487 WHERE `entry`=3487;
@@ -1275,7 +1275,7 @@ UPDATE `creature_template` SET `equipment_id`=2190 WHERE `entry`=2190;
 UPDATE `creature_template` SET `equipment_id`=3356 WHERE `entry`=3356;
 UPDATE `creature_template` SET `equipment_id`=2191 WHERE `entry`=2191;
 UPDATE `creature_template` SET `equipment_id`=2913 WHERE `entry`=2913;
-UPDATE `creature_template` SET `equipment_id`=2192 WHERE `entry`=2192;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=2192;
 UPDATE `creature_template` SET `equipment_id`=2201 WHERE `entry`=2201;
 UPDATE `creature_template` SET `equipment_id`=3947 WHERE `entry`=3947;
 UPDATE `creature_template` SET `equipment_id`=2202 WHERE `entry`=2202;
@@ -1346,7 +1346,7 @@ UPDATE `creature_template` SET `equipment_id`=2308 WHERE `entry`=2308;
 UPDATE `creature_template` SET `equipment_id`=2309 WHERE `entry`=2309;
 UPDATE `creature_template` SET `equipment_id`=2740 WHERE `entry`=2740;
 UPDATE `creature_template` SET `equipment_id`=2310 WHERE `entry`=2310;
-UPDATE `creature_template` SET `equipment_id`=3770 WHERE `entry`=3770;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3770;
 UPDATE `creature_template` SET `equipment_id`=3263 WHERE `entry`=3263;
 UPDATE `creature_template` SET `equipment_id`=2748 WHERE `entry`=2748;
 UPDATE `creature_template` SET `equipment_id`=2318 WHERE `entry`=2318;
@@ -1457,7 +1457,7 @@ UPDATE `creature_template` SET `equipment_id`=2432 WHERE `entry`=2432;
 UPDATE `creature_template` SET `equipment_id`=2577 WHERE `entry`=2577;
 UPDATE `creature_template` SET `equipment_id`=3603 WHERE `entry`=3603;
 UPDATE `creature_template` SET `equipment_id`=2434 WHERE `entry`=2434;
-UPDATE `creature_template` SET `equipment_id`=2435 WHERE `entry`=2435;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=2435;
 UPDATE `creature_template` SET `equipment_id`=2436 WHERE `entry`=2436;
 UPDATE `creature_template` SET `equipment_id`=2581 WHERE `entry`=2581;
 UPDATE `creature_template` SET `equipment_id`=2437 WHERE `entry`=2437;
@@ -1495,7 +1495,7 @@ UPDATE `creature_template` SET `equipment_id`=2485 WHERE `entry`=2485;
 UPDATE `creature_template` SET `equipment_id`=3076 WHERE `entry`=3076;
 UPDATE `creature_template` SET `equipment_id`=2488 WHERE `entry`=2488;
 UPDATE `creature_template` SET `equipment_id`=2569 WHERE `entry`=2569;
-UPDATE `creature_template` SET `equipment_id`=3086 WHERE `entry`=3086;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3086;
 UPDATE `creature_template` SET `equipment_id`=2489 WHERE `entry`=2489;
 UPDATE `creature_template` SET `equipment_id`=3595 WHERE `entry`=3595;
 UPDATE `creature_template` SET `equipment_id`=2490 WHERE `entry`=2490;
@@ -1526,7 +1526,7 @@ UPDATE `creature_template` SET `equipment_id`=2530 WHERE `entry`=2530;
 UPDATE `creature_template` SET `equipment_id`=5232 WHERE `entry`=5232;
 UPDATE `creature_template` SET `equipment_id`=3188 WHERE `entry`=3188;
 UPDATE `creature_template` SET `equipment_id`=3198 WHERE `entry`=3198;
-UPDATE `creature_template` SET `equipment_id`=2685 WHERE `entry`=2685;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=2685;
 UPDATE `creature_template` SET `equipment_id`=5759 WHERE `entry`=5759;
 UPDATE `creature_template` SET `equipment_id`=3196 WHERE `entry`=3196;
 UPDATE `creature_template` SET `equipment_id`=2543 WHERE `entry`=2543;
@@ -1600,7 +1600,7 @@ UPDATE `creature_template` SET `equipment_id`=3993 WHERE `entry`=3993;
 UPDATE `creature_template` SET `equipment_id`=6115 WHERE `entry`=6115;
 UPDATE `creature_template` SET `equipment_id`=3554 WHERE `entry`=3554;
 UPDATE `creature_template` SET `equipment_id`=4065 WHERE `entry`=4065;
-UPDATE `creature_template` SET `equipment_id`=2682 WHERE `entry`=2682;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=2682;
 UPDATE `creature_template` SET `equipment_id`=3562 WHERE `entry`=3562;
 UPDATE `creature_template` SET `equipment_id`=2683 WHERE `entry`=2683;
 UPDATE `creature_template` SET `equipment_id`=4079 WHERE `entry`=4079;
@@ -1625,7 +1625,7 @@ UPDATE `creature_template` SET `equipment_id`=2718 WHERE `entry`=2718;
 UPDATE `creature_template` SET `equipment_id`=2719 WHERE `entry`=2719;
 UPDATE `creature_template` SET `equipment_id`=2720 WHERE `entry`=2720;
 UPDATE `creature_template` SET `equipment_id`=3387 WHERE `entry`=3387;
-UPDATE `creature_template` SET `equipment_id`=3846 WHERE `entry`=3846;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3846;
 UPDATE `creature_template` SET `equipment_id`=2737 WHERE `entry`=2737;
 UPDATE `creature_template` SET `equipment_id`=3331 WHERE `entry`=3331;
 UPDATE `creature_template` SET `equipment_id`=2738 WHERE `entry`=2738;
@@ -1654,12 +1654,12 @@ UPDATE `creature_template` SET `equipment_id`=2786 WHERE `entry`=2786;
 UPDATE `creature_template` SET `equipment_id`=2789 WHERE `entry`=2789;
 UPDATE `creature_template` SET `equipment_id`=3964 WHERE `entry`=3964;
 UPDATE `creature_template` SET `equipment_id`=2799 WHERE `entry`=2799;
-UPDATE `creature_template` SET `equipment_id`=3395 WHERE `entry`=3395;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3395;
 UPDATE `creature_template` SET `equipment_id`=2802 WHERE `entry`=2802;
 UPDATE `creature_template` SET `equipment_id`=3403 WHERE `entry`=3403;
 UPDATE `creature_template` SET `equipment_id`=2810 WHERE `entry`=2810;
 UPDATE `creature_template` SET `equipment_id`=2819 WHERE `entry`=2819;
-UPDATE `creature_template` SET `equipment_id`=3767 WHERE `entry`=3767;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3767;
 UPDATE `creature_template` SET `equipment_id`=2820 WHERE `entry`=2820;
 UPDATE `creature_template` SET `equipment_id`=2834 WHERE `entry`=2834;
 UPDATE `creature_template` SET `equipment_id`=2835 WHERE `entry`=2835;
@@ -1678,7 +1678,7 @@ UPDATE `creature_template` SET `equipment_id`=4558 WHERE `entry`=4558;
 UPDATE `creature_template` SET `equipment_id`=2860 WHERE `entry`=2860;
 UPDATE `creature_template` SET `equipment_id`=3745 WHERE `entry`=3745;
 UPDATE `creature_template` SET `equipment_id`=3536 WHERE `entry`=3536;
-UPDATE `creature_template` SET `equipment_id`=3759 WHERE `entry`=3759;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3759;
 UPDATE `creature_template` SET `equipment_id`=3544 WHERE `entry`=3544;
 UPDATE `creature_template` SET `equipment_id`=2878 WHERE `entry`=2878;
 UPDATE `creature_template` SET `equipment_id`=4569 WHERE `entry`=4569;
@@ -1691,7 +1691,7 @@ UPDATE `creature_template` SET `equipment_id`=2907 WHERE `entry`=2907;
 UPDATE `creature_template` SET `equipment_id`=4217 WHERE `entry`=4217;
 UPDATE `creature_template` SET `equipment_id`=16059 WHERE `entry`=16059;
 UPDATE `creature_template` SET `equipment_id`=2910 WHERE `entry`=2910;
-UPDATE `creature_template` SET `equipment_id`=3628 WHERE `entry`=3628;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3628;
 UPDATE `creature_template` SET `equipment_id`=2911 WHERE `entry`=2911;
 UPDATE `creature_template` SET `equipment_id`=3218 WHERE `entry`=3218;
 UPDATE `creature_template` SET `equipment_id`=3735 WHERE `entry`=3735;
@@ -1706,11 +1706,11 @@ UPDATE `creature_template` SET `equipment_id`=3298 WHERE `entry`=3298;
 UPDATE `creature_template` SET `equipment_id`=2932 WHERE `entry`=2932;
 UPDATE `creature_template` SET `equipment_id`=2934 WHERE `entry`=2934;
 UPDATE `creature_template` SET `equipment_id`=2937 WHERE `entry`=2937;
-UPDATE `creature_template` SET `equipment_id`=3606 WHERE `entry`=3606;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3606;
 UPDATE `creature_template` SET `equipment_id`=2947 WHERE `entry`=2947;
 UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=5648;
 UPDATE `creature_template` SET `equipment_id`=2949 WHERE `entry`=2949;
-UPDATE `creature_template` SET `equipment_id`=3604 WHERE `entry`=3604;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3604;
 UPDATE `creature_template` SET `equipment_id`=2951 WHERE `entry`=2951;
 UPDATE `creature_template` SET `equipment_id`=2952 WHERE `entry`=2952;
 UPDATE `creature_template` SET `equipment_id`=3614 WHERE `entry`=3614;
@@ -1728,7 +1728,7 @@ UPDATE `creature_template` SET `equipment_id`=2978 WHERE `entry`=2978;
 UPDATE `creature_template` SET `equipment_id`=3282 WHERE `entry`=3282;
 UPDATE `creature_template` SET `equipment_id`=2979 WHERE `entry`=2979;
 UPDATE `creature_template` SET `equipment_id`=5680 WHERE `entry`=5680;
-UPDATE `creature_template` SET `equipment_id`=3799 WHERE `entry`=3799;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3799;
 UPDATE `creature_template` SET `equipment_id`=2980 WHERE `entry`=2980;
 UPDATE `creature_template` SET `equipment_id`=2982 WHERE `entry`=2982;
 UPDATE `creature_template` SET `equipment_id`=2986 WHERE `entry`=2986;
@@ -1867,7 +1867,7 @@ UPDATE `creature_template` SET `equipment_id`=3199 WHERE `entry`=3199;
 UPDATE `creature_template` SET `equipment_id`=4368 WHERE `entry`=4368;
 UPDATE `creature_template` SET `equipment_id`=3203 WHERE `entry`=3203;
 UPDATE `creature_template` SET `equipment_id`=3204 WHERE `entry`=3204;
-UPDATE `creature_template` SET `equipment_id`=3205 WHERE `entry`=3205;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3205;
 UPDATE `creature_template` SET `equipment_id`=3208 WHERE `entry`=3208;
 UPDATE `creature_template` SET `equipment_id`=3211 WHERE `entry`=3211;
 UPDATE `creature_template` SET `equipment_id`=3212 WHERE `entry`=3212;
@@ -1932,7 +1932,7 @@ UPDATE `creature_template` SET `equipment_id`=3343 WHERE `entry`=3343;
 UPDATE `creature_template` SET `equipment_id`=3344 WHERE `entry`=3344;
 UPDATE `creature_template` SET `equipment_id`=3712 WHERE `entry`=3712;
 UPDATE `creature_template` SET `equipment_id`=3345 WHERE `entry`=3345;
-UPDATE `creature_template` SET `equipment_id`=3346 WHERE `entry`=3346;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3346;
 UPDATE `creature_template` SET `equipment_id`=3347 WHERE `entry`=3347;
 UPDATE `creature_template` SET `equipment_id`=3349 WHERE `entry`=3349;
 UPDATE `creature_template` SET `equipment_id`=3352 WHERE `entry`=3352;
@@ -2075,7 +2075,7 @@ UPDATE `creature_template` SET `equipment_id`=3733 WHERE `entry`=3733;
 UPDATE `creature_template` SET `equipment_id`=3739 WHERE `entry`=3739;
 UPDATE `creature_template` SET `equipment_id`=3740 WHERE `entry`=3740;
 UPDATE `creature_template` SET `equipment_id`=3742 WHERE `entry`=3742;
-UPDATE `creature_template` SET `equipment_id`=3763 WHERE `entry`=3763;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3763;
 UPDATE `creature_template` SET `equipment_id`=4922 WHERE `entry`=4922;
 UPDATE `creature_template` SET `equipment_id`=3779 WHERE `entry`=3779;
 UPDATE `creature_template` SET `equipment_id`=5163 WHERE `entry`=5163;
@@ -2088,8 +2088,8 @@ UPDATE `creature_template` SET `equipment_id`=3873 WHERE `entry`=3873;
 UPDATE `creature_template` SET `equipment_id`=3882 WHERE `entry`=3882;
 UPDATE `creature_template` SET `equipment_id`=3883 WHERE `entry`=3883;
 UPDATE `creature_template` SET `equipment_id`=3887 WHERE `entry`=3887;
-UPDATE `creature_template` SET `equipment_id`=3898 WHERE `entry`=3898;
-UPDATE `creature_template` SET `equipment_id`=3899 WHERE `entry`=3899;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3898;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=3899;
 UPDATE `creature_template` SET `equipment_id`=5593 WHERE `entry`=5593;
 UPDATE `creature_template` SET `equipment_id`=3936 WHERE `entry`=3936;
 UPDATE `creature_template` SET `equipment_id`=3943 WHERE `entry`=3943;
@@ -2121,7 +2121,7 @@ UPDATE `creature_template` SET `equipment_id`=4223 WHERE `entry`=4223;
 UPDATE `creature_template` SET `equipment_id`=4078 WHERE `entry`=4078;
 UPDATE `creature_template` SET `equipment_id`=4083 WHERE `entry`=4083;
 UPDATE `creature_template` SET `equipment_id`=12864 WHERE `entry`=12864;
-UPDATE `creature_template` SET `equipment_id`=4730 WHERE `entry`=4730;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=4730;
 UPDATE `creature_template` SET `equipment_id`=4085 WHERE `entry`=4085;
 UPDATE `creature_template` SET `equipment_id`=4086 WHERE `entry`=4086;
 UPDATE `creature_template` SET `equipment_id`=4094 WHERE `entry`=4094;
@@ -2188,7 +2188,7 @@ UPDATE `creature_template` SET `equipment_id`=4214 WHERE `entry`=4214;
 UPDATE `creature_template` SET `equipment_id`=4215 WHERE `entry`=4215;
 UPDATE `creature_template` SET `equipment_id`=4216 WHERE `entry`=4216;
 UPDATE `creature_template` SET `equipment_id`=4219 WHERE `entry`=4219;
-UPDATE `creature_template` SET `equipment_id`=6122 WHERE `entry`=6122;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=6122;
 UPDATE `creature_template` SET `equipment_id`=5615 WHERE `entry`=5615;
 UPDATE `creature_template` SET `equipment_id`=4220 WHERE `entry`=4220;
 UPDATE `creature_template` SET `equipment_id`=5100 WHERE `entry`=5100;
@@ -2227,9 +2227,9 @@ UPDATE `creature_template` SET `equipment_id`=5591 WHERE `entry`=5591;
 UPDATE `creature_template` SET `equipment_id`=4262 WHERE `entry`=4262;
 UPDATE `creature_template` SET `equipment_id`=8150 WHERE `entry`=8150;
 UPDATE `creature_template` SET `equipment_id`=4921 WHERE `entry`=4921;
-UPDATE `creature_template` SET `equipment_id`=4265 WHERE `entry`=4265;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=4265;
 UPDATE `creature_template` SET `equipment_id`=4266 WHERE `entry`=4266;
-UPDATE `creature_template` SET `equipment_id`=4267 WHERE `entry`=4267;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=4267;
 UPDATE `creature_template` SET `equipment_id`=4275 WHERE `entry`=4275;
 UPDATE `creature_template` SET `equipment_id`=11520 WHERE `entry`=11520;
 UPDATE `creature_template` SET `equipment_id`=4276 WHERE `entry`=4276;
@@ -2254,12 +2254,12 @@ UPDATE `creature_template` SET `equipment_id`=4289 WHERE `entry`=4289;
 UPDATE `creature_template` SET `equipment_id`=4290 WHERE `entry`=4290;
 UPDATE `creature_template` SET `equipment_id`=4949 WHERE `entry`=4949;
 UPDATE `creature_template` SET `equipment_id`=4292 WHERE `entry`=4292;
-UPDATE `creature_template` SET `equipment_id`=4293 WHERE `entry`=4293;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=4293;
 UPDATE `creature_template` SET `equipment_id`=4294 WHERE `entry`=4294;
 UPDATE `creature_template` SET `equipment_id`=4295 WHERE `entry`=4295;
 UPDATE `creature_template` SET `equipment_id`=5669 WHERE `entry`=5669;
 UPDATE `creature_template` SET `equipment_id`=4296 WHERE `entry`=4296;
-UPDATE `creature_template` SET `equipment_id`=5470 WHERE `entry`=5470;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=5470;
 UPDATE `creature_template` SET `equipment_id`=4297 WHERE `entry`=4297;
 UPDATE `creature_template` SET `equipment_id`=4298 WHERE `entry`=4298;
 UPDATE `creature_template` SET `equipment_id`=5979 WHERE `entry`=5979;
@@ -2469,7 +2469,7 @@ UPDATE `creature_template` SET `equipment_id`=7288 WHERE `entry`=7288;
 UPDATE `creature_template` SET `equipment_id`=4588 WHERE `entry`=4588;
 UPDATE `creature_template` SET `equipment_id`=4589 WHERE `entry`=4589;
 UPDATE `creature_template` SET `equipment_id`=4591 WHERE `entry`=4591;
-UPDATE `creature_template` SET `equipment_id`=4673 WHERE `entry`=4673;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=4673;
 UPDATE `creature_template` SET `equipment_id`=4592 WHERE `entry`=4592;
 UPDATE `creature_template` SET `equipment_id`=5190 WHERE `entry`=5190;
 UPDATE `creature_template` SET `equipment_id`=4593 WHERE `entry`=4593;
@@ -2500,7 +2500,7 @@ UPDATE `creature_template` SET `equipment_id`=4615 WHERE `entry`=4615;
 UPDATE `creature_template` SET `equipment_id`=7606 WHERE `entry`=7606;
 UPDATE `creature_template` SET `equipment_id`=4616 WHERE `entry`=4616;
 UPDATE `creature_template` SET `equipment_id`=4617 WHERE `entry`=4617;
-UPDATE `creature_template` SET `equipment_id`=4619 WHERE `entry`=4619;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=4619;
 UPDATE `creature_template` SET `equipment_id`=4623 WHERE `entry`=4623;
 UPDATE `creature_template` SET `equipment_id`=5506 WHERE `entry`=5506;
 UPDATE `creature_template` SET `equipment_id`=4630 WHERE `entry`=4630;
@@ -2567,13 +2567,13 @@ UPDATE `creature_template` SET `equipment_id`=4787 WHERE `entry`=4787;
 UPDATE `creature_template` SET `equipment_id`=12032 WHERE `entry`=12032;
 UPDATE `creature_template` SET `equipment_id`=4791 WHERE `entry`=4791;
 UPDATE `creature_template` SET `equipment_id`=5892 WHERE `entry`=5892;
-UPDATE `creature_template` SET `equipment_id`=5387 WHERE `entry`=5387;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=5387;
 UPDATE `creature_template` SET `equipment_id`=4794 WHERE `entry`=4794;
 UPDATE `creature_template` SET `equipment_id`=7944 WHERE `entry`=7944;
 UPDATE `creature_template` SET `equipment_id`=5900 WHERE `entry`=5900;
 UPDATE `creature_template` SET `equipment_id`=4802 WHERE `entry`=4802;
 UPDATE `creature_template` SET `equipment_id`=4805 WHERE `entry`=4805;
-UPDATE `creature_template` SET `equipment_id`=5157 WHERE `entry`=5157;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=5157;
 UPDATE `creature_template` SET `equipment_id`=4807 WHERE `entry`=4807;
 UPDATE `creature_template` SET `equipment_id`=4809 WHERE `entry`=4809;
 UPDATE `creature_template` SET `equipment_id`=4810 WHERE `entry`=4810;
@@ -2612,7 +2612,7 @@ UPDATE `creature_template` SET `equipment_id`=4884 WHERE `entry`=4884;
 UPDATE `creature_template` SET `equipment_id`=5767 WHERE `entry`=5767;
 UPDATE `creature_template` SET `equipment_id`=4886 WHERE `entry`=4886;
 UPDATE `creature_template` SET `equipment_id`=4888 WHERE `entry`=4888;
-UPDATE `creature_template` SET `equipment_id`=5258 WHERE `entry`=5258;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=5258;
 UPDATE `creature_template` SET `equipment_id`=4891 WHERE `entry`=4891;
 UPDATE `creature_template` SET `equipment_id`=4892 WHERE `entry`=4892;
 UPDATE `creature_template` SET `equipment_id`=4894 WHERE `entry`=4894;
@@ -2791,7 +2791,6 @@ UPDATE `creature_template` SET `equipment_id`=8157 WHERE `entry`=8157;
 UPDATE `creature_template` SET `equipment_id`=8154 WHERE `entry`=8154;
 UPDATE `creature_template` SET `equipment_id`=5884 WHERE `entry`=5884;
 UPDATE `creature_template` SET `equipment_id`=5824 WHERE `entry`=5824;
-UPDATE `creature_template` SET `equipment_id`=5464 WHERE `entry`=5464;
 UPDATE `creature_template` SET `equipment_id`=5469 WHERE `entry`=5469;
 UPDATE `creature_template` SET `equipment_id`=5836 WHERE `entry`=5836;
 UPDATE `creature_template` SET `equipment_id`=6178 WHERE `entry`=6178;
@@ -2815,7 +2814,7 @@ UPDATE `creature_template` SET `equipment_id`=5860 WHERE `entry`=5860;
 UPDATE `creature_template` SET `equipment_id`=5495 WHERE `entry`=5495;
 UPDATE `creature_template` SET `equipment_id`=6886 WHERE `entry`=6886;
 UPDATE `creature_template` SET `equipment_id`=5496 WHERE `entry`=5496;
-UPDATE `creature_template` SET `equipment_id`=5497 WHERE `entry`=5497;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=5497;
 UPDATE `creature_template` SET `equipment_id`=5864 WHERE `entry`=5864;
 UPDATE `creature_template` SET `equipment_id`=5498 WHERE `entry`=5498;
 UPDATE `creature_template` SET `equipment_id`=5500 WHERE `entry`=5500;
@@ -2893,7 +2892,7 @@ UPDATE `creature_template` SET `equipment_id`=5696 WHERE `entry`=5696;
 UPDATE `creature_template` SET `equipment_id`=5698 WHERE `entry`=5698;
 UPDATE `creature_template` SET `equipment_id`=5702 WHERE `entry`=5702;
 UPDATE `creature_template` SET `equipment_id`=5703 WHERE `entry`=5703;
-UPDATE `creature_template` SET `equipment_id`=6646 WHERE `entry`=6646;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=6646;
 UPDATE `creature_template` SET `equipment_id`=5704 WHERE `entry`=5704;
 UPDATE `creature_template` SET `equipment_id`=5706 WHERE `entry`=5706;
 UPDATE `creature_template` SET `equipment_id`=5711 WHERE `entry`=5711;
@@ -2913,7 +2912,7 @@ UPDATE `creature_template` SET `equipment_id`=5765 WHERE `entry`=5765;
 UPDATE `creature_template` SET `equipment_id`=11018 WHERE `entry`=11018;
 UPDATE `creature_template` SET `equipment_id`=5771 WHERE `entry`=5771;
 UPDATE `creature_template` SET `equipment_id`=5782 WHERE `entry`=5782;
-UPDATE `creature_template` SET `equipment_id`=5787 WHERE `entry`=5787;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=5787;
 UPDATE `creature_template` SET `equipment_id`=7016 WHERE `entry`=7016;
 UPDATE `creature_template` SET `equipment_id`=5797 WHERE `entry`=5797;
 UPDATE `creature_template` SET `equipment_id`=5798 WHERE `entry`=5798;
@@ -2991,7 +2990,7 @@ UPDATE `creature_template` SET `equipment_id`=6091 WHERE `entry`=6091;
 UPDATE `creature_template` SET `equipment_id`=6093 WHERE `entry`=6093;
 UPDATE `creature_template` SET `equipment_id`=6738 WHERE `entry`=6738;
 UPDATE `creature_template` SET `equipment_id`=6119 WHERE `entry`=6119;
-UPDATE `creature_template` SET `equipment_id`=6123 WHERE `entry`=6123;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=6123;
 UPDATE `creature_template` SET `equipment_id`=6127 WHERE `entry`=6127;
 UPDATE `creature_template` SET `equipment_id`=6131 WHERE `entry`=6131;
 UPDATE `creature_template` SET `equipment_id`=6142 WHERE `entry`=6142;
@@ -3221,7 +3220,7 @@ UPDATE `creature_template` SET `equipment_id`=7345 WHERE `entry`=7345;
 UPDATE `creature_template` SET `equipment_id`=7346 WHERE `entry`=7346;
 UPDATE `creature_template` SET `equipment_id`=7945 WHERE `entry`=7945;
 UPDATE `creature_template` SET `equipment_id`=7354 WHERE `entry`=7354;
-UPDATE `creature_template` SET `equipment_id`=7949 WHERE `entry`=7949;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=7949;
 UPDATE `creature_template` SET `equipment_id`=7360 WHERE `entry`=7360;
 UPDATE `creature_template` SET `equipment_id`=8017 WHERE `entry`=8017;
 UPDATE `creature_template` SET `equipment_id`=7396 WHERE `entry`=7396;
@@ -3235,7 +3234,7 @@ UPDATE `creature_template` SET `equipment_id`=7427 WHERE `entry`=7427;
 UPDATE `creature_template` SET `equipment_id`=7435 WHERE `entry`=7435;
 UPDATE `creature_template` SET `equipment_id`=7436 WHERE `entry`=7436;
 UPDATE `creature_template` SET `equipment_id`=7437 WHERE `entry`=7437;
-UPDATE `creature_template` SET `equipment_id`=7868 WHERE `entry`=7868;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=7868;
 UPDATE `creature_template` SET `equipment_id`=8894 WHERE `entry`=8894;
 UPDATE `creature_template` SET `equipment_id`=7442 WHERE `entry`=7442;
 UPDATE `creature_template` SET `equipment_id`=7772 WHERE `entry`=7772;
@@ -3279,7 +3278,7 @@ UPDATE `creature_template` SET `equipment_id`=7857 WHERE `entry`=7857;
 UPDATE `creature_template` SET `equipment_id`=7858 WHERE `entry`=7858;
 UPDATE `creature_template` SET `equipment_id`=7865 WHERE `entry`=7865;
 UPDATE `creature_template` SET `equipment_id`=7869 WHERE `entry`=7869;
-UPDATE `creature_template` SET `equipment_id`=7870 WHERE `entry`=7870;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=7870;
 UPDATE `creature_template` SET `equipment_id`=7871 WHERE `entry`=7871;
 UPDATE `creature_template` SET `equipment_id`=7874 WHERE `entry`=7874;
 UPDATE `creature_template` SET `equipment_id`=7876 WHERE `entry`=7876;
@@ -3401,20 +3400,20 @@ UPDATE `creature_template` SET `equipment_id`=8419 WHERE `entry`=8419;
 UPDATE `creature_template` SET `equipment_id`=9077 WHERE `entry`=9077;
 UPDATE `creature_template` SET `equipment_id`=9540 WHERE `entry`=9540;
 UPDATE `creature_template` SET `equipment_id`=9033 WHERE `entry`=9033;
-UPDATE `creature_template` SET `equipment_id`=9550 WHERE `entry`=9550;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=9550;
 UPDATE `creature_template` SET `equipment_id`=8442 WHERE `entry`=8442;
 UPDATE `creature_template` SET `equipment_id`=10059 WHERE `entry`=10059;
 UPDATE `creature_template` SET `equipment_id`=8444 WHERE `entry`=8444;
 UPDATE `creature_template` SET `equipment_id`=9037 WHERE `entry`=9037;
 UPDATE `creature_template` SET `equipment_id`=9548 WHERE `entry`=9548;
-UPDATE `creature_template` SET `equipment_id`=8478 WHERE `entry`=8478;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=8478;
 UPDATE `creature_template` SET `equipment_id`=16014 WHERE `entry`=16014;
 UPDATE `creature_template` SET `equipment_id`=8479 WHERE `entry`=8479;
 UPDATE `creature_template` SET `equipment_id`=8496 WHERE `entry`=8496;
 UPDATE `creature_template` SET `equipment_id`=8503 WHERE `entry`=8503;
 UPDATE `creature_template` SET `equipment_id`=8504 WHERE `entry`=8504;
 UPDATE `creature_template` SET `equipment_id`=15541 WHERE `entry`=15541;
-UPDATE `creature_template` SET `equipment_id`=8507 WHERE `entry`=8507;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=8507;
 UPDATE `creature_template` SET `equipment_id`=8508 WHERE `entry`=8508;
 UPDATE `creature_template` SET `equipment_id`=8509 WHERE `entry`=8509;
 UPDATE `creature_template` SET `equipment_id`=8876 WHERE `entry`=8876;
@@ -3622,7 +3621,7 @@ UPDATE `creature_template` SET `equipment_id`=10379 WHERE `entry`=10379;
 UPDATE `creature_template` SET `equipment_id`=9499 WHERE `entry`=9499;
 UPDATE `creature_template` SET `equipment_id`=9501 WHERE `entry`=9501;
 UPDATE `creature_template` SET `equipment_id`=9503 WHERE `entry`=9503;
-UPDATE `creature_template` SET `equipment_id`=9522 WHERE `entry`=9522;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=9522;
 UPDATE `creature_template` SET `equipment_id`=9523 WHERE `entry`=9523;
 UPDATE `creature_template` SET `equipment_id`=9525 WHERE `entry`=9525;
 UPDATE `creature_template` SET `equipment_id`=12241 WHERE `entry`=12241;
@@ -3657,7 +3656,7 @@ UPDATE `creature_template` SET `equipment_id`=16157 WHERE `entry`=16157;
 UPDATE `creature_template` SET `equipment_id`=9583 WHERE `entry`=9583;
 UPDATE `creature_template` SET `equipment_id`=9596 WHERE `entry`=9596;
 UPDATE `creature_template` SET `equipment_id`=9604 WHERE `entry`=9604;
-UPDATE `creature_template` SET `equipment_id`=9605 WHERE `entry`=9605;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=9605;
 UPDATE `creature_template` SET `equipment_id`=9616 WHERE `entry`=9616;
 UPDATE `creature_template` SET `equipment_id`=9618 WHERE `entry`=9618;
 UPDATE `creature_template` SET `equipment_id`=9619 WHERE `entry`=9619;
@@ -3684,7 +3683,7 @@ UPDATE `creature_template` SET `equipment_id`=9817 WHERE `entry`=9817;
 UPDATE `creature_template` SET `equipment_id`=9818 WHERE `entry`=9818;
 UPDATE `creature_template` SET `equipment_id`=9819 WHERE `entry`=9819;
 UPDATE `creature_template` SET `equipment_id`=11048 WHERE `entry`=11048;
-UPDATE `creature_template` SET `equipment_id`=9876 WHERE `entry`=9876;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=9876;
 UPDATE `creature_template` SET `equipment_id`=15130 WHERE `entry`=15130;
 UPDATE `creature_template` SET `equipment_id`=9916 WHERE `entry`=9916;
 UPDATE `creature_template` SET `equipment_id`=9956 WHERE `entry`=9956;
@@ -3778,7 +3777,7 @@ UPDATE `creature_template` SET `equipment_id`=10398 WHERE `entry`=10398;
 UPDATE `creature_template` SET `equipment_id`=10399 WHERE `entry`=10399;
 UPDATE `creature_template` SET `equipment_id`=10400 WHERE `entry`=10400;
 UPDATE `creature_template` SET `equipment_id`=11057 WHERE `entry`=11057;
-UPDATE `creature_template` SET `equipment_id`=11582 WHERE `entry`=11582;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=11582;
 UPDATE `creature_template` SET `equipment_id`=10418 WHERE `entry`=10418;
 UPDATE `creature_template` SET `equipment_id`=10419 WHERE `entry`=10419;
 UPDATE `creature_template` SET `equipment_id`=10420 WHERE `entry`=10420;
@@ -3842,7 +3841,7 @@ UPDATE `creature_template` SET `equipment_id`=12248 WHERE `entry`=12248;
 UPDATE `creature_template` SET `equipment_id`=10559 WHERE `entry`=10559;
 UPDATE `creature_template` SET `equipment_id`=10944 WHERE `entry`=10944;
 UPDATE `creature_template` SET `equipment_id`=10578 WHERE `entry`=10578;
-UPDATE `creature_template` SET `equipment_id`=11811 WHERE `entry`=11811;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=11811;
 UPDATE `creature_template` SET `equipment_id`=10948 WHERE `entry`=10948;
 UPDATE `creature_template` SET `equipment_id`=10584 WHERE `entry`=10584;
 UPDATE `creature_template` SET `equipment_id`=10600 WHERE `entry`=10600;
@@ -3860,11 +3859,11 @@ UPDATE `creature_template` SET `equipment_id`=13557 WHERE `entry`=13557;
 UPDATE `creature_template` SET `equipment_id`=10781 WHERE `entry`=10781;
 UPDATE `creature_template` SET `equipment_id`=10637 WHERE `entry`=10637;
 UPDATE `creature_template` SET `equipment_id`=10638 WHERE `entry`=10638;
-UPDATE `creature_template` SET `equipment_id`=10639 WHERE `entry`=10639;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=10639;
 UPDATE `creature_template` SET `equipment_id`=10643 WHERE `entry`=10643;
 UPDATE `creature_template` SET `equipment_id`=10645 WHERE `entry`=10645;
 UPDATE `creature_template` SET `equipment_id`=10646 WHERE `entry`=10646;
-UPDATE `creature_template` SET `equipment_id`=10647 WHERE `entry`=10647;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=10647;
 UPDATE `creature_template` SET `equipment_id`=10857 WHERE `entry`=10857;
 UPDATE `creature_template` SET `equipment_id`=10801 WHERE `entry`=10801;
 UPDATE `creature_template` SET `equipment_id`=11318 WHERE `entry`=11318;
@@ -3878,7 +3877,7 @@ UPDATE `creature_template` SET `equipment_id`=10761 WHERE `entry`=10761;
 UPDATE `creature_template` SET `equipment_id`=10681 WHERE `entry`=10681;
 UPDATE `creature_template` SET `equipment_id`=11278 WHERE `entry`=11278;
 UPDATE `creature_template` SET `equipment_id`=10682 WHERE `entry`=10682;
-UPDATE `creature_template` SET `equipment_id`=10683 WHERE `entry`=10683;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=10683;
 UPDATE `creature_template` SET `equipment_id`=10696 WHERE `entry`=10696;
 UPDATE `creature_template` SET `equipment_id`=11867 WHERE `entry`=11867;
 UPDATE `creature_template` SET `equipment_id`=11382 WHERE `entry`=11382;
@@ -3905,11 +3904,11 @@ UPDATE `creature_template` SET `equipment_id`=10838 WHERE `entry`=10838;
 UPDATE `creature_template` SET `equipment_id`=12225 WHERE `entry`=12225;
 UPDATE `creature_template` SET `equipment_id`=10839 WHERE `entry`=10839;
 UPDATE `creature_template` SET `equipment_id`=10856 WHERE `entry`=10856;
-UPDATE `creature_template` SET `equipment_id`=10877 WHERE `entry`=10877;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=10877;
 UPDATE `creature_template` SET `equipment_id`=988006 WHERE `entry`=988006;
-UPDATE `creature_template` SET `equipment_id`=10878 WHERE `entry`=10878;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=10878;
 UPDATE `creature_template` SET `equipment_id`=10879 WHERE `entry`=10879;
-UPDATE `creature_template` SET `equipment_id`=10880 WHERE `entry`=10880;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=10880;
 UPDATE `creature_template` SET `equipment_id`=10881 WHERE `entry`=10881;
 UPDATE `creature_template` SET `equipment_id`=10896 WHERE `entry`=10896;
 UPDATE `creature_template` SET `equipment_id`=10897 WHERE `entry`=10897;
@@ -4115,8 +4114,8 @@ UPDATE `creature_template` SET `equipment_id`=11687 WHERE `entry`=11687;
 UPDATE `creature_template` SET `equipment_id`=11833 WHERE `entry`=11833;
 UPDATE `creature_template` SET `equipment_id`=11696 WHERE `entry`=11696;
 UPDATE `creature_template` SET `equipment_id`=11697 WHERE `entry`=11697;
-UPDATE `creature_template` SET `equipment_id`=11701 WHERE `entry`=11701;
-UPDATE `creature_template` SET `equipment_id`=11702 WHERE `entry`=11702;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=11701;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=11702;
 UPDATE `creature_template` SET `equipment_id`=11703 WHERE `entry`=11703;
 UPDATE `creature_template` SET `equipment_id`=11706 WHERE `entry`=11706;
 UPDATE `creature_template` SET `equipment_id`=11708 WHERE `entry`=11708;
@@ -4159,7 +4158,7 @@ UPDATE `creature_template` SET `equipment_id`=11872 WHERE `entry`=11872;
 UPDATE `creature_template` SET `equipment_id`=11876 WHERE `entry`=11876;
 UPDATE `creature_template` SET `equipment_id`=11880 WHERE `entry`=11880;
 UPDATE `creature_template` SET `equipment_id`=11882 WHERE `entry`=11882;
-UPDATE `creature_template` SET `equipment_id`=11883 WHERE `entry`=11883;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=11883;
 UPDATE `creature_template` SET `equipment_id`=11886 WHERE `entry`=11886;
 UPDATE `creature_template` SET `equipment_id`=11887 WHERE `entry`=11887;
 UPDATE `creature_template` SET `equipment_id`=11898 WHERE `entry`=11898;
@@ -4200,8 +4199,8 @@ UPDATE `creature_template` SET `equipment_id`=12243 WHERE `entry`=12243;
 UPDATE `creature_template` SET `equipment_id`=12245 WHERE `entry`=12245;
 UPDATE `creature_template` SET `equipment_id`=12259 WHERE `entry`=12259;
 UPDATE `creature_template` SET `equipment_id`=12264 WHERE `entry`=12264;
-UPDATE `creature_template` SET `equipment_id`=12319 WHERE `entry`=12319;
-UPDATE `creature_template` SET `equipment_id`=12321 WHERE `entry`=12321;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=12319;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=12321;
 UPDATE `creature_template` SET `equipment_id`=15709 WHERE `entry`=15709;
 UPDATE `creature_template` SET `equipment_id`=16076 WHERE `entry`=16076;
 UPDATE `creature_template` SET `equipment_id`=12322 WHERE `entry`=12322;
@@ -4266,10 +4265,10 @@ UPDATE `creature_template` SET `equipment_id`=12617 WHERE `entry`=12617;
 UPDATE `creature_template` SET `equipment_id`=13519 WHERE `entry`=13519;
 UPDATE `creature_template` SET `equipment_id`=12636 WHERE `entry`=12636;
 UPDATE `creature_template` SET `equipment_id`=12657 WHERE `entry`=12657;
-UPDATE `creature_template` SET `equipment_id`=12658 WHERE `entry`=12658;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=12658;
 UPDATE `creature_template` SET `equipment_id`=12696 WHERE `entry`=12696;
 UPDATE `creature_template` SET `equipment_id`=13535 WHERE `entry`=13535;
-UPDATE `creature_template` SET `equipment_id`=15410 WHERE `entry`=15410;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=15410;
 UPDATE `creature_template` SET `equipment_id`=12717 WHERE `entry`=12717;
 UPDATE `creature_template` SET `equipment_id`=12719 WHERE `entry`=12719;
 UPDATE `creature_template` SET `equipment_id`=12720 WHERE `entry`=12720;
@@ -4298,7 +4297,7 @@ UPDATE `creature_template` SET `equipment_id`=12791 WHERE `entry`=12791;
 UPDATE `creature_template` SET `equipment_id`=12796 WHERE `entry`=12796;
 UPDATE `creature_template` SET `equipment_id`=12877 WHERE `entry`=12877;
 UPDATE `creature_template` SET `equipment_id`=12797 WHERE `entry`=12797;
-UPDATE `creature_template` SET `equipment_id`=12799 WHERE `entry`=12799;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=12799;
 UPDATE `creature_template` SET `equipment_id`=12807 WHERE `entry`=12807;
 UPDATE `creature_template` SET `equipment_id`=12816 WHERE `entry`=12816;
 UPDATE `creature_template` SET `equipment_id`=12837 WHERE `entry`=12837;
@@ -4306,7 +4305,7 @@ UPDATE `creature_template` SET `equipment_id`=12856 WHERE `entry`=12856;
 UPDATE `creature_template` SET `equipment_id`=12858 WHERE `entry`=12858;
 UPDATE `creature_template` SET `equipment_id`=12859 WHERE `entry`=12859;
 UPDATE `creature_template` SET `equipment_id`=13738 WHERE `entry`=13738;
-UPDATE `creature_template` SET `equipment_id`=12860 WHERE `entry`=12860;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=12860;
 UPDATE `creature_template` SET `equipment_id`=12862 WHERE `entry`=12862;
 UPDATE `creature_template` SET `equipment_id`=13528 WHERE `entry`=13528;
 UPDATE `creature_template` SET `equipment_id`=12863 WHERE `entry`=12863;
@@ -4320,7 +4319,7 @@ UPDATE `creature_template` SET `equipment_id`=12902 WHERE `entry`=12902;
 UPDATE `creature_template` SET `equipment_id`=14225 WHERE `entry`=14225;
 UPDATE `creature_template` SET `equipment_id`=12903 WHERE `entry`=12903;
 UPDATE `creature_template` SET `equipment_id`=16283 WHERE `entry`=16283;
-UPDATE `creature_template` SET `equipment_id`=12918 WHERE `entry`=12918;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=12918;
 UPDATE `creature_template` SET `equipment_id`=15846 WHERE `entry`=15846;
 UPDATE `creature_template` SET `equipment_id`=12919 WHERE `entry`=12919;
 UPDATE `creature_template` SET `equipment_id`=12920 WHERE `entry`=12920;
@@ -4366,8 +4365,8 @@ UPDATE `creature_template` SET `equipment_id`=13139 WHERE `entry`=13139;
 UPDATE `creature_template` SET `equipment_id`=13140 WHERE `entry`=13140;
 UPDATE `creature_template` SET `equipment_id`=13143 WHERE `entry`=13143;
 UPDATE `creature_template` SET `equipment_id`=13144 WHERE `entry`=13144;
-UPDATE `creature_template` SET `equipment_id`=13145 WHERE `entry`=13145;
-UPDATE `creature_template` SET `equipment_id`=13146 WHERE `entry`=13146;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=13145;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=13146;
 UPDATE `creature_template` SET `equipment_id`=13147 WHERE `entry`=13147;
 UPDATE `creature_template` SET `equipment_id`=15906 WHERE `entry`=15906;
 UPDATE `creature_template` SET `equipment_id`=13149 WHERE `entry`=13149;
@@ -4532,7 +4531,7 @@ UPDATE `creature_template` SET `equipment_id`=14325 WHERE `entry`=14325;
 UPDATE `creature_template` SET `equipment_id`=14326 WHERE `entry`=14326;
 UPDATE `creature_template` SET `equipment_id`=14327 WHERE `entry`=14327;
 UPDATE `creature_template` SET `equipment_id`=15793 WHERE `entry`=15793;
-UPDATE `creature_template` SET `equipment_id`=14342 WHERE `entry`=14342;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=14342;
 UPDATE `creature_template` SET `equipment_id`=14351 WHERE `entry`=14351;
 UPDATE `creature_template` SET `equipment_id`=14363 WHERE `entry`=14363;
 UPDATE `creature_template` SET `equipment_id`=14364 WHERE `entry`=14364;
@@ -4570,7 +4569,7 @@ UPDATE `creature_template` SET `equipment_id`=14442 WHERE `entry`=14442;
 UPDATE `creature_template` SET `equipment_id`=15775 WHERE `entry`=15775;
 UPDATE `creature_template` SET `equipment_id`=14445 WHERE `entry`=14445;
 UPDATE `creature_template` SET `equipment_id`=15260 WHERE `entry`=15260;
-UPDATE `creature_template` SET `equipment_id`=14447 WHERE `entry`=14447;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=14447;
 UPDATE `creature_template` SET `equipment_id`=15847 WHERE `entry`=15847;
 UPDATE `creature_template` SET `equipment_id`=15841 WHERE `entry`=15841;
 UPDATE `creature_template` SET `equipment_id`=14456 WHERE `entry`=14456;
@@ -4599,12 +4598,12 @@ UPDATE `creature_template` SET `equipment_id`=14522 WHERE `entry`=14522;
 UPDATE `creature_template` SET `equipment_id`=15702 WHERE `entry`=15702;
 UPDATE `creature_template` SET `equipment_id`=15189 WHERE `entry`=15189;
 UPDATE `creature_template` SET `equipment_id`=15700 WHERE `entry`=15700;
-UPDATE `creature_template` SET `equipment_id`=15193 WHERE `entry`=15193;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=15193;
 UPDATE `creature_template` SET `equipment_id`=15197 WHERE `entry`=15197;
 UPDATE `creature_template` SET `equipment_id`=15708 WHERE `entry`=15708;
 UPDATE `creature_template` SET `equipment_id`=14567 WHERE `entry`=14567;
 UPDATE `creature_template` SET `equipment_id`=16058 WHERE `entry`=16058;
-UPDATE `creature_template` SET `equipment_id`=14604 WHERE `entry`=14604;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=14604;
 UPDATE `creature_template` SET `equipment_id`=14622 WHERE `entry`=14622;
 UPDATE `creature_template` SET `equipment_id`=14624 WHERE `entry`=14624;
 UPDATE `creature_template` SET `equipment_id`=14627 WHERE `entry`=14627;
@@ -4612,7 +4611,7 @@ UPDATE `creature_template` SET `equipment_id`=14628 WHERE `entry`=14628;
 UPDATE `creature_template` SET `equipment_id`=14634 WHERE `entry`=14634;
 UPDATE `creature_template` SET `equipment_id`=14638 WHERE `entry`=14638;
 UPDATE `creature_template` SET `equipment_id`=14639 WHERE `entry`=14639;
-UPDATE `creature_template` SET `equipment_id`=14640 WHERE `entry`=14640;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=14640;
 UPDATE `creature_template` SET `equipment_id`=15615 WHERE `entry`=15615;
 UPDATE `creature_template` SET `equipment_id`=14715 WHERE `entry`=14715;
 UPDATE `creature_template` SET `equipment_id`=14717 WHERE `entry`=14717;
@@ -4623,7 +4622,7 @@ UPDATE `creature_template` SET `equipment_id`=14724 WHERE `entry`=14724;
 UPDATE `creature_template` SET `equipment_id`=14873 WHERE `entry`=14873;
 UPDATE `creature_template` SET `equipment_id`=14729 WHERE `entry`=14729;
 UPDATE `creature_template` SET `equipment_id`=14730 WHERE `entry`=14730;
-UPDATE `creature_template` SET `equipment_id`=14877 WHERE `entry`=14877;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=14877;
 UPDATE `creature_template` SET `equipment_id`=14734 WHERE `entry`=14734;
 UPDATE `creature_template` SET `equipment_id`=14736 WHERE `entry`=14736;
 UPDATE `creature_template` SET `equipment_id`=14737 WHERE `entry`=14737;
@@ -4690,7 +4689,7 @@ UPDATE `creature_template` SET `equipment_id`=15008 WHERE `entry`=15008;
 UPDATE `creature_template` SET `equipment_id`=15021 WHERE `entry`=15021;
 UPDATE `creature_template` SET `equipment_id`=15022 WHERE `entry`=15022;
 UPDATE `creature_template` SET `equipment_id`=15046 WHERE `entry`=15046;
-UPDATE `creature_template` SET `equipment_id`=15061 WHERE `entry`=15061;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=15061;
 UPDATE `creature_template` SET `equipment_id`=15064 WHERE `entry`=15064;
 UPDATE `creature_template` SET `equipment_id`=15074 WHERE `entry`=15074;
 UPDATE `creature_template` SET `equipment_id`=15076 WHERE `entry`=15076;
@@ -4718,7 +4717,7 @@ UPDATE `creature_template` SET `equipment_id`=15182 WHERE `entry`=15182;
 UPDATE `creature_template` SET `equipment_id`=16065 WHERE `entry`=16065;
 UPDATE `creature_template` SET `equipment_id`=15908 WHERE `entry`=15908;
 UPDATE `creature_template` SET `equipment_id`=15191 WHERE `entry`=15191;
-UPDATE `creature_template` SET `equipment_id`=15199 WHERE `entry`=15199;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=15199;
 UPDATE `creature_template` SET `equipment_id`=15200 WHERE `entry`=15200;
 UPDATE `creature_template` SET `equipment_id`=15202 WHERE `entry`=15202;
 UPDATE `creature_template` SET `equipment_id`=15203 WHERE `entry`=15203;
@@ -4727,7 +4726,7 @@ UPDATE `creature_template` SET `equipment_id`=16103 WHERE `entry`=16103;
 UPDATE `creature_template` SET `equipment_id`=16097 WHERE `entry`=16097;
 UPDATE `creature_template` SET `equipment_id`=15270 WHERE `entry`=15270;
 UPDATE `creature_template` SET `equipment_id`=15282 WHERE `entry`=15282;
-UPDATE `creature_template` SET `equipment_id`=15293 WHERE `entry`=15293;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=15293;
 UPDATE `creature_template` SET `equipment_id`=15303 WHERE `entry`=15303;
 UPDATE `creature_template` SET `equipment_id`=15451 WHERE `entry`=15451;
 UPDATE `creature_template` SET `equipment_id`=15306 WHERE `entry`=15306;
@@ -4738,7 +4737,7 @@ UPDATE `creature_template` SET `equipment_id`=15354 WHERE `entry`=15354;
 UPDATE `creature_template` SET `equipment_id`=15459 WHERE `entry`=15459;
 UPDATE `creature_template` SET `equipment_id`=15275 WHERE `entry`=15275;
 UPDATE `creature_template` SET `equipment_id`=15441 WHERE `entry`=15441;
-UPDATE `creature_template` SET `equipment_id`=15139 WHERE `entry`=15139;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=15139;
 UPDATE `creature_template` SET `equipment_id`=15442 WHERE `entry`=15442;
 UPDATE `creature_template` SET `equipment_id`=15443 WHERE `entry`=15443;
 UPDATE `creature_template` SET `equipment_id`=15444 WHERE `entry`=15444;
@@ -4746,13 +4745,13 @@ UPDATE `creature_template` SET `equipment_id`=16165 WHERE `entry`=16165;
 UPDATE `creature_template` SET `equipment_id`=15471 WHERE `entry`=15471;
 UPDATE `creature_template` SET `equipment_id`=15473 WHERE `entry`=15473;
 UPDATE `creature_template` SET `equipment_id`=15502 WHERE `entry`=15502;
-UPDATE `creature_template` SET `equipment_id`=15503 WHERE `entry`=15503;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=15503;
 UPDATE `creature_template` SET `equipment_id`=15504 WHERE `entry`=15504;
 UPDATE `creature_template` SET `equipment_id`=15612 WHERE `entry`=15612;
 UPDATE `creature_template` SET `equipment_id`=15613 WHERE `entry`=15613;
 UPDATE `creature_template` SET `equipment_id`=15616 WHERE `entry`=15616;
 UPDATE `creature_template` SET `equipment_id`=15617 WHERE `entry`=15617;
-UPDATE `creature_template` SET `equipment_id`=15818 WHERE `entry`=15818;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=15818;
 UPDATE `creature_template` SET `equipment_id`=15961 WHERE `entry`=15961;
 UPDATE `creature_template` SET `equipment_id`=15852 WHERE `entry`=15852;
 UPDATE `creature_template` SET `equipment_id`=15853 WHERE `entry`=15853;
@@ -4845,7 +4844,7 @@ UPDATE `creature_template` SET `equipment_id`=15704 WHERE `entry`=15704;
 UPDATE `creature_template` SET `equipment_id`=15707 WHERE `entry`=15707;
 UPDATE `creature_template` SET `equipment_id`=16254 WHERE `entry`=16254;
 UPDATE `creature_template` SET `equipment_id`=15437 WHERE `entry`=15437;
-UPDATE `creature_template` SET `equipment_id`=16384 WHERE `entry`=16384;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=16384;
 UPDATE `creature_template` SET `equipment_id`=16395 WHERE `entry`=16395;
 UPDATE `creature_template` SET `equipment_id`=16396 WHERE `entry`=16396;
 UPDATE `creature_template` SET `equipment_id`=17041 WHERE `entry`=17041;
@@ -4892,21 +4891,21 @@ UPDATE `creature_template` SET `equipment_id`=15865 WHERE `entry`=15865;
 UPDATE `creature_template` SET `equipment_id`=16049 WHERE `entry`=16049;
 UPDATE `creature_template` SET `equipment_id`=16050 WHERE `entry`=16050;
 UPDATE `creature_template` SET `equipment_id`=16054 WHERE `entry`=16054;
-UPDATE `creature_template` SET `equipment_id`=16120 WHERE `entry`=16120;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=16120;
 UPDATE `creature_template` SET `equipment_id`=16255 WHERE `entry`=16255;
 UPDATE `creature_template` SET `equipment_id`=16433 WHERE `entry`=16433;
 UPDATE `creature_template` SET `equipment_id`=16434 WHERE `entry`=16434;
 UPDATE `creature_template` SET `equipment_id`=16435 WHERE `entry`=16435;
 UPDATE `creature_template` SET `equipment_id`=16436 WHERE `entry`=16436;
 UPDATE `creature_template` SET `equipment_id`=16861 WHERE `entry`=16861;
-UPDATE `creature_template` SET `equipment_id`=16083 WHERE `entry`=16083;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=16083;
 UPDATE `creature_template` SET `equipment_id`=2454 WHERE `entry`=2454;
 UPDATE `creature_template` SET `equipment_id`=10579 WHERE `entry`=10579;
 UPDATE `creature_template` SET `equipment_id`=15796 WHERE `entry`=15796;
 UPDATE `creature_template` SET `equipment_id`=15720 WHERE `entry`=15720;
-UPDATE `creature_template` SET `equipment_id`=14966 WHERE `entry`=14966;
-UPDATE `creature_template` SET `equipment_id`=14968 WHERE `entry`=14968;
-UPDATE `creature_template` SET `equipment_id`=7791 WHERE `entry`=7791;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=14966;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=14968;
+UPDATE `creature_template` SET `equipment_id`=0 WHERE `entry`=7791;
 UPDATE `creature_template` SET `equipment_id`=10459 WHERE `entry`=10459;
 UPDATE `creature_template` SET `equipment_id`=12792 WHERE `entry`=12792;
 UPDATE `creature_template` SET `equipment_id`=13521 WHERE `entry`=13521;
@@ -5426,7 +5425,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (703, 1983, 0, 0),
 (1062, 2176, 0, 0),
 (836, 1903, 1984, 0),
-(1783, 1895, 0, 0),
 (8016, 12285, 0, 0),
 (709, 1909, 0, 0),
 (888, 2180, 2081, 0),
@@ -5623,7 +5621,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (985, 11087, 0, 0),
 (986, 2809, 2081, 0),
 (2360, 3346, 0, 0),
-(3752, 14874, 14874, 0),
 (3385, 1899, 1984, 0),
 (987, 0, 0, 2550),
 (3378, 3364, 0, 0),
@@ -5663,7 +5660,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (2950, 1900, 0, 0),
 (1047, 12403, 0, 0),
 (1050, 5746, 0, 0),
-(6549, 5747, 0, 0),
 (1052, 1896, 2052, 0),
 (1053, 1910, 0, 0),
 (1054, 2884, 0, 0),
@@ -5682,7 +5678,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (2780, 1906, 0, 0),
 (1960, 1911, 0, 0),
 (2779, 5747, 0, 0),
-(2501, 3756, 0, 0),
 (1089, 2180, 1984, 0),
 (1090, 2180, 1984, 0),
 (2557, 1908, 0, 0),
@@ -5907,7 +5902,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (2216, 2198, 13341, 0),
 (1500, 1911, 0, 0),
 (1506, 2184, 0, 0),
-(2080, 0, 1908, 0),
 (1507, 2813, 0, 0),
 (1653, 1907, 0, 0),
 (1657, 3361, 0, 0),
@@ -5978,7 +5972,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (6495, 2703, 0, 0),
 (1743, 1905, 0, 2551),
 (1746, 1905, 0, 2551),
-(2832, 0, 2705, 0),
 (1747, 12748, 0, 0),
 (1749, 2176, 0, 0),
 (1750, 2179, 2711, 0),
@@ -6065,10 +6058,8 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (14848, 0, 0, 5259),
 (1973, 1896, 2052, 0),
 (2055, 2199, 3695, 0),
-(1975, 0, 1905, 0),
 (1977, 1908, 0, 0),
 (1978, 1895, 0, 0),
-(1981, 1900, 0, 0),
 (2562, 2695, 0, 0),
 (2618, 1905, 0, 0),
 (6069, 2178, 2051, 0),
@@ -6093,7 +6084,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (6768, 5285, 0, 0),
 (2167, 3432, 0, 0),
 (2119, 1899, 0, 0),
-(2046, 1903, 0, 0),
 (2996, 12855, 0, 0),
 (2053, 1906, 0, 0),
 (2054, 2184, 0, 0),
@@ -6140,7 +6130,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (2130, 10616, 0, 0),
 (2131, 1899, 0, 0),
 (2132, 3699, 3697, 0),
-(3364, 0, 3696, 0),
 (2135, 1903, 0, 0),
 (3374, 1910, 0, 0),
 (3016, 12745, 12745, 0),
@@ -6149,7 +6138,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (2140, 1905, 12745, 0),
 (3529, 1903, 0, 0),
 (2142, 2180, 2081, 0),
-(2149, 1900, 0, 0),
 (2968, 0, 0, 2550),
 (2153, 1906, 0, 0),
 (3487, 12745, 12745, 0),
@@ -6183,7 +6171,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (3356, 1903, 13611, 0),
 (2191, 1907, 0, 0),
 (2913, 2714, 0, 0),
-(2192, 6230, 0, 0),
 (2201, 1897, 0, 0),
 (3947, 5292, 0, 0),
 (2202, 2184, 0, 0),
@@ -6254,7 +6241,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (2309, 3367, 0, 0),
 (2740, 2559, 0, 0),
 (2310, 6235, 0, 0),
-(3770, 23369, 0, 0),
 (3263, 5276, 0, 0),
 (2748, 2557, 0, 0),
 (2318, 2559, 0, 0),
@@ -6365,7 +6351,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (2577, 1907, 0, 0),
 (3603, 3699, 3697, 0),
 (2434, 2711, 0, 0),
-(2435, 0, 13610, 0),
 (2436, 3367, 0, 0),
 (2581, 1896, 2053, 0),
 (2437, 12863, 0, 0),
@@ -6403,7 +6388,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (3076, 0, 12745, 0),
 (2488, 1897, 0, 0),
 (2569, 1903, 1901, 0),
-(3086, 0, 2201, 0),
 (2489, 2177, 0, 0),
 (3595, 2813, 0, 0),
 (2490, 5278, 0, 0),
@@ -6434,7 +6418,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (5232, 5301, 0, 0),
 (3188, 12322, 0, 0),
 (3198, 2809, 0, 0),
-(2685, 2552, 0, 0),
 (5759, 2827, 0, 0),
 (3196, 2809, 0, 0),
 (2543, 12182, 0, 0),
@@ -6508,7 +6491,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (6115, 2809, 0, 0),
 (3554, 5281, 0, 0),
 (4065, 1905, 1957, 0),
-(2682, 0, 1911, 0),
 (3562, 1908, 0, 0),
 (2683, 1911, 0, 0),
 (4079, 3432, 0, 0),
@@ -6533,7 +6515,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (2719, 1983, 0, 0),
 (2720, 1908, 0, 0),
 (3387, 9659, 0, 0),
-(3846, 2178, 10616, 0),
 (2737, 3494, 11506, 0),
 (3331, 2178, 0, 0),
 (2738, 3432, 0, 0),
@@ -6562,12 +6543,10 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (2789, 2711, 0, 0),
 (3964, 2198, 0, 0),
 (2799, 2184, 0, 0),
-(3395, 885, 0, 0),
 (2802, 3364, 0, 0),
 (3403, 5300, 0, 0),
 (2810, 2184, 13609, 0),
 (2819, 10619, 2081, 0),
-(3767, 12298, 0, 0),
 (2820, 2703, 13407, 0),
 (2834, 19485, 0, 0),
 (2835, 11424, 0, 0),
@@ -6586,7 +6565,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (2860, 1903, 0, 0),
 (3745, 1905, 0, 5258),
 (3536, 12850, 0, 0),
-(3759, 10617, 10617, 0),
 (3544, 12850, 0, 0),
 (2878, 2023, 0, 0),
 (4569, 2147, 0, 0),
@@ -6599,7 +6577,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (4217, 5600, 0, 0),
 (16059, 22199, 0, 0),
 (2910, 1906, 0, 0),
-(3628, 3757, 0, 0),
 (2911, 2714, 0, 0),
 (3218, 2023, 0, 14642),
 (3735, 4993, 0, 0),
@@ -6614,10 +6591,8 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (2932, 4991, 0, 0),
 (2934, 2177, 0, 0),
 (2937, 3368, 0, 0),
-(3606, 6230, 0, 0),
 (2947, 0, 0, 2552),
 (2949, 2809, 0, 0),
-(3604, 0, 6233, 0),
 (2951, 1896, 2052, 2551),
 (2952, 5261, 0, 0),
 (3614, 2718, 0, 0),
@@ -6635,7 +6610,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (3282, 1896, 0, 5262),
 (2979, 1903, 0, 0),
 (5680, 2695, 0, 0),
-(3799, 6334, 0, 0),
 (2980, 2023, 0, 0),
 (2982, 1906, 0, 0),
 (2986, 5301, 0, 0),
@@ -6774,7 +6748,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (4368, 13150, 0, 0),
 (3203, 1907, 0, 0),
 (3204, 5285, 0, 0),
-(3205, 0, 4993, 0),
 (3208, 1908, 0, 0),
 (3211, 2023, 0, 14642),
 (3212, 2023, 0, 14642),
@@ -6839,7 +6812,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (3344, 3361, 0, 0),
 (3712, 1899, 0, 0),
 (3345, 12746, 0, 6230),
-(3346, 6231, 0, 0),
 (3347, 3699, 3697, 0),
 (3349, 5304, 0, 0),
 (3352, 0, 0, 5262),
@@ -6981,7 +6953,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (3739, 5278, 2052, 0),
 (3740, 2023, 0, 5870),
 (3742, 5276, 0, 0),
-(3763, 13631, 0, 5870),
 (4922, 1899, 1984, 0),
 (3779, 2177, 0, 0),
 (5163, 1911, 0, 0),
@@ -6994,8 +6965,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (3882, 2827, 0, 0),
 (3883, 2197, 0, 0),
 (3887, 11264, 0, 0),
-(3898, 2179, 0, 0),
-(3899, 2559, 0, 0),
 (5593, 3433, 0, 0),
 (3936, 5598, 0, 0),
 (3943, 5747, 0, 0),
@@ -7027,7 +6996,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (4078, 5304, 0, 0),
 (4083, 4993, 0, 0),
 (12864, 5278, 0, 14118),
-(4730, 5262, 0, 0),
 (4085, 12856, 2081, 0),
 (4086, 12852, 0, 0),
 (4094, 1905, 0, 5261),
@@ -7094,7 +7062,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (4215, 2180, 0, 0),
 (4216, 6233, 0, 0),
 (4219, 3494, 0, 0),
-(6122, 13293, 0, 0),
 (5615, 5278, 0, 0),
 (4220, 3696, 0, 0),
 (5100, 1911, 0, 0),
@@ -7132,9 +7099,7 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (4262, 5598, 0, 2550),
 (8150, 2196, 0, 0),
 (4921, 1899, 1984, 0),
-(4265, 0, 2197, 0),
 (4266, 12856, 0, 0),
-(4267, 5258, 0, 0),
 (4275, 6322, 0, 0),
 (11520, 11321, 0, 0),
 (4276, 1910, 13610, 0),
@@ -7159,12 +7124,10 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (4290, 3432, 0, 0),
 (4949, 12183, 0, 0),
 (4292, 2813, 1984, 0),
-(4293, 4993, 0, 0),
 (4294, 2177, 0, 0),
 (4295, 5305, 1895, 0),
 (5669, 0, 0, 2552),
 (4296, 1908, 0, 0),
-(5470, 2813, 0, 0),
 (4297, 2177, 0, 0),
 (4298, 1896, 1984, 0),
 (5979, 5281, 0, 0),
@@ -7373,7 +7336,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (4588, 12298, 0, 0),
 (4589, 1895, 0, 0),
 (4591, 1907, 0, 0),
-(4673, 0, 0, 5258),
 (4592, 2184, 0, 0),
 (5190, 2714, 0, 0),
 (4593, 5502, 0, 0),
@@ -7404,7 +7366,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (7606, 2559, 0, 0),
 (4616, 3361, 2552, 0),
 (4617, 0, 0, 12941),
-(4619, 14879, 0, 0),
 (4623, 1897, 1957, 0),
 (5506, 5301, 0, 0),
 (4630, 1911, 13606, 0),
@@ -7471,13 +7432,11 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (12032, 1117, 0, 0),
 (4791, 3433, 0, 0),
 (5892, 5291, 0, 0),
-(5387, 5262, 0, 0),
 (4794, 3351, 0, 0),
 (7944, 1903, 0, 0),
 (5900, 6334, 0, 0),
 (4802, 1908, 0, 0),
 (4805, 5303, 0, 0),
-(5157, 12941, 0, 0),
 (4807, 5746, 0, 0),
 (4809, 2176, 0, 0),
 (4810, 4991, 0, 0),
@@ -7516,7 +7475,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (5767, 1908, 0, 0),
 (4886, 1903, 0, 0),
 (4888, 1903, 13611, 0),
-(5258, 14870, 0, 0),
 (4891, 2197, 0, 0),
 (4892, 0, 0, 5262),
 (4894, 2827, 13406, 0),
@@ -7691,7 +7649,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (8154, 6680, 0, 0),
 (5884, 5276, 0, 0),
 (5824, 5289, 0, 0),
-(5464, 2703, 0, 0),
 (5469, 2809, 0, 0),
 (5836, 4994, 0, 0),
 (6178, 1903, 0, 0),
@@ -7715,7 +7672,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (5495, 1907, 0, 0),
 (6886, 2184, 0, 0),
 (5496, 5277, 0, 0),
-(5497, 6231, 0, 0),
 (5864, 2023, 0, 0),
 (5498, 5277, 0, 0),
 (5500, 2200, 3695, 0),
@@ -7792,7 +7748,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (5698, 2809, 0, 0),
 (5702, 2559, 0, 0),
 (5703, 1907, 0, 0),
-(6646, 5303, 0, 0),
 (5704, 0, 0, 6230),
 (5706, 5276, 0, 0),
 (5711, 10878, 0, 0),
@@ -7812,7 +7767,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (11018, 13316, 0, 0),
 (5771, 2559, 0, 0),
 (5782, 3494, 11506, 0),
-(5787, 10756, 0, 0),
 (7016, 3432, 0, 5259),
 (5797, 5599, 0, 0),
 (5798, 5305, 0, 0),
@@ -7890,7 +7844,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (6093, 1905, 0, 0),
 (6738, 5260, 0, 0),
 (6119, 12863, 0, 0),
-(6123, 22215, 0, 0),
 (6127, 2559, 0, 0),
 (6131, 1907, 0, 0),
 (6142, 2182, 0, 0),
@@ -8119,7 +8072,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (7346, 1903, 0, 0),
 (7945, 1117, 0, 0),
 (7354, 11087, 0, 0),
-(7949, 6231, 0, 0),
 (7360, 2695, 1985, 0),
 (8017, 1904, 0, 5262),
 (7396, 3326, 0, 0),
@@ -8133,7 +8085,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (7435, 1897, 0, 0),
 (7436, 2147, 1984, 0),
 (7437, 2177, 0, 0),
-(7868, 6231, 0, 0),
 (8894, 2176, 0, 0),
 (7442, 0, 0, 5260),
 (7772, 1117, 0, 0),
@@ -8177,7 +8128,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (7858, 1897, 0, 0),
 (7865, 10591, 1984, 5260),
 (7869, 5291, 0, 0),
-(7870, 5262, 0, 0),
 (7871, 3433, 0, 0),
 (7874, 1907, 0, 0),
 (7876, 1903, 12856, 0),
@@ -8298,20 +8248,17 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (9077, 11042, 0, 0),
 (9540, 2705, 0, 0),
 (9033, 11342, 0, 0),
-(9550, 5303, 0, 0),
 (8442, 2183, 0, 0),
 (10059, 12329, 0, 0),
 (8444, 2177, 0, 0),
 (9037, 11591, 0, 0),
 (9548, 0, 0, 12523),
-(8478, 2147, 0, 0),
 (16014, 4994, 11586, 0),
 (8479, 2179, 0, 0),
 (8496, 1911, 0, 0),
 (8503, 2184, 0, 0),
 (8504, 1896, 0, 2552),
 (15541, 10617, 0, 0),
-(8507, 6231, 0, 0),
 (8508, 1117, 0, 0),
 (8509, 2147, 0, 0),
 (8876, 1908, 0, 0),
@@ -8517,7 +8464,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (9499, 2705, 0, 0),
 (9501, 2717, 0, 0),
 (9503, 2703, 0, 6886),
-(9522, 1909, 2052, 0),
 (9523, 5304, 0, 0),
 (9525, 12754, 0, 0),
 (12241, 3361, 0, 0),
@@ -8552,7 +8498,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (9583, 12290, 10611, 0),
 (9596, 7612, 0, 0),
 (9604, 3361, 0, 0),
-(9605, 2557, 0, 0),
 (9616, 11424, 0, 0),
 (9618, 2715, 0, 0),
 (9619, 10612, 0, 0),
@@ -8576,7 +8521,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (9818, 5304, 0, 0),
 (9819, 3361, 1984, 0),
 (11048, 12332, 0, 0),
-(9876, 2557, 0, 0),
 (15130, 13104, 12995, 0),
 (9916, 2147, 0, 0),
 (9956, 2179, 1957, 2552),
@@ -8669,7 +8613,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (10399, 12298, 0, 0),
 (10400, 2177, 0, 0),
 (11057, 2198, 12867, 0),
-(11582, 13290, 0, 0),
 (10418, 3361, 12932, 0),
 (10419, 6618, 0, 0),
 (10420, 12868, 0, 0),
@@ -8733,7 +8676,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (10559, 1907, 0, 0),
 (10944, 14082, 0, 0),
 (10578, 4993, 0, 0),
-(11811, 12941, 0, 0),
 (10948, 12890, 1984, 0),
 (10584, 11087, 0, 0),
 (10600, 5491, 0, 0),
@@ -8751,11 +8693,9 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (10781, 12861, 0, 0),
 (10637, 13894, 2081, 0),
 (10638, 12290, 12456, 0),
-(10639, 14870, 0, 0),
 (10643, 2147, 0, 0),
 (10645, 12329, 0, 0),
 (10646, 2184, 0, 0),
-(10647, 11342, 0, 0),
 (10857, 10616, 0, 0),
 (10801, 3367, 0, 0),
 (11318, 1904, 0, 0),
@@ -8769,7 +8709,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (10681, 3361, 1984, 0),
 (11278, 1903, 0, 0),
 (10682, 12593, 0, 0),
-(10683, 10825, 0, 0),
 (10696, 2178, 6434, 2551),
 (11867, 10613, 0, 0),
 (11382, 13316, 0, 0),
@@ -8796,11 +8735,8 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (12225, 13336, 0, 0),
 (10839, 12882, 0, 0),
 (10856, 5287, 0, 0),
-(10877, 0, 2714, 0),
 (988006, 2716, 0, 0),
-(10878, 0, 2715, 0),
 (10879, 2714, 0, 0),
-(10880, 0, 2715, 0),
 (10881, 1906, 0, 0),
 (10896, 9659, 0, 0),
 (10897, 13721, 0, 5258),
@@ -9005,8 +8941,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (11833, 10612, 13319, 0),
 (11696, 3494, 11506, 0),
 (11697, 2809, 0, 0),
-(11701, 2703, 0, 0),
-(11702, 2827, 0, 0),
 (11703, 2182, 0, 0),
 (11706, 3364, 0, 0),
 (11708, 12328, 0, 0),
@@ -9049,7 +8983,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (11876, 13719, 0, 0),
 (11880, 13312, 13312, 0),
 (11882, 12421, 0, 0),
-(11883, 13290, 0, 0),
 (11886, 3346, 13610, 0),
 (11887, 3346, 13609, 0),
 (11898, 12949, 0, 0),
@@ -9090,8 +9023,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (12245, 2714, 0, 0),
 (12259, 13698, 0, 0),
 (12264, 2177, 0, 0),
-(12319, 2184, 0, 0),
-(12321, 4993, 0, 0),
 (15709, 13631, 0, 0),
 (16076, 20468, 0, 0),
 (12322, 14880, 14534, 13147),
@@ -9155,10 +9086,8 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (13519, 12290, 0, 5261),
 (12636, 5303, 0, 0),
 (12657, 2715, 0, 0),
-(12658, 0, 2714, 0),
 (12696, 13625, 0, 0),
 (13535, 11322, 0, 0),
-(15410, 20738, 0, 0),
 (12717, 13337, 0, 0),
 (12719, 17123, 0, 0),
 (12720, 12745, 0, 0),
@@ -9187,7 +9116,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (12796, 10611, 0, 0),
 (12877, 10612, 0, 0),
 (12797, 12403, 0, 0),
-(12799, 10612, 0, 0),
 (12807, 10617, 0, 0),
 (12816, 10611, 13609, 0),
 (12837, 11424, 0, 0),
@@ -9195,7 +9123,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (12858, 10878, 0, 0),
 (12859, 12290, 12454, 0),
 (13738, 1905, 0, 5258),
-(12860, 13632, 0, 0),
 (12862, 5278, 0, 14118),
 (13528, 5287, 0, 5258),
 (12863, 5278, 0, 14118),
@@ -9206,10 +9133,9 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (12896, 5598, 0, 2550),
 (12897, 1899, 0, 0),
 (12902, 5491, 0, 0),
-(14225, 23369, 0, 0),
+(14225, 14880, 0, 0),
 (12903, 1905, 1957, 5260),
 (16283, 1910, 0, 0),
-(12918, 11087, 0, 0),
 (15846, 5305, 0, 5260),
 (12919, 1117, 0, 0),
 (12920, 5278, 0, 0),
@@ -9255,8 +9181,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (13140, 14586, 0, 5262),
 (13143, 11323, 0, 5260),
 (13144, 14535, 0, 2551),
-(13145, 12593, 10898, 5260),
-(13146, 12593, 10898, 14118),
 (13147, 13627, 0, 14118),
 (15906, 2703, 0, 0),
 (13149, 2711, 2147, 0),
@@ -9421,7 +9345,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (14326, 10611, 2052, 0),
 (14327, 13698, 0, 0),
 (15793, 2703, 0, 0),
-(14342, 3326, 0, 0),
 (14351, 14527, 0, 0),
 (14363, 11763, 11763, 0),
 (14364, 13753, 0, 0),
@@ -9459,7 +9382,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (15775, 11369, 0, 0),
 (14445, 13632, 0, 0),
 (15260, 13336, 0, 0),
-(14447, 5278, 0, 0),
 (15847, 12294, 0, 0),
 (15841, 12944, 143, 0),
 (14456, 17463, 0, 0),
@@ -9487,12 +9409,10 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (15702, 5280, 0, 0),
 (15189, 3699, 0, 0),
 (15700, 18419, 0, 0),
-(15193, 2179, 0, 14118),
 (15197, 13069, 0, 0),
 (15708, 14873, 0, 0),
 (14567, 13894, 2081, 0),
 (16058, 18122, 0, 0),
-(14604, 5293, 0, 0),
 (14622, 3361, 2081, 12523),
 (14624, 13894, 2081, 0),
 (14627, 3494, 11506, 0),
@@ -9500,7 +9420,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (14634, 2703, 2703, 0),
 (14638, 3326, 0, 0),
 (14639, 5491, 0, 0),
-(14640, 5301, 0, 0),
 (15615, 13720, 0, 0),
 (14715, 5598, 0, 13147),
 (14717, 13707, 13319, 5260),
@@ -9511,7 +9430,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (14873, 12801, 0, 0),
 (14729, 3361, 2081, 0),
 (14730, 3433, 0, 5262),
-(14877, 13720, 0, 0),
 (14734, 3350, 3350, 0),
 (14736, 13337, 0, 0),
 (14737, 1903, 13611, 0),
@@ -9578,7 +9496,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (15021, 19762, 19763, 0),
 (15022, 1895, 2053, 0),
 (15046, 3367, 0, 0),
-(15061, 2705, 0, 0),
 (15064, 1903, 0, 0),
 (15074, 1910, 0, 0),
 (15076, 13336, 0, 0),
@@ -9606,7 +9523,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (16065, 23582, 0, 0),
 (15908, 2703, 0, 0),
 (15191, 13709, 0, 0),
-(15199, 12890, 11041, 0),
 (15200, 10617, 12861, 0),
 (15202, 20719, 0, 0),
 (15203, 12403, 0, 0),
@@ -9615,7 +9531,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (16097, 18122, 0, 5259),
 (15270, 11542, 0, 0),
 (15282, 1903, 0, 0),
-(15293, 5261, 0, 0),
 (15303, 1906, 0, 0),
 (15451, 5598, 0, 0),
 (15306, 5300, 0, 0),
@@ -9626,7 +9541,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (15459, 1910, 0, 0),
 (15275, 21794, 0, 0),
 (15441, 0, 0, 12523),
-(15139, 2714, 0, 5259),
 (15442, 5287, 0, 0),
 (15443, 2557, 0, 0),
 (15444, 13078, 0, 0),
@@ -9634,13 +9548,11 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (15471, 21465, 21465, 0),
 (15473, 4991, 0, 0),
 (15502, 12746, 0, 0),
-(15503, 13723, 0, 0),
 (15504, 18122, 0, 0),
 (15612, 13706, 0, 0),
 (15613, 14823, 0, 0),
 (15616, 2183, 10612, 0),
 (15617, 12629, 12629, 5856),
-(15818, 13706, 0, 0),
 (15961, 20417, 20417, 0),
 (15852, 10612, 21549, 0),
 (15853, 14870, 0, 0),
@@ -9732,7 +9644,6 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (15707, 13312, 0, 0),
 (16254, 2181, 0, 0),
 (15437, 21121, 0, 0),
-(16384, 19053, 0, 0),
 (16395, 19053, 0, 0),
 (16396, 5305, 143, 0),
 (17041, 0, 3757, 0),
@@ -9779,21 +9690,16 @@ INSERT INTO `creature_equip_template` (`entry`, `equipentry1`, `equipentry2`, `e
 (16049, 22210, 22211, 0),
 (16050, 22215, 5284, 0),
 (16054, 22341, 11587, 0),
-(16120, 11343, 0, 0),
 (16255, 5305, 12980, 0),
 (16433, 14873, 0, 0),
 (16434, 18122, 0, 0),
 (16435, 14873, 0, 0),
 (16436, 18122, 0, 0),
 (16861, 22738, 0, 0),
-(16083, 13339, 0, 0),
 (2454, 2711, 0, 0),
 (10579, 943, 0, 0),
 (15796, 12788, 0, 0),
 (15720, 13339, 0, 0),
-(14966, 13631, 0, 5870),
-(14968, 12298, 0, 0),
-(7791, 2559, 0, 0),
 (10459, 12338, 0, 0),
 (12792, 14836, 0, 0),
 (13521, 5305, 5281, 13147),
