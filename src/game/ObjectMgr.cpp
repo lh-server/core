@@ -7948,7 +7948,8 @@ bool ObjectMgr::LoadTrainerGreetings()
 
         if (!ObjectMgr::GetCreatureTemplate(entry))
         {
-            sLog.outErrorDb("Table `npc_trainer_greeting` have entry for nonexistent creature template (Entry: %u), ignore", entry);
+            if (!IsExistingCreatureId(entry))
+                sLog.outErrorDb("Table `npc_trainer_greeting` have entry for nonexistent creature template (Entry: %u), ignore", entry);
             continue;
         }
 
@@ -7958,11 +7959,11 @@ bool ObjectMgr::LoadTrainerGreetings()
         ++count;
 
         // 0 -> default, idx in to idx+1
-        data.Content[0] = fields[2].GetCppString();
+        data.Content[0] = fields[1].GetCppString();
 
         for (int i = 1; i < MAX_LOCALE; ++i)
         {
-            std::string str = fields[i + 2].GetCppString();
+            std::string str = fields[i + 1].GetCppString();
             if (!str.empty())
             {
                 int idx = GetOrNewIndexForLocale(LocaleConstant(i));
