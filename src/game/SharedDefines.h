@@ -2589,8 +2589,10 @@ enum TradeStatus
 // Change the supported client build in Common.h before compiling.
 #if SUPPORTED_CLIENT_BUILD >= CLIENT_BUILD_1_12_1
     #define EXPECTED_MANGOSD_CLIENT_BUILD        { 5875, 6005, 6141, 0}
-#else
+#elif SUPPORTED_CLIENT_BUILD == CLIENT_BUILD_1_11_2
     #define EXPECTED_MANGOSD_CLIENT_BUILD        { 5464, 0}
+#else
+    #define EXPECTED_MANGOSD_CLIENT_BUILD        { 5302, 0}
 #endif
 
 // TrinityCore
