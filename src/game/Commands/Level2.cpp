@@ -3604,9 +3604,7 @@ bool ChatHandler::HandleModifyHonorCommand(char* args)
         if (amount < 0 || amount > 255)
             return false;
         // rank points is sent to client with same size of uint8(255) for each rank
-#if SUPPORTED_CLIENT_BUILD >= CLIENT_BUILD_1_12_1
         target->SetByteValue(PLAYER_FIELD_BYTES2, 0, amount);
-#endif
     }
     else if (hasStringAbbr(field, "rank"))
     {
