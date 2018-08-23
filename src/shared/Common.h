@@ -168,7 +168,15 @@ inline float finiteAlways(float f) { return finite(f) ? f : 0.0f; }
 #define CLIENT_BUILD_1_11_2 5464
 #define CLIENT_BUILD_1_12_1 5875
 // Change this to define which version players can use
-#define SUPPORTED_CLIENT_BUILD CLIENT_BUILD_1_11_2
+#define SUPPORTED_CLIENT_BUILD CLIENT_BUILD_1_10_2
+
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_11_2
+#define MAX_CONTENT_PATCH 10
+#elif SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_10_2
+#define MAX_CONTENT_PATCH 9
+#else
+#define MAX_CONTENT_PATCH 8
+#endif
 
 enum TimeConstants
 {

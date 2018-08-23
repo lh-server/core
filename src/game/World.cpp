@@ -425,14 +425,8 @@ void World::LoadConfigSettings(bool reload)
     // Set the available content patch.
     m_wowPatch = sConfig.GetIntDefault("WowPatch", WOW_PATCH_102);
 
-#if SUPPORTED_CLIENT_BUILD >= CLIENT_BUILD_1_12_1
-    WowPatch const maxPatch = WOW_PATCH_112;
-#else
-    WowPatch const maxPatch = WOW_PATCH_111;
-#endif
-
-    if (m_wowPatch > maxPatch)
-        m_wowPatch = maxPatch;
+    if (m_wowPatch > MAX_CONTENT_PATCH)
+        m_wowPatch = MAX_CONTENT_PATCH;
 
     ///- Read the player limit and the Message of the day from the config file
     SetPlayerLimit(sConfig.GetIntDefault("PlayerLimit", DEFAULT_PLAYER_LIMIT), true);
