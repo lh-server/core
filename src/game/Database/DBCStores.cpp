@@ -112,7 +112,6 @@ static TalentInspectMap sTalentPosInInspect;
 static TalentInspectMap sTalentTabSizeInInspect;
 static uint32 sTalentTabPages[12/*MAX_CLASSES*/][3];
 
-DBCStorage <TaxiNodesEntry> sTaxiNodesStore(TaxiNodesEntryfmt);
 TaxiMask sTaxiNodesMask;
 
 // DBC used only for initialization sTaxiPathSetBySource at startup.
@@ -359,8 +358,6 @@ void LoadDBCStores(const std::string& dataPath)
         }
     }
 
-    LoadDBC(availableDbcLocales, bar, bad_dbc_files, sTaxiNodesStore,           dbcPath, "TaxiNodes.dbc");
-
     LoadDBC(availableDbcLocales, bar, bad_dbc_files, sTaxiPathStore,            dbcPath, "TaxiPath.dbc");
     for (uint32 i = 1; i < sTaxiPathStore.GetNumRows(); ++i)
         if (TaxiPathEntry const* entry = sTaxiPathStore.LookupEntry(i))
@@ -398,9 +395,9 @@ void LoadDBCStores(const std::string& dataPath)
                         spellPaths.insert(sInfo->EffectMiscValue[j]);
 
         memset(sTaxiNodesMask, 0, sizeof(sTaxiNodesMask));
-        for (uint32 i = 1; i < sTaxiNodesStore.GetNumRows(); ++i)
+        for (uint32 i = 1; i < sObjectMgr.GetMaxTaxiNodeId(); ++i)
         {
-            TaxiNodesEntry const* node = sTaxiNodesStore.LookupEntry(i);
+            TaxiNodesEntry const* node = sObjectMgr.GeTaxiNodeEntry(i);
             if (!node)
                 continue;
 

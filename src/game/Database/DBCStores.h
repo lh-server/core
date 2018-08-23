@@ -103,7 +103,6 @@ extern DBCStorage <SpellShapeshiftFormEntry>     sSpellShapeshiftFormStore;
 extern DBCStorage <StableSlotPricesEntry>        sStableSlotPricesStore;
 extern DBCStorage <TalentEntry>                  sTalentStore;
 extern DBCStorage <TalentTabEntry>               sTalentTabStore;
-extern DBCStorage <TaxiNodesEntry>               sTaxiNodesStore;
 extern DBCStorage <TaxiPathEntry>                sTaxiPathStore;
 extern TaxiMask                                  sTaxiNodesMask;
 extern TaxiPathSetBySource                       sTaxiPathSetBySource;

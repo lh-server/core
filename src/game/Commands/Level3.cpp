@@ -3547,9 +3547,9 @@ bool ChatHandler::HandleLookupTaxiNodeCommand(char * args)
     uint32 counter = 0;                                     // Counter for figure out that we found smth.
 
     // Search in TaxiNodes.dbc
-    for (uint32 id = 0; id < sTaxiNodesStore.GetNumRows(); id++)
+    for (uint32 id = 0; id < sObjectMgr.GetMaxTaxiNodeId(); id++)
     {
-        TaxiNodesEntry const *nodeEntry = sTaxiNodesStore.LookupEntry(id);
+        TaxiNodesEntry const *nodeEntry = sObjectMgr.GeTaxiNodeEntry(id);
         if (nodeEntry)
         {
             int loc = GetSessionDbcLocale();

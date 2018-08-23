@@ -5232,9 +5232,9 @@ uint32 ObjectMgr::GetNearestTaxiNode(float x, float y, float z, uint32 mapid, Te
     float dist = 0.0f;
     uint32 id = 0;
 
-    for (uint32 i = 1; i < sTaxiNodesStore.GetNumRows(); ++i)
+    for (uint32 i = 1; i < GetMaxTaxiNodeId(); ++i)
     {
-        TaxiNodesEntry const* node = sTaxiNodesStore.LookupEntry(i);
+        TaxiNodesEntry const* node = GeTaxiNodeEntry(i);
         if (!node || node->map_id != mapid || !node->MountCreatureID[team == ALLIANCE ? 1 : 0])
             continue;
 
@@ -5294,7 +5294,7 @@ uint32 ObjectMgr::GetTaxiMountDisplayId(uint32 id, Team team, bool allowed_alt_t
     uint16 mount_entry = 0;
 
     // select mount creature id
-    TaxiNodesEntry const* node = sTaxiNodesStore.LookupEntry(id);
+    TaxiNodesEntry const* node = GeTaxiNodeEntry(id);
     if (node)
     {
         if (team == ALLIANCE)
@@ -7008,6 +7008,68 @@ void ObjectMgr::LoadCreatureInvolvedRelations()
         else if (!(cInfo->npcflag & UNIT_NPC_FLAG_QUESTGIVER))
             sLog.outDetail("Table `creature_involvedrelation` has creature entry (%u) for quest %u, but npcflag does not include UNIT_NPC_FLAG_QUESTGIVER", itr->first, itr->second);
     }
+}
+
+void ObjectMgr::LoadTaxiNodes()
+{
+    sLog.outString("Loading taxi nodes ...");
+
+    // Getting the maximum ID.
+    QueryResult* result = WorldDatabase.PQuery("SELECT MAX(ID) FROM taxi_nodes WHERE build=%u", SUPPORTED_CLIENT_BUILD);
+
+    if (!result)
+    {
+        sLog.outString(">> Loaded 0 taxi nodes. DB table `taxi_nodes` is empty.");
+        return;
+    }
+
+    auto fields = result->Fetch();
+    uint32 maxTaxiNodeEntry = fields[0].GetUInt32() + 1;
+    delete result;
+
+    // Actually loading the taxi nodes.
+    result = WorldDatabase.PQuery("SELECT * FROM taxi_nodes WHERE build=%u", SUPPORTED_CLIENT_BUILD);
+
+    if (!result)
+    {
+        sLog.outString(">> Loaded 0 taxi nodes. DB table `taxi_nodes` is empty.");
+        return;
+    }
+
+    m_TaxiNodes.resize(maxTaxiNodeEntry);
+
+    do
+    {
+        fields = result->Fetch();
+
+        std::unique_ptr<TaxiNodesEntry> taxiNode = std::make_unique<TaxiNodesEntry>();
+
+        uint32 nodeId = fields[0].GetUInt32();
+
+        taxiNode->ID = nodeId;
+        taxiNode->map_id = fields[2].GetUInt32();
+        taxiNode->x = fields[3].GetFloat();
+        taxiNode->y = fields[4].GetFloat();
+        taxiNode->z = fields[5].GetFloat();
+        taxiNode->name[0] = fields[6].GetCppString();
+        taxiNode->name[1] = fields[7].GetCppString();
+        taxiNode->name[2] = fields[8].GetCppString();
+        taxiNode->name[3] = fields[9].GetCppString();
+        taxiNode->name[4] = fields[10].GetCppString();
+        taxiNode->name[5] = fields[11].GetCppString();
+        taxiNode->name[6] = fields[12].GetCppString();
+        taxiNode->name[7] = fields[13].GetCppString();
+        taxiNode->MountCreatureID[0] = fields[14].GetUInt32();
+        taxiNode->MountCreatureID[1] = fields[15].GetUInt32();
+
+        m_TaxiNodes[nodeId] = std::move(taxiNode);
+
+    } while (result->NextRow());
+
+    delete result;
+
+    sLog.outString();
+    sLog.outString(">> Loaded %u taxi nodes.", maxTaxiNodeEntry);
 }
 
 void ObjectMgr::LoadTaxiPathTransitions()

@@ -14813,7 +14813,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder *holder)
         // problems with taxi path loading
         TaxiNodesEntry const* nodeEntry = NULL;
         if (uint32 node_id = m_taxi.GetTaxiSource())
-            nodeEntry = sTaxiNodesStore.LookupEntry(node_id);
+            nodeEntry = sObjectMgr.GeTaxiNodeEntry(node_id);
 
         if (!nodeEntry)                                     // don't know taxi start node, to homebind
         {
@@ -14840,7 +14840,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder *holder)
     if (uint32 node_id = m_taxi.GetTaxiSource())
     {
         // save source node as recall coord to prevent recall and fall from sky
-        TaxiNodesEntry const* nodeEntry = sTaxiNodesStore.LookupEntry(node_id);
+        TaxiNodesEntry const* nodeEntry = sObjectMgr.GeTaxiNodeEntry(node_id);
         MANGOS_ASSERT(nodeEntry);                           // checked in m_taxi.LoadTaxiDestinationsFromString
         m_recallMap = nodeEntry->map_id;
         m_recallX = nodeEntry->x;
@@ -17352,7 +17352,7 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc 
     uint32 sourcenode = nodes[0];
 
     // starting node too far away (cheat?)
-    TaxiNodesEntry const* node = sTaxiNodesStore.LookupEntry(sourcenode);
+    TaxiNodesEntry const* node = sObjectMgr.GeTaxiNodeEntry(sourcenode);
     if (!node)
     {
         WorldPacket data(SMSG_ACTIVATETAXIREPLY, 4);
@@ -21021,7 +21021,7 @@ void Player::TaxiStepFinished()
     if (!curDest)
         return;
 
-    TaxiNodesEntry const* curDestNode = sTaxiNodesStore.LookupEntry(curDest);
+    TaxiNodesEntry const* curDestNode = sObjectMgr.GeTaxiNodeEntry(curDest);
 
     // far teleport case
     if (curDestNode && curDestNode->map_id != GetMapId())

@@ -378,6 +378,7 @@ struct TaxiPathTransition
 
 typedef std::multimap<uint32, TaxiPathTransition> TaxiPathTransitionsMap;
 typedef std::pair<TaxiPathTransitionsMap::const_iterator, TaxiPathTransitionsMap::const_iterator> TaxiPathTransitionsMapBounds;
+typedef std::vector<std::unique_ptr<TaxiNodesEntry>> TaxiNodesStore;
 
 // NPC gossip text id
 typedef UNORDERED_MAP<uint32, uint32> CacheNpcTextIdMap;
@@ -666,6 +667,10 @@ class ObjectMgr
         {
             return m_TaxiPathTransitions.equal_range(entry);
         }
+
+        void LoadTaxiNodes();
+        TaxiNodesEntry const* GeTaxiNodeEntry(uint32 id) const { return id < GetMaxTaxiNodeId() ? m_TaxiNodes[id].get() : nullptr; }
+        uint32 GetMaxTaxiNodeId() const { return m_TaxiNodes.size(); }
 
         Quest const* GetQuestTemplate(uint32 quest_id) const
         {
@@ -1361,6 +1366,8 @@ class ObjectMgr
         QuestRelationsMap       m_GOQuestInvolvedRelations;
 
         TaxiPathTransitionsMap  m_TaxiPathTransitions;
+        TaxiNodesStore          m_TaxiNodes;
+
 
         int DBCLocaleIndex;
 

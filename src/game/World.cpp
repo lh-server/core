@@ -1174,6 +1174,9 @@ void World::SetInitialWorldSettings()
     sLog.outString();
     sObjectMgr.LoadSoundEntries();
 
+    sLog.outString();
+    sObjectMgr.LoadTaxiNodes();
+
     ///- Load the DBC files
     sLog.outString("Initialize data stores...");
     LoadDBCStores(m_dataPath);
