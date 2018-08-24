@@ -255,19 +255,7 @@ void ObjectMgr::LoadAllIdentifiers()
         delete result;
     }
 
-    m_SpellIdSet.clear();
-    result = WorldDatabase.Query("SELECT DISTINCT ID FROM spell_template");
-
-    if (result)
-    {
-        do
-        {
-            fields = result->Fetch();
-            uint32 id = fields[0].GetUInt32();
-            m_SpellIdSet.insert(id);
-        } while (result->NextRow());
-        delete result;
-    }
+    sSpellMgr.LoadExistingSpellIds();
 }
 
 // Nostalrius
@@ -1663,7 +1651,8 @@ void ObjectMgr::LoadCreatureSpells()
             {
                 if (!sSpellMgr.GetSpellEntry(spellId))
                 {
-                    sLog.outErrorDb("Entry %u in table `creature_spells` has non-existent spell %u used as spellId_%u, skipping spell.", entry, spellId, i);
+                    if (!sSpellMgr.IsExistingSpellId(spellId))
+                        sLog.outErrorDb("Entry %u in table `creature_spells` has non-existent spell %u used as spellId_%u, skipping spell.", entry, spellId, i);
                     continue;
                 }
 
@@ -5032,6 +5021,64 @@ void ObjectMgr::ReturnOrDeleteOldMails(bool serverUp)
     CharacterDatabase.AsyncPQueryUnsafe(cb, &OldMailsReturner::Callback, "SELECT id,messageType,sender,receiver,itemTextId,has_items,expire_time,cod,checked,mailTemplateId FROM mail WHERE expire_time < '" UI64FMTD "' ORDER BY expire_time LIMIT %u,%u", (uint64)basetime, m_OldMailCounter, limit);
 }
 
+void ObjectMgr::LoadAreaTriggers()
+{
+    sLog.outString("Loading area triggers ...");
+
+    // Getting the maximum ID.
+    QueryResult* result = WorldDatabase.PQuery("SELECT MAX(ID) FROM areatrigger_template WHERE build=%u", SUPPORTED_CLIENT_BUILD);
+
+    if (!result)
+    {
+        sLog.outString(">> Loaded 0 area triggers. DB table `areatrigger_template` is empty.");
+        return;
+    }
+
+    auto fields = result->Fetch();
+    uint32 maxAreaTriggerEntry = fields[0].GetUInt32() + 1;
+    delete result;
+
+    // Actually loading the area triggers.
+    result = WorldDatabase.PQuery("SELECT * FROM areatrigger_template WHERE build=%u", SUPPORTED_CLIENT_BUILD);
+
+    if (!result)
+    {
+        sLog.outString(">> Loaded 0 area triggers. DB table `areatrigger_template` is empty.");
+        return;
+    }
+
+    mAreaTriggers.resize(maxAreaTriggerEntry);
+
+    do
+    {
+        fields = result->Fetch();
+
+        std::unique_ptr<AreaTriggerEntry> areaTrigger = std::make_unique<AreaTriggerEntry>();
+
+        uint32 triggerId = fields[0].GetUInt32();
+
+        areaTrigger->id = triggerId;
+        areaTrigger->mapid = fields[2].GetUInt32();
+        areaTrigger->x = fields[3].GetFloat();
+        areaTrigger->y = fields[4].GetFloat();
+        areaTrigger->z = fields[5].GetFloat();
+        areaTrigger->radius = fields[6].GetFloat();
+        areaTrigger->box_x = fields[7].GetFloat();
+        areaTrigger->box_y = fields[8].GetFloat();
+        areaTrigger->box_z = fields[9].GetFloat();
+        areaTrigger->box_orientation = fields[10].GetFloat();
+
+
+        mAreaTriggers[triggerId] = std::move(areaTrigger);
+
+    } while (result->NextRow());
+
+    delete result;
+
+    sLog.outString();
+    sLog.outString(">> Loaded %u area triggers.", maxAreaTriggerEntry);
+}
+
 void ObjectMgr::LoadQuestAreaTriggers()
 {
     mQuestAreaTriggerMap.clear();                           // need for reload case
@@ -5062,7 +5109,7 @@ void ObjectMgr::LoadQuestAreaTriggers()
         uint32 trigger_ID = fields[0].GetUInt32();
         uint32 quest_ID   = fields[1].GetUInt32();
 
-        AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(trigger_ID);
+        AreaTriggerEntry const* atEntry = GetAreaTrigger(trigger_ID);
         if (!atEntry)
         {
             sLog.outErrorDb("Table `areatrigger_involvedrelation` has area trigger (ID: %u) not listed in `AreaTrigger.dbc`.", trigger_ID);
@@ -5127,7 +5174,7 @@ void ObjectMgr::LoadTavernAreaTriggers()
 
         uint32 Trigger_ID      = fields[0].GetUInt32();
 
-        AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(Trigger_ID);
+        AreaTriggerEntry const* atEntry = GetAreaTrigger(Trigger_ID);
         if (!atEntry)
         {
             sLog.outErrorDb("Table `areatrigger_tavern` has area trigger (ID:%u) not listed in `AreaTrigger.dbc`.", Trigger_ID);
@@ -5188,7 +5235,7 @@ void ObjectMgr::LoadBattlegroundEntranceTriggers()
         bget.exit_Z             = fields[6].GetFloat();
         bget.exit_Orientation   = fields[7].GetFloat();
 
-        AreaTriggerEntry const* bgetEntry = sAreaTriggerStore.LookupEntry(Trigger_ID);
+        AreaTriggerEntry const* bgetEntry = GetAreaTrigger(Trigger_ID);
         if (!bgetEntry)
         {
             sLog.outErrorDb("Table `areatrigger_bg_entrance` has area trigger (ID:%u) not listed in `AreaTrigger.dbc`.", Trigger_ID);
@@ -5549,7 +5596,7 @@ bool ObjectMgr::AddGraveYardLink(uint32 id, uint32 zoneId, Team team, bool inDB)
 
 void ObjectMgr::LoadAreaTriggerTeleports()
 {
-    mAreaTriggers.clear();                                  // need for reload case
+    mAreaTriggerTeleports.clear();                                  // need for reload case
 
     uint32 count = 0;
 
@@ -5585,7 +5632,7 @@ void ObjectMgr::LoadAreaTriggerTeleports()
 
         uint32 Trigger_ID = fields[0].GetUInt32();
 
-        AreaTrigger at;
+        AreaTriggerTeleport at;
 
         at.requiredLevel      = fields[1].GetUInt8();
         at.requiredItem       = fields[2].GetUInt32();
@@ -5601,7 +5648,7 @@ void ObjectMgr::LoadAreaTriggerTeleports()
         at.required_pvp_rank  = fields[12].GetUInt8();
         at.required_team      = fields[13].GetUInt16();
 
-        AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(Trigger_ID);
+        AreaTriggerEntry const* atEntry = GetAreaTrigger(Trigger_ID);
         if (!atEntry)
         {
             sLog.outErrorDb("Table `areatrigger_teleport` has area trigger (ID:%u) not listed in `AreaTrigger.dbc`.", Trigger_ID);
@@ -5659,7 +5706,7 @@ void ObjectMgr::LoadAreaTriggerTeleports()
             continue;
         }
 
-        mAreaTriggers[Trigger_ID] = at;
+        mAreaTriggerTeleports[Trigger_ID] = at;
 
     }
     while (result->NextRow());
@@ -5673,17 +5720,17 @@ void ObjectMgr::LoadAreaTriggerTeleports()
 /*
  * Searches for the areatrigger which teleports players out of the given map (only direct to continent)
  */
-AreaTrigger const* ObjectMgr::GetGoBackTrigger(uint32 map_id) const
+AreaTriggerTeleport const* ObjectMgr::GetGoBackTrigger(uint32 map_id) const
 {  
     MapEntry const* mapEntry = sMapStorage.LookupEntry<MapEntry>(map_id);
     if (!mapEntry || !mapEntry->IsDungeon())
         return nullptr;
 
-    for (AreaTriggerMap::const_iterator itr = mAreaTriggers.begin(); itr != mAreaTriggers.end(); ++itr)
+    for (AreaTriggerTeleportMap::const_iterator itr = mAreaTriggerTeleports.begin(); itr != mAreaTriggerTeleports.end(); ++itr)
     {
         if (itr->second.target_mapId == uint32(mapEntry->ghostEntranceMap))
         {
-            AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(itr->first);
+            AreaTriggerEntry const* atEntry = GetAreaTrigger(itr->first);
             if (atEntry && atEntry->mapid == map_id)
                 return &itr->second;
         }
@@ -5694,13 +5741,13 @@ AreaTrigger const* ObjectMgr::GetGoBackTrigger(uint32 map_id) const
 /**
  * Searches for the areatrigger which teleports players to the given map
  */
-AreaTrigger const* ObjectMgr::GetMapEntranceTrigger(uint32 Map) const
+AreaTriggerTeleport const* ObjectMgr::GetMapEntranceTrigger(uint32 Map) const
 {
-    for (AreaTriggerMap::const_iterator itr = mAreaTriggers.begin(); itr != mAreaTriggers.end(); ++itr)
+    for (AreaTriggerTeleportMap::const_iterator itr = mAreaTriggerTeleports.begin(); itr != mAreaTriggerTeleports.end(); ++itr)
     {
         if (itr->second.target_mapId == Map)
         {
-            AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(itr->first);
+            AreaTriggerEntry const* atEntry = GetAreaTrigger(itr->first);
             if (atEntry)
                 return &itr->second;
         }
@@ -8291,7 +8338,7 @@ void ObjectMgr::LoadTrainers(char const* tableName, bool isTemplates)
         SpellEntry const *spellinfo = sSpellMgr.GetSpellEntry(spell);
         if (!spellinfo)
         {
-            if (!IsExistingSpellId(spell))
+            if (!sSpellMgr.IsExistingSpellId(spell))
                 sLog.outErrorDb("Table `%s` (Entry: %u ) has non existing spell %u, ignore", tableName, entry, spell);
             continue;
         }

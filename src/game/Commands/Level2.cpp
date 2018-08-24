@@ -170,7 +170,7 @@ bool ChatHandler::HandleUnmuteCommand(char* args)
     return true;
 }
 
-void ChatHandler::ShowTriggerTargetListHelper(uint32 id, AreaTrigger const* at, bool subpart /*= false*/)
+void ChatHandler::ShowTriggerTargetListHelper(uint32 id, AreaTriggerTeleport const* at, bool subpart /*= false*/)
 {
     if (m_session)
     {
@@ -210,7 +210,7 @@ void ChatHandler::ShowTriggerListHelper(AreaTriggerEntry const * atEntry)
         PSendSysMessage(LANG_TRIGGER_LIST_CONSOLE,
                         atEntry->id, atEntry->mapid, atEntry->x, atEntry->y, atEntry->z, tavern, quest);
 
-    if (AreaTrigger const* at = sObjectMgr.GetAreaTrigger(atEntry->id))
+    if (AreaTriggerTeleport const* at = sObjectMgr.GetAreaTriggerTeleport(atEntry->id))
         ShowTriggerTargetListHelper(atEntry->id, at, true);
 }
 
@@ -230,7 +230,7 @@ bool ChatHandler::HandleTriggerCommand(char* args)
         if (!atId)
             return false;
 
-        atEntry = sAreaTriggerStore.LookupEntry(atId);
+        atEntry = sObjectMgr.GetAreaTrigger(atId);
 
         if (!atEntry)
         {
@@ -250,9 +250,9 @@ bool ChatHandler::HandleTriggerCommand(char* args)
         Player* pl = m_session->GetPlayer();
 
         // Search triggers
-        for (uint32 id = 0; id < sAreaTriggerStore.GetNumRows(); ++id)
+        for (uint32 id = 0; id < sObjectMgr.GetMaxAreaTriggerId(); ++id)
         {
-            AreaTriggerEntry const *atTestEntry = sAreaTriggerStore.LookupEntry(id);
+            AreaTriggerEntry const *atTestEntry = sObjectMgr.GetAreaTrigger(id);
             if (!atTestEntry)
                 continue;
 
@@ -283,7 +283,7 @@ bool ChatHandler::HandleTriggerCommand(char* args)
 
     int loc_idx = GetSessionDbLocaleIndex();
 
-    AreaTrigger const* at = sObjectMgr.GetAreaTrigger(atEntry->id);
+    AreaTriggerTeleport const* at = sObjectMgr.GetAreaTriggerTeleport(atEntry->id);
     if (at)
         PSendSysMessage(LANG_TRIGGER_REQ_LEVEL, at->requiredLevel);
 
@@ -322,9 +322,9 @@ bool ChatHandler::HandleTriggerActiveCommand(char* /*args*/)
     Player* pl = m_session->GetPlayer();
 
     // Search in AreaTable.dbc
-    for (uint32 id = 0; id < sAreaTriggerStore.GetNumRows(); ++id)
+    for (uint32 id = 0; id < sObjectMgr.GetMaxAreaTriggerId(); ++id)
     {
-        AreaTriggerEntry const *atEntry = sAreaTriggerStore.LookupEntry(id);
+        AreaTriggerEntry const *atEntry = sObjectMgr.GetAreaTrigger(id);
         if (!atEntry)
             continue;
 
@@ -351,9 +351,9 @@ bool ChatHandler::HandleTriggerNearCommand(char* args)
     Player* pl = m_session->GetPlayer();
 
     // Search triggers
-    for (uint32 id = 0; id < sAreaTriggerStore.GetNumRows(); ++id)
+    for (uint32 id = 0; id < sObjectMgr.GetMaxAreaTriggerId(); ++id)
     {
-        AreaTriggerEntry const *atEntry = sAreaTriggerStore.LookupEntry(id);
+        AreaTriggerEntry const *atEntry = sObjectMgr.GetAreaTrigger(id);
         if (!atEntry)
             continue;
 
@@ -372,13 +372,13 @@ bool ChatHandler::HandleTriggerNearCommand(char* args)
     }
 
     // Search trigger targets
-    for (uint32 id = 0; id < sAreaTriggerStore.GetNumRows(); ++id)
+    for (uint32 id = 0; id < sObjectMgr.GetMaxAreaTriggerId(); ++id)
     {
-        AreaTriggerEntry const *atEntry = sAreaTriggerStore.LookupEntry(id);
+        AreaTriggerEntry const *atEntry = sObjectMgr.GetAreaTrigger(id);
         if (!atEntry)
             continue;
 
-        AreaTrigger const* at = sObjectMgr.GetAreaTrigger(atEntry->id);
+        AreaTriggerTeleport const* at = sObjectMgr.GetAreaTriggerTeleport(atEntry->id);
         if (!at)
             continue;
 
@@ -427,7 +427,7 @@ bool ChatHandler::HandleGoTriggerCommand(char* args)
     if (!atId)
         return false;
 
-    AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(atId);
+    AreaTriggerEntry const* atEntry = sObjectMgr.GetAreaTrigger(atId);
     if (!atEntry)
     {
         PSendSysMessage(LANG_COMMAND_GOAREATRNOTFOUND, atId);
@@ -441,7 +441,7 @@ bool ChatHandler::HandleGoTriggerCommand(char* args)
 
     if (to_target)
     {
-        AreaTrigger const* at = sObjectMgr.GetAreaTrigger(atId);
+        AreaTriggerTeleport const* at = sObjectMgr.GetAreaTriggerTeleport(atId);
         if (!at)
         {
             PSendSysMessage(LANG_AREATRIGER_NOT_HAS_TARGET, atId);

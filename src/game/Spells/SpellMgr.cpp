@@ -1511,7 +1511,7 @@ void SpellMgr::LoadSpellBonuses()
     mSpellBonusMap.clear();                             // need for reload case
     uint32 count = 0;
     //                                                0      1             2          3
-    QueryResult *result = WorldDatabase.Query("SELECT entry, direct_bonus, dot_bonus, ap_bonus, ap_dot_bonus FROM spell_bonus_data");
+    QueryResult *result = WorldDatabase.PQuery("SELECT entry, direct_bonus, dot_bonus, ap_bonus, ap_dot_bonus FROM spell_bonus_data WHERE %u BETWEEN build_min AND build_max", SUPPORTED_CLIENT_BUILD);
     if (!result)
     {
         BarGoLink bar(1);
@@ -2814,7 +2814,7 @@ void SpellMgr::LoadSpellChains()
     }
 
     // load custom case
-    QueryResult *result = WorldDatabase.PQuery("SELECT spell_id, prev_spell, first_spell, rank, req_spell FROM spell_chain WHERE (build_min <= %u) && (build_max >= %u)", SUPPORTED_CLIENT_BUILD, SUPPORTED_CLIENT_BUILD);
+    QueryResult *result = WorldDatabase.PQuery("SELECT spell_id, prev_spell, first_spell, rank, req_spell FROM spell_chain WHERE %u BETWEEN build_min AND build_max", SUPPORTED_CLIENT_BUILD);
     if (!result)
     {
         BarGoLink bar(1);
@@ -3225,7 +3225,8 @@ void SpellMgr::LoadSpellScriptTarget()
 
         if (!spellProto)
         {
-            sLog.outErrorDb("Table `spell_script_target`: spellId %u listed for TargetEntry %u does not exist.", spellId, targetEntry);
+            if (!sSpellMgr.IsExistingSpellId(spellId))
+                sLog.outErrorDb("Table `spell_script_target`: spellId %u listed for TargetEntry %u does not exist.", spellId, targetEntry);
             continue;
         }
 
@@ -3535,7 +3536,8 @@ void SpellMgr::LoadSpellAreas()
 
         if (!sSpellMgr.GetSpellEntry(spell))
         {
-            sLog.outErrorDb("Spell %u listed in `spell_area` does not exist", spell);
+            if (!sSpellMgr.IsExistingSpellId(spell))
+                sLog.outErrorDb("Spell %u listed in `spell_area` does not exist", spell);
             continue;
         }
 
@@ -4245,6 +4247,25 @@ void SpellMgr::LoadSpellAffects()
 
             sLog.outErrorDb("Spell %u (%s) misses spell_affect for effect %u", id, spellInfo->SpellName[sWorld.GetDefaultDbcLocale()].c_str(), effectId);
         }
+    }
+}
+
+void SpellMgr::LoadExistingSpellIds()
+{
+    mExistingSpellsSet.clear();
+
+    Field* fields;
+    QueryResult* result = WorldDatabase.Query("SELECT DISTINCT ID FROM spell_template");
+
+    if (result)
+    {
+        do
+        {
+            fields = result->Fetch();
+            uint32 id = fields[0].GetUInt32();
+            mExistingSpellsSet.insert(id);
+        } while (result->NextRow());
+        delete result;
     }
 }
 

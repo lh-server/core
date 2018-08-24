@@ -62,7 +62,7 @@ struct GameTele
 
 typedef UNORDERED_MAP<uint32, GameTele > GameTeleMap;
 
-struct AreaTrigger
+struct AreaTriggerTeleport
 {
     uint8  requiredLevel;
     uint32 requiredItem;
@@ -575,7 +575,7 @@ class ObjectMgr
         bool IsExistingGameObjectId(uint32 id) const { return (m_GameObjectIdSet.find(id) != m_GameObjectIdSet.end()); }
         bool IsExistingCreatureGuid(uint32 id) const { return (m_CreatureGuidSet.find(id) != m_CreatureGuidSet.end()); }
         bool IsExistingGameObjectGuid(uint32 id) const { return (m_GameObjectGuidSet.find(id) != m_GameObjectGuidSet.end()); }
-        bool IsExistingSpellId(uint32 id) const { return (m_SpellIdSet.find(id) != m_SpellIdSet.end()); }
+        bool IsExistingAreaTriggerId(uint32 id) const { return (m_AreaTriggerIdSet.find(id) != m_AreaTriggerIdSet.end()); }
 
         typedef UNORDERED_MAP<uint32, Item*> ItemMap;
 
@@ -583,7 +583,8 @@ class ObjectMgr
 
         typedef UNORDERED_MAP<uint32, Quest*> QuestMap;
 
-        typedef std::map<uint32, AreaTrigger> AreaTriggerMap;
+        typedef std::vector<std::unique_ptr<AreaTriggerEntry>> AreaTriggerStore;
+        typedef std::map<uint32, AreaTriggerTeleport> AreaTriggerTeleportMap;
         typedef UNORDERED_MAP<uint32, BattlegroundEntranceTrigger> BGEntranceTriggerMap;
 
         typedef UNORDERED_MAP<uint32, RepRewardRate > RepRewardRateMap;
@@ -706,16 +707,20 @@ class ObjectMgr
         void LoadGraveyardZones();
         GraveYardData const* FindGraveYardData(uint32 id, uint32 zone) const;
 
-        AreaTrigger const* GetAreaTrigger(uint32 trigger) const
+        AreaTriggerTeleport const* GetAreaTriggerTeleport(uint32 trigger) const
         {
-            auto itr = mAreaTriggers.find( trigger );
-            if( itr != mAreaTriggers.end( ) )
+            auto itr = mAreaTriggerTeleports.find( trigger );
+            if( itr != mAreaTriggerTeleports.end( ) )
                 return &itr->second;
             return nullptr;
         }
 
-        AreaTrigger const* GetGoBackTrigger(uint32 Map) const;
-        AreaTrigger const* GetMapEntranceTrigger(uint32 Map) const;
+        AreaTriggerTeleport const* GetGoBackTrigger(uint32 Map) const;
+        AreaTriggerTeleport const* GetMapEntranceTrigger(uint32 Map) const;
+
+        void LoadAreaTriggers();
+        AreaTriggerEntry const* GetAreaTrigger(uint32 id) const { return id < GetMaxAreaTriggerId() ? mAreaTriggers[id].get() : nullptr; }
+        uint32 GetMaxAreaTriggerId() const { return mAreaTriggers.size(); }
 
         BattlegroundEntranceTrigger const* GetBattlegroundEntranceTrigger(uint32 trigger) const
         {
@@ -1328,10 +1333,11 @@ class ObjectMgr
 
         ItemTextMap         mItemTexts;
 
+        AreaTriggerStore    mAreaTriggers;
         QuestAreaTriggerMap mQuestAreaTriggerMap;
         TavernAreaTriggerSet mTavernAreaTriggerSet;
         GameObjectForQuestSet mGameObjectForQuestSet;
-        AreaTriggerMap      mAreaTriggers;
+        AreaTriggerTeleportMap      mAreaTriggerTeleports;
         QuestStartingItemMap   mQuestStartingItems;
         BGEntranceTriggerMap mBGEntranceTriggers;
 
@@ -1387,7 +1393,7 @@ class ObjectMgr
         std::set<uint32> m_GameObjectIdSet;
         std::set<uint32> m_CreatureGuidSet;
         std::set<uint32> m_GameObjectGuidSet;
-        std::set<uint32> m_SpellIdSet;
+        std::set<uint32> m_AreaTriggerIdSet;
 
         typedef std::map<uint32,PetLevelInfo*> PetLevelInfoMap;
         // PetLevelInfoMap[creature_id][level]

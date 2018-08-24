@@ -6076,7 +6076,7 @@ void Player::CheckAreaExploreAndOutdoor()
     {
         if (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING) && GetRestType() == REST_TYPE_IN_TAVERN)
         {
-            AreaTriggerEntry const* at = sAreaTriggerStore.LookupEntry(inn_trigger_id);
+            AreaTriggerEntry const* at = sObjectMgr.GetAreaTrigger(inn_trigger_id);
             if (!at || !IsPointInAreaTriggerZone(at, GetMapId(), GetPositionX(), GetPositionY(), GetPositionZ()))
             {
                 // Player left inn (REST_TYPE_IN_CITY overrides REST_TYPE_IN_TAVERN, so just clear rest)
@@ -14652,7 +14652,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder *holder)
         // if the player is in an instance and it has been reset in the meantime teleport him to the entrance
         if (!state)
         {
-            AreaTrigger const* at = sObjectMgr.GetGoBackTrigger(GetMapId());
+            AreaTriggerTeleport const* at = sObjectMgr.GetGoBackTrigger(GetMapId());
             if (at)
             {
                 Relocate(at->target_X, at->target_Y, at->target_Z, at->target_Orientation);

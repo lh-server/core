@@ -1337,7 +1337,7 @@ void ScriptMgr::LoadAreaTriggerScripts()
         uint32 triggerId       = fields[0].GetUInt32();
         const char *scriptName = fields[1].GetString();
 
-        if (!sAreaTriggerStore.LookupEntry(triggerId))
+        if (!sObjectMgr.GetAreaTrigger(triggerId))
         {
             sLog.outErrorDb("Table `scripted_areatrigger` has area trigger (ID: %u) not listed in `AreaTrigger.dbc`.", triggerId);
             continue;

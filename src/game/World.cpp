@@ -1171,6 +1171,9 @@ void World::SetInitialWorldSettings()
     sLog.outString();
     sObjectMgr.LoadTaxiNodes();
 
+    sLog.outString();
+    sObjectMgr.LoadAreaTriggers();
+
     ///- Load the DBC files
     sLog.outString("Initialize data stores...");
     LoadDBCStores(m_dataPath);
@@ -1362,7 +1365,7 @@ void World::SetInitialWorldSettings()
     sLog.outString("Loading SpellArea Data...");            // must be after quest load
     sSpellMgr.LoadSpellAreas();
 
-    sLog.outString("Loading AreaTrigger definitions...");
+    sLog.outString("Loading AreaTrigger teleports...");
     sObjectMgr.LoadAreaTriggerTeleports();                  // must be after item template load
 
     sLog.outString("Loading Quest Area Triggers...");
