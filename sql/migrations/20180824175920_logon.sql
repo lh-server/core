@@ -8,7 +8,8 @@ IF v=0 THEN
 INSERT INTO `migrations` VALUES ('20180824175920');
 -- Add your query below.
 
-ALTER TABLE `account` ADD COLUMN `invite_id` INT DEFAULT NULL;
+ALTER TABLE `account` ADD COLUMN `invite_id` INT DEFAULT NULL,
+ADD UNIQUE INDEX `invite_id_UNIQUE` (`invite_id` ASC);
 
 ALTER TABLE `account` 
 ADD INDEX `invite_id_fk_idx` (`invite_id` ASC);
