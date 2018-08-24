@@ -2889,6 +2889,12 @@ void Player::GiveLevel(uint32 level)
 
     if (m_session->ShouldBeBanned(getLevel()))
         sWorld.BanAccount(BAN_ACCOUNT, m_session->GetUsername(), 0, m_session->GetScheduleBanReason(), "");
+
+    if(level > GetSession()->GetAccountMaxLevel())
+    {
+        GetSession()->SetAccountMaxLevel(level);
+    }
+
     sAnticheatLib->OnPlayerLevelUp(this);
 }
 

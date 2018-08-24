@@ -231,7 +231,7 @@ int WorldSocket::HandleAuthSession(WorldPacket& recvPacket)
     uint32 accFlags = fields[10].GetUInt32();
     bool isBanned = fields[11].GetBool();
     uint32 inviteID = fields[12].GetUInt32();
-    
+
     if (isBanned || sAccountMgr.IsIPBanned(GetRemoteAddress()))
     {
         packet.Initialize(SMSG_AUTH_RESPONSE, 1);

@@ -83,7 +83,7 @@ bool Config::Reload()
     return false;
 }
 
-const std::string& Config::GetStringDefault(const char* name, const char* def)
+std::string Config::GetStringDefault(const char* name, const char* def)
 {
     ACE_TString val;
     return GetValueHelper(name, val) ? val.c_str() : def;

@@ -41,7 +41,7 @@ class MANGOS_DLL_SPEC Config
         bool SetSource(const char *file);
         bool Reload();
 
-        const std::string& GetStringDefault(const char* name, const char* def);
+        std::string GetStringDefault(const char* name, const char* def);
         bool GetBoolDefault(const char* name, const bool def = false);
         int32 GetIntDefault(const char* name, const int32 def);
         float GetFloatDefault(const char* name, const float def);

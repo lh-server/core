@@ -261,7 +261,7 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& recvPacket)
     {
         for (int i = 0; i < TRADE_SLOT_TRADED_COUNT; ++i)
         {
-            if (auto item = my_trade->GetItem(TradeSlots(i)))
+            if (my_trade->GetItem(TradeSlots(i)))
             {
                 SendRestrictedHelp(LANG_INV_TRADE_SEND_RESTRICTED);
                 my_trade->SetAccepted(false, true);

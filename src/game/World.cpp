@@ -1034,6 +1034,7 @@ void World::LoadNostalriusConfig(bool reload)
     setConfig(CONFIG_UINT32_WAR_EFFORT_AUTOCOMPLETE_PERIOD,             "WarEffortResourceCompletePeriod", 86400);
 
     setConfig(CONFIG_UINT32_ACCOUNT_CONCURRENT_AUCTION_LIMIT,           "Auction.AccountConcurrentLimit", 0);
+    setConfig(CONFIG_UINT32_INVITE_RESTRICT_CAP,                        "Invites.RestrictionCap",         0);
 
     if (getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_CHAT))
         setConfig(CONFIG_BOOL_GM_JOIN_OPPOSITE_FACTION_CHANNELS, false);

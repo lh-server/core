@@ -414,7 +414,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                 {
                     if (IsAccountRestricted()) // only applies if below the old whisper limit
                     {
-                        SendRestrictedHelp(LANG_INV_MAIL_SEND_RESTRICTED);
+                        SendRestrictedHelp(LANG_INV_WHISPER_RESTRICTED);
                     }
                     else
                     {
