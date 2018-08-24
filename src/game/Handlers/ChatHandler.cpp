@@ -406,7 +406,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                     return;
                 }
 
-                const auto whisperLevelReq = sWorld.getConfig(CONFIG_UINT32_WHISP_DIFF_ZONE_MIN_LEVEL);
+                const auto whisperLevelReq = sWorld.getConfig(CONFIG_UINT32_WHISP_MIN_LEVEL);
                 const auto maxLevel = masterPlr->GetSession()->GetAccountMaxLevel();
                 const auto social = player->GetSession()->GetPlayer()->GetSocial(); // (╯°□°）╯︵ ┻━┻
 
