@@ -2520,6 +2520,13 @@ void ObjectMgr::LoadItemPrototypes()
 
         if (proto->BagFamily)
         {
+
+#if SUPPORTED_CLIENT_BUILD <= CLIENT_BUILD_1_10_2
+            // The keyring was added in 1.11.
+            if (proto->BagFamily == BAG_FAMILY_KEYS)
+                const_cast<ItemPrototype*>(proto)->BagFamily = 0;
+#endif
+
             ItemBagFamilyEntry const* bf = sItemBagFamilyStore.LookupEntry(proto->BagFamily);
             if (!bf)
             {
