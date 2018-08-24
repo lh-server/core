@@ -33,6 +33,7 @@
 #include "Util.h"
 #include "Chat.h"
 #include "Anticheat.h"
+#include "Language.h"
 
 // please DO NOT use iterator++, because it is slower than ++iterator!!!
 // post-incrementation is always slower than pre-incrementation !
@@ -273,6 +274,12 @@ void WorldSession::HandleAuctionSellItem(WorldPacket & recv_data)
         return;
 
     Player *pl = GetPlayer();
+
+    if (IsAccountRestricted())
+    {
+        SendRestrictedHelp(LANG_INV_AUCTION_LIST_RESTRICTED);
+        return;
+    }
 
     AuctionHouseEntry const* auctionHouseEntry = GetCheckedAuctionHouseForAuctioneer(auctioneerGuid);
     if (!auctionHouseEntry)

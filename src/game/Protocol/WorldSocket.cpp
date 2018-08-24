@@ -163,9 +163,9 @@ int WorldSocket::HandleAuthSession(WorldPacket& recvPacket)
     LoginDatabase.escape_string(safe_account);
     // No SQL injection, username escaped.
 
-    QueryResult *result = LoginDatabase.PQuery("SELECT a.id, aa.gmLevel, a.sessionkey, a.last_ip, a.locked, a.v, a.s, a.mutetime, a.locale, a.os, a.flags, "
-        "ab.unbandate > UNIX_TIMESTAMP() OR ab.unbandate = ab.bandate FROM account a LEFT JOIN account_access aa ON a.id = aa.id AND aa.RealmID IN (-1, %u) "
-        "LEFT JOIN account_banned ab ON a.id = ab.id AND ab.active = 1 WHERE a.username = '%s' ORDER BY aa.RealmID DESC LIMIT 1", realmID, safe_account.c_str());
+    auto result = std::unique_ptr<QueryResult>(LoginDatabase.PQuery("SELECT a.id, aa.gmLevel, a.sessionkey, a.last_ip, a.locked, a.v, a.s, a.mutetime, a.locale, a.os, a.flags, "
+        "ab.unbandate > UNIX_TIMESTAMP() OR ab.unbandate = ab.bandate, a.invite_id FROM account a LEFT JOIN account_access aa ON a.id = aa.id AND aa.RealmID IN (-1, %u) "
+        "LEFT JOIN account_banned ab ON a.id = ab.id AND ab.active = 1 WHERE a.username = '%s' ORDER BY aa.RealmID DESC LIMIT 1", realmID, safe_account.c_str()));
 
     // Stop if the account is not found
     if (!result)
@@ -205,8 +205,6 @@ int WorldSocket::HandleAuthSession(WorldPacket& recvPacket)
             packet.Initialize(SMSG_AUTH_RESPONSE, 1);
             packet << uint8(AUTH_FAILED);
             SendPacket(packet);
-
-            delete result;
             BASIC_LOG("WorldSocket::HandleAuthSession: Sent Auth Response (Account IP differs).");
             return -1;
         }
@@ -221,7 +219,6 @@ int WorldSocket::HandleAuthSession(WorldPacket& recvPacket)
 
     if (K.AsByteArray().empty())
     {
-        delete result;
         return -1;
     }
 
@@ -233,8 +230,7 @@ int WorldSocket::HandleAuthSession(WorldPacket& recvPacket)
     os = fields[9].GetString();
     uint32 accFlags = fields[10].GetUInt32();
     bool isBanned = fields[11].GetBool();
-    delete result;
-
+    uint32 inviteID = fields[12].GetUInt32();
     
     if (isBanned || sAccountMgr.IsIPBanned(GetRemoteAddress()))
     {
@@ -317,6 +313,7 @@ int WorldSocket::HandleAuthSession(WorldPacket& recvPacket)
     m_Session->SetUsername(account);
     m_Session->SetGameBuild(BuiltNumberClient);
     m_Session->SetAccountFlags(accFlags);
+    m_Session->SetInviteID(inviteID);
     m_Session->SetOS(clientOs);
     m_Session->LoadTutorialsData();
     m_Session->InitWarden(&K);

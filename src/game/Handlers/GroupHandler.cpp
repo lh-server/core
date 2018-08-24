@@ -31,6 +31,7 @@
 #include "Group.h"
 #include "SocialMgr.h"
 #include "Util.h"
+#include "Language.h"
 
 /* differeces from off:
     -you can uninvite yourself - is is useful
@@ -89,6 +90,15 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket & recv_data)
     {
         SendPartyResult(PARTY_OP_INVITE, membername, ERR_IGNORING_YOU_S);
         return;
+    }
+
+    if (IsAccountRestricted())
+    {
+        if (!player->GetSocial()->HasFriend(GetPlayer()->GetObjectGuid()))
+        {
+            SendRestrictedHelp(LANG_INV_PARTY_INVITE_RESTRICTED);
+            return;
+        }
     }
 
     Group *group = GetPlayer()->GetGroup();

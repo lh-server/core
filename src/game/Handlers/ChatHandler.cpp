@@ -40,6 +40,7 @@
 #include "CellImpl.h"
 #include "Anticheat.h"
 #include "AccountMgr.h"
+#include "SocialMgr.h"
 
 bool WorldSession::processChatmessageFurtherAfterSecurityChecks(std::string& msg, uint32 lang)
 {
@@ -404,9 +405,25 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                     SendWrongFactionNotice();
                     return;
                 }
-                if (/*player->GetZoneId() != masterPlr->GetZoneId() && */masterPlr->getLevel() < sWorld.getConfig(CONFIG_UINT32_WHISP_DIFF_ZONE_MIN_LEVEL))
+
+                const auto whisperLevelReq = sWorld.getConfig(CONFIG_UINT32_WHISP_DIFF_ZONE_MIN_LEVEL);
+                const auto maxLevel = masterPlr->GetSession()->GetAccountMaxLevel();
+                const auto social = player->GetSession()->GetPlayer()->GetSocial(); // (╯°□°）╯︵ ┻━┻
+
+                if (maxLevel < whisperLevelReq && !social->HasFriend(masterPlr->GetObjectGuid()))
                 {
-                    ChatHandler(this).SendSysMessage("You cannot whisper yet.");
+                    if (IsAccountRestricted()) // only applies if below the old whisper limit
+                    {
+                        SendRestrictedHelp(LANG_INV_MAIL_SEND_RESTRICTED);
+                    }
+                    else
+                    {
+                        ChatHandler(this).PSendSysMessage(
+                            "You cannot whisper players that do not have you on their friends list until you "
+                            "have a level %u or higher character on your account.", whisperLevelReq
+                        );
+                    }
+
                     return;
                 }
             }

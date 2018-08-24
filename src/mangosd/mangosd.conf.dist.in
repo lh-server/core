@@ -1889,6 +1889,11 @@ SayMinLevel = 0;
 SayEmoteMinLevel = 0;
 YellMinLevel = 0;
 
+# Invite system (limits trades/whispers/invites until above RestrictionCap or referred by an existing player)
+Invites.Enable = false
+Invites.RestrictionCap = 15
+Invites.HelpURL = https://lightshope.org/invite
+
 # Database logs
 LogsDB.Chat                 = 0
 LogsDB.Characters           = 0
