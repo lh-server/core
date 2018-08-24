@@ -7731,8 +7731,8 @@ bool ChatHandler::HandleModifySpellPowerCommand(char *args)
     }
 
     // dunno where spell power is stored so using a custom spell
-    player->RemoveAurasDueToSpell(30776);
-    player->CastCustomSpell(player, 30776, &amount, &amount, NULL, true);
+    player->RemoveAurasDueToSpell(18058);
+    player->CastCustomSpell(player, 18058, &amount, &amount, NULL, true);
 
     PSendSysMessage(LANG_YOU_CHANGE_SP, player->GetName(), amount);
 
