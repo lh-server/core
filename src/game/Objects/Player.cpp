@@ -1354,8 +1354,15 @@ void Player::Update(uint32 update_diff, uint32 p_time)
             HandleSobering();
     }
 
+    // World of Warcraft Client Patch 1.11.0 (2006-06-20)
+    // - Release timers have been be removed from instances. This includes 
+    //   dungeons, battlegrounds, and raid instances.
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_10_2
     // not auto-free ghost from body in instances
     if (getDeathState() == CORPSE  && !GetMap()->Instanceable())
+#else
+    if (getDeathState() == CORPSE)
+#endif
     {
         if (p_time >= m_deathTimer)
         {

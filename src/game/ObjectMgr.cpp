@@ -255,6 +255,20 @@ void ObjectMgr::LoadAllIdentifiers()
         delete result;
     }
 
+    m_AreaTriggerIdSet.clear();
+    result = WorldDatabase.Query("SELECT DISTINCT ID FROM areatrigger_template");
+
+    if (result)
+    {
+        do
+        {
+            fields = result->Fetch();
+            uint32 id = fields[0].GetUInt32();
+            m_AreaTriggerIdSet.insert(id);
+        } while (result->NextRow());
+        delete result;
+    }
+
     sSpellMgr.LoadExistingSpellIds();
 }
 
@@ -1392,7 +1406,7 @@ EquipmentInfo const* ObjectMgr::GetEquipmentInfo(uint32 entry)
 
 void ObjectMgr::LoadEquipmentTemplates()
 {
-    sEquipmentStorage.LoadProgressive(sWorld.GetWowPatch(), true);
+    sEquipmentStorage.LoadProgressive(sWorld.GetWowPatch(), "patch", true);
 
     for (uint32 i = 0; i < sEquipmentStorage.GetMaxEntry(); ++i)
     {
@@ -1473,7 +1487,7 @@ CreatureModelInfo const* ObjectMgr::GetCreatureModelRandomGender(uint32 display_
 
 void ObjectMgr::LoadCreatureModelInfo()
 {
-    sCreatureModelStorage.LoadProgressive(SUPPORTED_CLIENT_BUILD);
+    sCreatureModelStorage.LoadProgressive(SUPPORTED_CLIENT_BUILD, "build");
 
     // post processing
     for (uint32 i = 1; i < sCreatureModelStorage.GetMaxEntry(); ++i)
@@ -5149,7 +5163,7 @@ void ObjectMgr::LoadTavernAreaTriggers()
 {
     mTavernAreaTriggerSet.clear();                          // need for reload case
 
-    QueryResult *result = WorldDatabase.Query("SELECT id FROM areatrigger_tavern");
+    QueryResult *result = WorldDatabase.PQuery("SELECT id FROM areatrigger_tavern WHERE patch_min <= %u", sWorld.GetWowPatch());
 
     uint32 count = 0;
 
@@ -6497,53 +6511,53 @@ void ObjectMgr::LoadFactions()
         return;
     }
 
-    mFactions.resize(maxFactionEntry, nullptr);
+    mFactions.resize(maxFactionEntry);
 
     do
     {
         fields = result->Fetch();
 
-        FactionEntry* faction = new FactionEntry();
+        std::unique_ptr<FactionEntry> faction = std::make_unique<FactionEntry>();
 
         uint32 factionId = fields[0].GetUInt32();
 
         faction->ID = factionId;
-        faction->reputationListID = fields[1].GetInt32();
-        faction->BaseRepRaceMask[0] = fields[2].GetUInt32();
-        faction->BaseRepRaceMask[1] = fields[3].GetUInt32();
-        faction->BaseRepRaceMask[2] = fields[4].GetUInt32();
-        faction->BaseRepRaceMask[3] = fields[5].GetUInt32();
-        faction->BaseRepClassMask[0] = fields[6].GetUInt32();
-        faction->BaseRepClassMask[1] = fields[7].GetUInt32();
-        faction->BaseRepClassMask[2] = fields[8].GetUInt32();
-        faction->BaseRepClassMask[3] = fields[9].GetUInt32();
-        faction->BaseRepValue[0] = fields[10].GetInt32();
-        faction->BaseRepValue[1] = fields[11].GetInt32();
-        faction->BaseRepValue[2] = fields[12].GetInt32();
-        faction->BaseRepValue[3] = fields[13].GetInt32();
-        faction->ReputationFlags[0] = fields[14].GetUInt32();
-        faction->ReputationFlags[1] = fields[15].GetUInt32();
-        faction->ReputationFlags[2] = fields[16].GetUInt32();
-        faction->ReputationFlags[3] = fields[17].GetUInt32();
-        faction->team = fields[18].GetUInt32();
-        faction->name[0] = new char[strlen(fields[19].GetString()) + 1];
-        strcpy(faction->name[0], fields[19].GetString());
-        faction->name[1] = new char[strlen(fields[20].GetString()) + 1];
-        strcpy(faction->name[1], fields[20].GetString());
-        faction->name[2] = new char[strlen(fields[21].GetString()) + 1];
-        strcpy(faction->name[2], fields[21].GetString());
-        faction->name[3] = new char[strlen(fields[22].GetString()) + 1];
-        strcpy(faction->name[3], fields[22].GetString());
-        faction->name[4] = new char[strlen(fields[23].GetString()) + 1];
-        strcpy(faction->name[4], fields[23].GetString());
-        faction->name[5] = new char[strlen(fields[24].GetString()) + 1];
-        strcpy(faction->name[5], fields[24].GetString());
-        faction->name[6] = new char[strlen(fields[25].GetString()) + 1];
-        strcpy(faction->name[6], fields[25].GetString());
-        faction->name[7] = new char[strlen(fields[26].GetString()) + 1];
-        strcpy(faction->name[7], fields[26].GetString());
+        faction->reputationListID = fields[2].GetInt32();
+        faction->BaseRepRaceMask[0] = fields[3].GetUInt32();
+        faction->BaseRepRaceMask[1] = fields[4].GetUInt32();
+        faction->BaseRepRaceMask[2] = fields[5].GetUInt32();
+        faction->BaseRepRaceMask[3] = fields[6].GetUInt32();
+        faction->BaseRepClassMask[0] = fields[7].GetUInt32();
+        faction->BaseRepClassMask[1] = fields[8].GetUInt32();
+        faction->BaseRepClassMask[2] = fields[9].GetUInt32();
+        faction->BaseRepClassMask[3] = fields[10].GetUInt32();
+        faction->BaseRepValue[0] = fields[11].GetInt32();
+        faction->BaseRepValue[1] = fields[12].GetInt32();
+        faction->BaseRepValue[2] = fields[13].GetInt32();
+        faction->BaseRepValue[3] = fields[14].GetInt32();
+        faction->ReputationFlags[0] = fields[15].GetUInt32();
+        faction->ReputationFlags[1] = fields[16].GetUInt32();
+        faction->ReputationFlags[2] = fields[17].GetUInt32();
+        faction->ReputationFlags[3] = fields[18].GetUInt32();
+        faction->team = fields[19].GetUInt32();
+        faction->name[0] = new char[strlen(fields[20].GetString()) + 1];
+        strcpy(faction->name[0], fields[20].GetString());
+        faction->name[1] = new char[strlen(fields[21].GetString()) + 1];
+        strcpy(faction->name[1], fields[21].GetString());
+        faction->name[2] = new char[strlen(fields[22].GetString()) + 1];
+        strcpy(faction->name[2], fields[22].GetString());
+        faction->name[3] = new char[strlen(fields[23].GetString()) + 1];
+        strcpy(faction->name[3], fields[23].GetString());
+        faction->name[4] = new char[strlen(fields[24].GetString()) + 1];
+        strcpy(faction->name[4], fields[24].GetString());
+        faction->name[5] = new char[strlen(fields[25].GetString()) + 1];
+        strcpy(faction->name[5], fields[25].GetString());
+        faction->name[6] = new char[strlen(fields[26].GetString()) + 1];
+        strcpy(faction->name[6], fields[26].GetString());
+        faction->name[7] = new char[strlen(fields[27].GetString()) + 1];
+        strcpy(faction->name[7], fields[27].GetString());
 
-        mFactions[factionId] = faction;
+        mFactions[factionId] = std::move(faction);
 
     } while (result->NextRow());
 
@@ -6570,32 +6584,32 @@ void ObjectMgr::LoadFactions()
         return;
     }
 
-    mFactionTemplates.resize(maxFactionTemplateEntry, nullptr);
+    mFactionTemplates.resize(maxFactionTemplateEntry);
 
     do
     {
         fields = result->Fetch();
 
-        FactionTemplateEntry* faction = new FactionTemplateEntry();
+        std::unique_ptr<FactionTemplateEntry> faction = std::make_unique<FactionTemplateEntry>();
 
         uint32 factionId = fields[0].GetUInt32();
 
         faction->ID = factionId;
-        faction->faction = fields[1].GetUInt32();
-        faction->factionFlags = fields[2].GetUInt32();
-        faction->ourMask = fields[3].GetUInt32();
-        faction->friendlyMask = fields[4].GetUInt32();
-        faction->hostileMask = fields[5].GetUInt32();
-        faction->enemyFaction[0] = fields[6].GetUInt32();
-        faction->enemyFaction[1] = fields[7].GetUInt32();
-        faction->enemyFaction[2] = fields[8].GetUInt32();
-        faction->enemyFaction[3] = fields[9].GetUInt32();
-        faction->friendFaction[0] = fields[10].GetInt32();
-        faction->friendFaction[1] = fields[11].GetInt32();
-        faction->friendFaction[2] = fields[12].GetInt32();
-        faction->friendFaction[3] = fields[13].GetInt32();
+        faction->faction = fields[2].GetUInt32();
+        faction->factionFlags = fields[3].GetUInt32();
+        faction->ourMask = fields[4].GetUInt32();
+        faction->friendlyMask = fields[5].GetUInt32();
+        faction->hostileMask = fields[6].GetUInt32();
+        faction->enemyFaction[0] = fields[7].GetUInt32();
+        faction->enemyFaction[1] = fields[8].GetUInt32();
+        faction->enemyFaction[2] = fields[9].GetUInt32();
+        faction->enemyFaction[3] = fields[10].GetUInt32();
+        faction->friendFaction[0] = fields[11].GetInt32();
+        faction->friendFaction[1] = fields[12].GetInt32();
+        faction->friendFaction[2] = fields[13].GetInt32();
+        faction->friendFaction[3] = fields[14].GetInt32();
 
-        mFactionTemplates[factionId] = faction;
+        mFactionTemplates[factionId] = std::move(faction);
 
     } while (result->NextRow());
 
@@ -7535,19 +7549,19 @@ void ObjectMgr::LoadSoundEntries()
         return;
     }
 
-    mSoundEntries.resize(maxSoundEntry, nullptr);
+    mSoundEntries.resize(maxSoundEntry);
 
     do
     {
         fields = result->Fetch();
 
-        SoundEntriesEntry* sound = new SoundEntriesEntry();
+        std::unique_ptr<SoundEntriesEntry> sound = std::make_unique<SoundEntriesEntry>();
         uint32 soundId = fields[0].GetUInt32();
 
         sound->Id = soundId;
         sound->Name = fields[1].GetCppString();
 
-        mSoundEntries[soundId] = sound;
+        mSoundEntries[soundId] = std::move(sound);
 
     } while (result->NextRow());
 
@@ -8308,7 +8322,7 @@ void ObjectMgr::LoadTrainers(char const* tableName, bool isTemplates)
 
     std::set<uint32> skip_trainers;
 
-    QueryResult *result = WorldDatabase.PQuery("SELECT entry, spell,spellcost,reqskill,reqskillvalue,reqlevel FROM %s", tableName);
+    QueryResult *result = WorldDatabase.PQuery("SELECT entry, spell,spellcost,reqskill,reqskillvalue,reqlevel FROM %s WHERE %u BETWEEN build_min AND build_max", tableName, SUPPORTED_CLIENT_BUILD);
 
     if (!result)
     {
@@ -8338,8 +8352,7 @@ void ObjectMgr::LoadTrainers(char const* tableName, bool isTemplates)
         SpellEntry const *spellinfo = sSpellMgr.GetSpellEntry(spell);
         if (!spellinfo)
         {
-            if (!sSpellMgr.IsExistingSpellId(spell))
-                sLog.outErrorDb("Table `%s` (Entry: %u ) has non existing spell %u, ignore", tableName, entry, spell);
+            sLog.outErrorDb("Table `%s` (Entry: %u ) has non existing spell %u, ignore", tableName, entry, spell);
             continue;
         }
 

@@ -1242,14 +1242,14 @@ class ObjectMgr
 
         // Sound Entries
         void LoadSoundEntries();
-        SoundEntriesEntry const* GetSoundEntry(uint32 id) const { return id < GetMaxSoundId() ? mSoundEntries[id] : nullptr; }
+        SoundEntriesEntry const* GetSoundEntry(uint32 id) const { return id < GetMaxSoundId() ? mSoundEntries[id].get() : nullptr; }
         uint32 GetMaxSoundId() const { return mSoundEntries.size(); }
 
         // Factions
         void LoadFactions();
-        FactionEntry const* GetFactionEntry(uint32 id) const { return id < GetMaxFactionId() ? mFactions[id] : nullptr; }
+        FactionEntry const* GetFactionEntry(uint32 id) const { return id < GetMaxFactionId() ? mFactions[id].get() : nullptr; }
         uint32 GetMaxFactionId() const { return mFactions.size(); }
-        FactionTemplateEntry const* GetFactionTemplateEntry(uint32 id) const { return id < GetMaxFactionTemplateId() ? mFactionTemplates[id] : nullptr; }
+        FactionTemplateEntry const* GetFactionTemplateEntry(uint32 id) const { return id < GetMaxFactionTemplateId() ? mFactionTemplates[id].get() : nullptr; }
         uint32 GetMaxFactionTemplateId() const { return mFactionTemplates.size(); }
 
         // Changes of faction
@@ -1438,12 +1438,12 @@ class ObjectMgr
         PointOfInterestLocaleMap mPointOfInterestLocaleMap;
         AreaLocaleMap mAreaLocaleMap;
 
-        typedef std::vector<FactionEntry*> FactionStore;
+        typedef std::vector<std::unique_ptr<FactionEntry>> FactionStore;
         FactionStore mFactions;
-        typedef std::vector<FactionTemplateEntry*> FactionTemplateStore;
+        typedef std::vector<std::unique_ptr<FactionTemplateEntry>> FactionTemplateStore;
         FactionTemplateStore mFactionTemplates;
 
-        typedef std::vector<SoundEntriesEntry*> SoundEntryStore;
+        typedef std::vector<std::unique_ptr<SoundEntriesEntry>> SoundEntryStore;
         SoundEntryStore mSoundEntries;
 
         CacheNpcTextIdMap m_mCacheNpcTextIdMap;

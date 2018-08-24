@@ -3546,7 +3546,7 @@ bool ChatHandler::HandleLookupTaxiNodeCommand(char * args)
 
     uint32 counter = 0;                                     // Counter for figure out that we found smth.
 
-    // Search in TaxiNodes.dbc
+    // Search in taxi nodes table
     for (uint32 id = 0; id < sObjectMgr.GetMaxTaxiNodeId(); id++)
     {
         TaxiNodesEntry const *nodeEntry = sObjectMgr.GeTaxiNodeEntry(id);

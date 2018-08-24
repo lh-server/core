@@ -366,7 +366,7 @@ bool ChatHandler::HandleDebugPlayMusicCommand(char* args)
         return false;
     }
 
-    if (!sObjectMgr.GetSoundEntry(dwSoundId))
+    if (sObjectMgr.GetSoundEntry(dwSoundId))
     {
         PSendSysMessage(LANG_SOUND_NOT_EXIST, dwSoundId);
         SetSentErrorMessage(true);
