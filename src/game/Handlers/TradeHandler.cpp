@@ -259,12 +259,21 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& recvPacket)
 
     if (IsAccountRestricted())
     {
+        if (my_trade->GetMoney())
+        {
+            SendRestrictedHelp(LANG_INV_TRADE_SEND_RESTRICTED);
+            SendTradeStatus(TRADE_STATUS_TRIAL_ACCOUNT);
+            my_trade->SetAccepted(false, false);
+            return;
+        }
+
         for (int i = 0; i < TRADE_SLOT_TRADED_COUNT; ++i)
         {
             if (my_trade->GetItem(TradeSlots(i)))
             {
                 SendRestrictedHelp(LANG_INV_TRADE_SEND_RESTRICTED);
-                my_trade->SetAccepted(false, true);
+                SendTradeStatus(TRADE_STATUS_TRIAL_ACCOUNT);
+                my_trade->SetAccepted(false, false);
                 return;
             }
         }
