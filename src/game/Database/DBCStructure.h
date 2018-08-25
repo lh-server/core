@@ -409,6 +409,8 @@ struct ItemSetEntry
 
 struct LiquidTypeEntry
 {
+    LiquidTypeEntry(uint32 id, uint32 liquidid, uint32 type, uint32 spellid) : Id(id), LiquidId(liquidid), Type(type), SpellId(spellid) {}
+    LiquidTypeEntry() = default;
     uint32 Id;
     uint32 LiquidId;                                        // 23: Water; 29: Ocean; 35: Magma; 41: Slime; 47: Naxxramas - Slime.
     uint32 Type;                                            // 0: Magma; 2: Slime; 3: Water

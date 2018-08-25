@@ -19578,7 +19578,7 @@ void Player::UpdateUnderwaterState()
 
     if (uint32 liqEntry = liquid_status.entry)
     {
-        LiquidTypeEntry const* liquid = sLiquidTypeStore.LookupEntry(liqEntry);
+        LiquidTypeEntry const* liquid = sTerrainMgr.GetLiquidType(liqEntry);
         if (m_lastLiquid && m_lastLiquid->SpellId && m_lastLiquid->Id != liqEntry)
             RemoveAurasDueToSpell(m_lastLiquid->SpellId);
 

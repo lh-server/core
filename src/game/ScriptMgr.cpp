@@ -926,8 +926,13 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, const char* tablename)
                     {
                         if (!sObjectMgr.GetCreatureSpellsTemplate(tmp.creatureSpells.spellTemplate[i]))
                         {
-                            abort = true;
-                            sLog.outErrorDb("Table `%s` has datalong%u=%u for a non-existent creature spells template in SCRIPT_COMMAND_CREATURE_SPELLS for script id %u.", tablename, i, tmp.creatureSpells.spellTemplate[i], tmp.id);
+                            if (!sObjectMgr.IsExistingCreatureSpellsId(tmp.creatureSpells.spellTemplate[i]))
+                            {
+                                abort = true;
+                                sLog.outErrorDb("Table `%s` has datalong%u=%u for a non-existent creature spells template in SCRIPT_COMMAND_CREATURE_SPELLS for script id %u.", tablename, i, tmp.creatureSpells.spellTemplate[i], tmp.id);
+                            }
+                            else
+                                DisableScriptAction(tmp);
                             break;
                         }
                         if (!tmp.creatureSpells.chance[i])

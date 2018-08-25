@@ -269,6 +269,20 @@ void ObjectMgr::LoadAllIdentifiers()
         delete result;
     }
 
+    m_CreatureSpellsIdSet.clear();
+    result = WorldDatabase.Query("SELECT DISTINCT entry FROM creature_spells");
+
+    if (result)
+    {
+        do
+        {
+            fields = result->Fetch();
+            uint32 id = fields[0].GetUInt32();
+            m_CreatureSpellsIdSet.insert(id);
+        } while (result->NextRow());
+        delete result;
+    }
+
     sSpellMgr.LoadExistingSpellIds();
 }
 
