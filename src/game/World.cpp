@@ -864,6 +864,7 @@ void World::LoadConfigSettings(bool reload)
     setConfig(CONFIG_BOOL_ACCURATE_LFG, "Progression.AccurateLFGAvailability", true);
     setConfig(CONFIG_BOOL_ACCURATE_PVE_EVENTS, "Progression.AccuratePVEEvents", true);
     setConfig(CONFIG_BOOL_ACCURATE_SPELL_EFFECTS, "Progression.AccurateSpellEffects", true);
+    setConfig(CONFIG_BOOL_NO_RESPEC_PRICE_DECAY, "Progression.NoRespecPriceDecay", true);
 
     setConfig(CONFIG_UINT32_CREATURE_SUMMON_LIMIT, "MaxCreatureSummonLimit", DEFAULT_CREATURE_SUMMON_LIMIT);
 
@@ -1173,6 +1174,9 @@ void World::SetInitialWorldSettings()
 
     sLog.outString();
     sObjectMgr.LoadAreaTriggers();
+
+    sLog.outString();
+    sObjectMgr.LoadSkillLineAbility();
 
     ///- Load the DBC files
     sLog.outString("Initialize data stores...");

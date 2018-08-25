@@ -3794,13 +3794,13 @@ void SpellMgr::LoadSkillLineAbilityMap()
 {
     mSkillLineAbilityMap.clear();
 
-    BarGoLink bar(sSkillLineAbilityStore.GetNumRows());
+    BarGoLink bar(sObjectMgr.GetMaxSkillLineAbilityId());
     uint32 count = 0;
 
-    for (uint32 i = 0; i < sSkillLineAbilityStore.GetNumRows(); ++i)
+    for (uint32 i = 0; i < sObjectMgr.GetMaxSkillLineAbilityId(); ++i)
     {
         bar.step();
-        SkillLineAbilityEntry const *SkillInfo = sSkillLineAbilityStore.LookupEntry(i);
+        SkillLineAbilityEntry const *SkillInfo = sObjectMgr.GetSkillLineAbility(i);
         if (!SkillInfo)
             continue;
 

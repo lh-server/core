@@ -7538,6 +7538,62 @@ void ObjectMgr::LoadGameObjectForQuests()
     sLog.outString(">> Loaded %u GameObjects for quests", count);
 }
 
+void ObjectMgr::LoadSkillLineAbility()
+{
+    sLog.outString("Loading skill line abilities ...");
+
+    // Getting the maximum ID.
+    QueryResult* result = WorldDatabase.Query("SELECT MAX(ID) FROM skill_line_ability");
+
+    if (!result)
+    {
+        sLog.outString(">> Loaded 0 skill line abilities. DB table `skill_line_ability` is empty.");
+        return;
+    }
+    auto fields = result->Fetch();
+    uint32 maxSkillLineAbilityId = fields[0].GetUInt32() + 1;
+    delete result;
+
+    // Actually loading the sounds.
+    result = WorldDatabase.Query("SELECT * FROM skill_line_ability");
+
+    if (!result)
+    {
+        sLog.outString(">> Loaded 0 skill line abilities. DB table `skill_line_ability` is empty.");
+        return;
+    }
+
+    mSkillLineAbilities.resize(maxSkillLineAbilityId);
+
+    do
+    {
+        fields = result->Fetch();
+
+        std::unique_ptr<SkillLineAbilityEntry> skill = std::make_unique<SkillLineAbilityEntry>();
+        uint32 id = fields[0].GetUInt32();
+
+        skill->id = id;
+        skill->skillId = fields[2].GetUInt32();
+        skill->spellId = fields[3].GetUInt32();
+        skill->racemask = fields[4].GetUInt32();
+        skill->classmask = fields[5].GetUInt32();
+        skill->req_skill_value = fields[6].GetUInt32();
+        skill->forward_spellid = fields[7].GetUInt32();
+        skill->learnOnGetSkill = fields[8].GetUInt32();
+        skill->max_value = fields[9].GetUInt32();
+        skill->min_value = fields[10].GetUInt32();
+        skill->reqtrainpoints = fields[11].GetUInt32();
+
+        mSkillLineAbilities[id] = std::move(skill);
+
+    } while (result->NextRow());
+
+    delete result;
+
+    sLog.outString();
+    sLog.outString(">> Loaded %u skill line abilities.", maxSkillLineAbilityId);
+}
+
 void ObjectMgr::LoadSoundEntries()
 {
     sLog.outString("Loading sounds ...");

@@ -2046,9 +2046,9 @@ bool ChatHandler::HandleLearnAllMySpellsCommand(char* /*args*/)
         return true;
     uint32 family = clsEntry->spellfamily;
 
-    for (uint32 i = 0; i < sSkillLineAbilityStore.GetNumRows(); ++i)
+    for (uint32 i = 0; i < sObjectMgr.GetMaxSkillLineAbilityId(); ++i)
     {
-        SkillLineAbilityEntry const *entry = sSkillLineAbilityStore.LookupEntry(i);
+        SkillLineAbilityEntry const *entry = sObjectMgr.GetSkillLineAbility(i);
         if (!entry)
             continue;
 

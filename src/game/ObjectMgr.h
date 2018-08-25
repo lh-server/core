@@ -1253,6 +1253,11 @@ class ObjectMgr
         FactionTemplateEntry const* GetFactionTemplateEntry(uint32 id) const { return id < GetMaxFactionTemplateId() ? mFactionTemplates[id].get() : nullptr; }
         uint32 GetMaxFactionTemplateId() const { return mFactionTemplates.size(); }
 
+        // Skill Line Abilities
+        void LoadSkillLineAbility();
+        SkillLineAbilityEntry const* GetSkillLineAbility(uint32 id) const { return id < GetMaxSkillLineAbilityId() ? mSkillLineAbilities[id].get() : nullptr; }
+        uint32 GetMaxSkillLineAbilityId() const { return mSkillLineAbilities.size(); }
+
         // Changes of faction
         typedef std::map<uint32, uint32> CharacterConversionMap;
         CharacterConversionMap factionchange_reputations;
@@ -1447,6 +1452,9 @@ class ObjectMgr
 
         typedef std::vector<std::unique_ptr<SoundEntriesEntry>> SoundEntryStore;
         SoundEntryStore mSoundEntries;
+
+        typedef std::vector<std::unique_ptr<SkillLineAbilityEntry>> SkillLineAbiilityStore;
+        SkillLineAbiilityStore mSkillLineAbilities;
 
         CacheNpcTextIdMap m_mCacheNpcTextIdMap;
         CacheVendorItemMap m_mCacheVendorTemplateItemMap;

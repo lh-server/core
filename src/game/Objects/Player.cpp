@@ -3893,7 +3893,9 @@ void Player::updateResetTalentsMultiplier()
 
 uint32 Player::resetTalentsCost()
 {
-    updateResetTalentsMultiplier(); // decay respec cost
+    // decay respec cost
+    if (!sWorld.getConfig(CONFIG_BOOL_NO_RESPEC_PRICE_DECAY) || (sWorld.GetWowPatch() >= WOW_PATCH_111))
+        updateResetTalentsMultiplier();
 
     if (!m_resetTalentsMultiplier) // initial respec
     {
@@ -5741,8 +5743,8 @@ void Player::SetSkill(uint16 id, uint16 currVal, uint16 maxVal, uint16 step /*=0
                 mSkillStatus.erase(itr);
 
             // remove all spells that related to this skill
-            for (uint32 j = 0; j < sSkillLineAbilityStore.GetNumRows(); ++j)
-                if (SkillLineAbilityEntry const *pAbility = sSkillLineAbilityStore.LookupEntry(j))
+            for (uint32 j = 0; j < sObjectMgr.GetMaxSkillLineAbilityId(); ++j)
+                if (SkillLineAbilityEntry const *pAbility = sObjectMgr.GetSkillLineAbility(j))
                     if (pAbility->skillId == id)
                         removeSpell(sSpellMgr.GetFirstSpellInChain(pAbility->spellId));
             // remove all quests related to this skill (else the spell will be automatically learned at next login, cf Player::learnQuestRewardedSpells)
@@ -18635,9 +18637,9 @@ void Player::learnSkillRewardedSpells(uint32 skill_id, uint32 skill_value)
 {
     uint32 raceMask  = getRaceMask();
     uint32 classMask = getClassMask();
-    for (uint32 j = 0; j < sSkillLineAbilityStore.GetNumRows(); ++j)
+    for (uint32 j = 0; j < sObjectMgr.GetMaxSkillLineAbilityId(); ++j)
     {
-        SkillLineAbilityEntry const *pAbility = sSkillLineAbilityStore.LookupEntry(j);
+        SkillLineAbilityEntry const *pAbility = sObjectMgr.GetSkillLineAbility(j);
         if (!pAbility || pAbility->skillId != skill_id || pAbility->learnOnGetSkill != ABILITY_LEARNED_ON_GET_PROFESSION_SKILL)
             continue;
         // Check race if set
