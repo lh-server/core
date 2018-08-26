@@ -36,6 +36,7 @@ class InstanceData;
 class Group;
 class BattleGround;
 class Map;
+struct LiquidTypeEntry;
 
 struct GridMapFileHeader
 {
