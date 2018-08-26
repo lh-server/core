@@ -4048,8 +4048,15 @@ void Aura::HandlePeriodicHeal(bool apply, bool /*Real*/)
         Unit *caster = GetCaster();
         if (!caster)
             return;
-
+     
+        // World of Warcraft Client Patch 1.11.0 (2006-06-20)
+        // - Periodic Healing: Spells which do periodic healing will now have 
+        //   their strength determined at the moment they are cast.Changing the
+        //   amount of bonus healing you have during the duration of the periodic
+        //   spell will have no impact on how much it heals for.
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_10_2
         m_modifier.m_amount = caster->SpellHealingBonusDone(target, GetSpellProto(), m_modifier.m_amount, DOT, GetStackAmount());
+#endif
     }
 }
 
@@ -5273,8 +5280,9 @@ void Aura::PeriodicTick(SpellEntry const* sProto, AuraType auraType, uint32 data
 {
     Unit *target = GetTarget();
     SpellEntry const* spellProto = sProto ? sProto : GetSpellProto();
+    AuraType const aura_type = sProto ? auraType : m_modifier.m_auraname;
 
-    switch (sProto ? auraType : m_modifier.m_auraname)
+    switch (aura_type)
     {
         case SPELL_AURA_PERIODIC_DAMAGE:
         case SPELL_AURA_PERIODIC_DAMAGE_PERCENT:
@@ -5507,8 +5515,20 @@ void Aura::PeriodicTick(SpellEntry const* sProto, AuraType auraType, uint32 data
             if (target != pCaster && spellProto->SpellVisual == 163 && !pCaster->isAlive())
                 return;
 
-            // ignore non positive values (can be result apply spellmods to aura damage
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_10_2
+            // Ignore non positive values (can be result apply spellmods to aura damage).
             uint32 amount = m_modifier.m_amount > 0 ? m_modifier.m_amount : 0;
+#else
+            // Before 1.11 the heal bonuses were calculated each tick, not upon initial cast.
+            uint32 amount;
+            if (aura_type == SPELL_AURA_PERIODIC_HEAL)
+            {
+                int32 const intAmount = pCaster->SpellHealingBonusDone(target, GetSpellProto(), m_modifier.m_amount, DOT, GetStackAmount());
+                amount = intAmount > 0 ? intAmount : 0;
+            }
+            else
+                amount = m_modifier.m_amount > 0 ? m_modifier.m_amount : 0;
+#endif
 
             uint32 pdamage;
 
