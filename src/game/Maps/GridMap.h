@@ -25,7 +25,7 @@
 #include "GridDefines.h"
 #include "Object.h"
 #include "SharedDefines.h"
-
+#include <memory>
 #include <bitset>
 #include <list>
 
