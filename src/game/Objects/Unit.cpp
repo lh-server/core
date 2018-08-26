@@ -636,7 +636,16 @@ void Unit::RemoveFearEffectsByDamageTaken(uint32 damage, uint32 exceptSpellId, D
     uint32 max_dmg = getLevel() > 8 ? 25 * getLevel() - 150 : 50;
 
     // Players are 3x more likely to break fears
-    if (GetTypeId() == TYPEID_PLAYER)
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_10_2
+    if (IsPlayer())
+#else
+    // World of Warcraft Client Patch 1.11.0 (2006-06-20)
+    // - Fear: The calculations to determine if Fear effects should break due 
+    //   to receiving damage have been changed. In addition, Intimidating 
+    //   Shout now follows that player versus non - player distinction, while
+    //   previously it did not.
+    if (IsPlayer() && !HasAura(5246))
+#endif
         max_dmg *= 0.333f;
 
     // World of Warcraft Client Patch 1.11.0 (2006-06-20)
