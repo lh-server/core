@@ -1364,19 +1364,15 @@ class SpellMgr
         void LoadSkillRaceClassInfoMap();
         void LoadSpellPetAuras();
         void LoadSpellAreas();
-        void LoadExistingSpellIds();
 
         // SPELL GROUPS
         void LoadSpellGroups();
         void LoadSpellGroupStackRules();
-
         // SpellEntry
         void LoadSpells();
         SpellEntry const* GetSpellEntry(uint32 spellId) const { return spellId < GetMaxSpellId() ? mSpellEntryMap[spellId].get() : nullptr; }
         uint32 GetMaxSpellId() const { return mSpellEntryMap.size(); }
-        bool IsExistingSpellId(uint32 id) const { return (mExistingSpellsSet.find(id) != mExistingSpellsSet.end()); }
-
-        // spell_mod
+            // spell_mod
         SpellEntry const*  OverwriteSpellEntry(uint32 id)
         {
             if (id < GetMaxSpellId())
@@ -1416,7 +1412,6 @@ class SpellMgr
         SpellAreaForQuestMap mSpellAreaForQuestEndMap;
         SpellAreaForAuraMap  mSpellAreaForAuraMap;
         SpellAreaForAreaMap  mSpellAreaForAreaMap;
-        std::set<uint32>     mExistingSpellsSet;
 
         // SPELL GROUPS
         SpellSpellGroupMap mSpellSpellGroup;

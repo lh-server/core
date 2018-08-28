@@ -3326,7 +3326,7 @@ bool ChatHandler::ExtractLocationFromLink(char** text, uint32& mapid, float& x, 
             if (!ExtractUInt32(&idS, id))
                 return false;
 
-            TaxiNodesEntry const* node = sObjectMgr.GeTaxiNodeEntry(id);
+            TaxiNodesEntry const* node = sTaxiNodesStore.LookupEntry(id);
             if (!node)
                 return false;
             mapid = node->map_id;
@@ -3427,7 +3427,7 @@ bool ChatHandler::ExtractLocationFromLink(char** text, uint32& mapid, float& x, 
             if (!ExtractUInt32(&idS, id))
                 return false;
 
-            AreaTriggerEntry const* atEntry = sObjectMgr.GetAreaTrigger(id);
+            AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(id);
             if (!atEntry)
             {
                 PSendSysMessage(LANG_COMMAND_GOAREATRNOTFOUND, id);
@@ -3447,14 +3447,14 @@ bool ChatHandler::ExtractLocationFromLink(char** text, uint32& mapid, float& x, 
             if (!ExtractUInt32(&idS, id))
                 return false;
 
-            if (!sObjectMgr.GetAreaTrigger(id))
+            if (!sAreaTriggerStore.LookupEntry(id))
             {
                 PSendSysMessage(LANG_COMMAND_GOAREATRNOTFOUND, id);
                 SetSentErrorMessage(true);
                 return false;
             }
 
-            AreaTriggerTeleport const* at = sObjectMgr.GetAreaTriggerTeleport(id);
+            AreaTrigger const* at = sObjectMgr.GetAreaTrigger(id);
             if (!at)
             {
                 PSendSysMessage(LANG_AREATRIGER_NOT_HAS_TARGET, id);

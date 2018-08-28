@@ -77,7 +77,6 @@ CREATE TABLE IF NOT EXISTS `account_access` (
 -- Dumping structure for table realmd.account_banned
 DROP TABLE IF EXISTS `account_banned`;
 CREATE TABLE IF NOT EXISTS `account_banned` (
-  `banid` bigint(20) NOT NULL AUTO_INCREMENT,
   `id` bigint(20) NOT NULL DEFAULT '0' COMMENT 'Account id',
   `bandate` bigint(40) NOT NULL DEFAULT '0',
   `unbandate` bigint(40) NOT NULL DEFAULT '0',
@@ -86,8 +85,7 @@ CREATE TABLE IF NOT EXISTS `account_banned` (
   `active` tinyint(4) NOT NULL DEFAULT '1',
   `realm` tinyint(4) NOT NULL DEFAULT '1',
   `gmlevel` tinyint(4) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`,`bandate`),
-  UNIQUE KEY `banid` (`banid`)
+  PRIMARY KEY (`id`,`bandate`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Ban List';
 
 -- Data exporting was unselected.

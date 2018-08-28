@@ -2081,7 +2081,7 @@ bool ChatHandler::HandleGoTaxinodeCommand(char* args)
     if (!ExtractUint32KeyFromLink(&args, "Htaxinode", nodeId))
         return false;
 
-    TaxiNodesEntry const* node = sObjectMgr.GeTaxiNodeEntry(nodeId);
+    TaxiNodesEntry const* node = sTaxiNodesStore.LookupEntry(nodeId);
     if (!node)
     {
         PSendSysMessage(LANG_COMMAND_GOTAXINODENOTFOUND, nodeId);

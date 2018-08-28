@@ -2046,9 +2046,9 @@ bool ChatHandler::HandleLearnAllMySpellsCommand(char* /*args*/)
         return true;
     uint32 family = clsEntry->spellfamily;
 
-    for (uint32 i = 0; i < sObjectMgr.GetMaxSkillLineAbilityId(); ++i)
+    for (uint32 i = 0; i < sSkillLineAbilityStore.GetNumRows(); ++i)
     {
-        SkillLineAbilityEntry const *entry = sObjectMgr.GetSkillLineAbility(i);
+        SkillLineAbilityEntry const *entry = sSkillLineAbilityStore.LookupEntry(i);
         if (!entry)
             continue;
 
@@ -3546,10 +3546,10 @@ bool ChatHandler::HandleLookupTaxiNodeCommand(char * args)
 
     uint32 counter = 0;                                     // Counter for figure out that we found smth.
 
-    // Search in taxi nodes table
-    for (uint32 id = 0; id < sObjectMgr.GetMaxTaxiNodeId(); id++)
+    // Search in TaxiNodes.dbc
+    for (uint32 id = 0; id < sTaxiNodesStore.GetNumRows(); id++)
     {
-        TaxiNodesEntry const *nodeEntry = sObjectMgr.GeTaxiNodeEntry(id);
+        TaxiNodesEntry const *nodeEntry = sTaxiNodesStore.LookupEntry(id);
         if (nodeEntry)
         {
             int loc = GetSessionDbcLocale();
@@ -7725,8 +7725,8 @@ bool ChatHandler::HandleModifySpellPowerCommand(char *args)
     }
 
     // dunno where spell power is stored so using a custom spell
-    player->RemoveAurasDueToSpell(18058);
-    player->CastCustomSpell(player, 18058, &amount, &amount, NULL, true);
+    player->RemoveAurasDueToSpell(30776);
+    player->CastCustomSpell(player, 30776, &amount, &amount, NULL, true);
 
     PSendSysMessage(LANG_YOU_CHANGE_SP, player->GetName(), amount);
 
