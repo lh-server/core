@@ -9713,9 +9713,8 @@ InventoryResult Player::CanEquipItem(uint8 slot, uint16 &dest, Item *pItem, bool
                 if (isInCombat() && pProto->Class == ITEM_CLASS_WEAPON && m_weaponChangeTimer != 0)
                     return EQUIP_ERR_CANT_DO_RIGHT_NOW;         // maybe exist better err
 
-                // Check is possibly not in vanilla.
-                //if (IsNonMeleeSpellCasted(false, true, true))
-                //    return EQUIP_ERR_CANT_DO_RIGHT_NOW;
+                if (IsNonMeleeSpellCasted(false, true, true))
+                    return EQUIP_ERR_CANT_DO_RIGHT_NOW;
             }
 
             uint8 eslot = FindEquipSlot(pProto, slot, swap);
@@ -9828,9 +9827,8 @@ InventoryResult Player::CanUnequipItem(uint16 pos, bool swap) const
     if (!swap && pItem->IsBag() && !((Bag*)pItem)->IsEmpty())
         return EQUIP_ERR_CAN_ONLY_DO_WITH_EMPTY_BAGS;
 
-    // Check is possibly not in vanilla.
-    //if (IsNonMeleeSpellCasted(false, true, true))
-    //    return EQUIP_ERR_CANT_DO_RIGHT_NOW;
+    if (IsNonMeleeSpellCasted(false, true, true))
+        return EQUIP_ERR_CANT_DO_RIGHT_NOW;
 
     return EQUIP_ERR_OK;
 }
