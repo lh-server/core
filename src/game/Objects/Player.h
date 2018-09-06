@@ -1393,6 +1393,7 @@ class MANGOS_DLL_SPEC Player final: public Unit
         static void SavePositionInDB(ObjectGuid guid, uint32 mapid, float x,float y,float z,float o,uint32 zone);
 
         static void DeleteFromDB(ObjectGuid playerguid, uint32 accountId, bool updateRealmChars = true, bool deleteFinally = false);
+        static void DeleteFromDBCallback(QueryResult*, SqlQueryHolder* holder, uint32);
         static void DeleteOldCharacters();
         static void DeleteOldCharacters(uint32 keepDays);
 
