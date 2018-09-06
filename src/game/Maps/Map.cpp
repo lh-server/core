@@ -3447,6 +3447,17 @@ void Map::PrintInfos(ChatHandler& handler)
  */
 void Map::AddCorpseToRemove(Corpse* corpse, ObjectGuid looter_guid)
 {
+    // Map not currently being updated. It's safe to remove the corpse immediately,
+    // and we should in fact do this. Otherwise if the server crashes before this
+    // map unloads or cleans up the corpse, the player can have two corpses :Z
+    if (!HavePlayers())
+    {
+        corpse->DeleteFromDB();
+
+        delete corpse;
+        return;
+    }
+
     ACE_Guard<MapMutexType> guard(_corpseRemovalLock);
     _corpseToRemove.emplace_back(corpse, looter_guid);
 }
