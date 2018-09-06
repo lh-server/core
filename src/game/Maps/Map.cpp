@@ -3441,23 +3441,37 @@ void Map::PrintInfos(ChatHandler& handler)
     handler.PSendSysMessage("Vis:%.1f Act:%.1f", m_VisibleDistance, m_GridActivationDistance);
 }
 
+bool Map::ShouldUpdateInactiveMap(uint32 now, uint32 inactiveTimeLimit)
+{
+    auto update = true;
+
+    if (!HavePlayers() && inactiveTimeLimit)
+    {
+        if (WorldTimer::getMSTimeDiff(_lastPlayerLeftTime, now) > inactiveTimeLimit)
+            update = false;
+    }
+
+    // If we have corpses to be removed, we should force an update of the map.
+    // Otherwise players may die elsewhere and generate another corpse while
+    // this one still exists. If the server crashes before the map unloads,
+    // they'll have two active corpses. We can't immediately remove the corpse
+    // in AddCorpseToRemove because it can be called concurrently.
+    if (!update)
+    {
+        ACE_Guard<MapMutexType> guard(_corpseRemovalLock);
+        if (_corpseToRemove.size() > 0)
+            update = true;
+    }
+
+    return update;
+}
+
 /**
  * Add a corpse to be removed, conditionally spawning bones in its place.
  * May be called from other maps or threads
  */
 void Map::AddCorpseToRemove(Corpse* corpse, ObjectGuid looter_guid)
 {
-    // Map not currently being updated. It's safe to remove the corpse immediately,
-    // and we should in fact do this. Otherwise if the server crashes before this
-    // map unloads or cleans up the corpse, the player can have two corpses :Z
-    if (!HavePlayers())
-    {
-        corpse->DeleteFromDB();
-
-        delete corpse;
-        return;
-    }
-
     ACE_Guard<MapMutexType> guard(_corpseRemovalLock);
     _corpseToRemove.emplace_back(corpse, looter_guid);
 }
