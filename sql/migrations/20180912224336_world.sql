@@ -1,4 +1,5 @@
--e DROP PROCEDURE IF EXISTS add_migration;
+
+DROP PROCEDURE IF EXISTS add_migration;
 delimiter ??
 CREATE PROCEDURE `add_migration`()
 BEGIN
@@ -7,6 +8,7 @@ SET v = (SELECT COUNT(*) FROM `migrations` WHERE `id`='20180912224336');
 IF v=0 THEN
 INSERT INTO `migrations` VALUES ('20180912224336');
 -- Add your query below.
+
 
 -- Goldthorn undergroundx2
 UPDATE `gameobject` SET `position_z`=115.631760 WHERE `guid`=50240;
