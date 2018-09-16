@@ -43,6 +43,7 @@
 #include "SharedDefines.h"
 #include "SpellMgr.h"
 #include "HonorMgr.h"
+#include "Database/SqlOperations.h"
 
 #include <string>
 #include <vector>
@@ -883,6 +884,31 @@ struct ScheduledTeleportData
     std::function<void()> recover;
 };
 
+class DeleteQueryHolder : public SqlQueryHolder
+{
+private:
+    uint32 _accountId;
+    ObjectGuid _playerguid;
+public:
+    DeleteQueryHolder(uint32 accountId, ObjectGuid& playerguid)
+        : SqlQueryHolder(playerguid.GetCounter()), _accountId(accountId),
+        _playerguid(playerguid)
+    {
+
+    }
+
+    uint32 GetAccountId() const { return _accountId; }
+    ObjectGuid& const GetPlayerGuid() { return _playerguid; }
+};
+
+enum PlayerDeleteQuery
+{
+    PLAYER_DELETE_QUERY_MAIL = 0,
+    PLAYER_DELETE_QUERY_MAIL_ITEMS,
+    PLAYER_DELETE_QUERY_PETS,
+    PLAYER_DELETE_QUERY_COUNT
+};
+
 class MANGOS_DLL_SPEC Player final: public Unit
 {
     friend class WorldSession;
@@ -1392,7 +1418,8 @@ class MANGOS_DLL_SPEC Player final: public Unit
         static void SetFloatValueInArray(Tokens& data,uint16 index, float value);
         static void SavePositionInDB(ObjectGuid guid, uint32 mapid, float x,float y,float z,float o,uint32 zone);
 
-        static void DeleteFromDB(ObjectGuid playerguid, uint32 accountId, bool updateRealmChars = true, bool deleteFinally = false);
+        static void DeleteFromDB(ObjectGuid& playerguid, WorldSession* session);
+        static void DeleteFromDB(ObjectGuid& playerguid, uint32 accountId, bool updateRealmChars = true, bool deleteFinally = false, WorldSession* session = nullptr);
         static void DeleteFromDBCallback(QueryResult*, SqlQueryHolder* holder, uint32);
         static void DeleteOldCharacters();
         static void DeleteOldCharacters(uint32 keepDays);

@@ -727,7 +727,7 @@ bool ChatHandler::HandleCleanCharactersToDeleteCommand(char* args)
         do
         {
             fields = toDeleteCharsResult->Fetch();
-            uint32 guid  = fields[0].GetUInt32();
+            ObjectGuid guid(fields[0].GetUInt32());
 
             Player::DeleteFromDB(guid,
                                  0, // AccountID

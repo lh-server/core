@@ -344,7 +344,6 @@ void WorldSession::HandleCharCreateOpcode(WorldPacket & recv_data)
         pNewChar->setCinematic(1);                          // not show intro
 
     pNewChar->SetAtLoginFlag(AT_LOGIN_FIRST);               // First login
-
     // Player created, save it now
     pNewChar->SaveToDB();
     masterPlayer.SaveToDB();
@@ -381,9 +380,7 @@ void WorldSession::HandleCharDeleteOpcode(WorldPacket & recv_data)
     // is guild leader
     if (sGuildMgr.GetGuildByLeader(guid))
     {
-        WorldPacket data(SMSG_CHAR_DELETE, 1);
-        data << (uint8)CHAR_DELETE_FAILED;
-        SendPacket(&data);
+        SendCharDeleteResult(CHAR_DELETE_FAILED);
         return;
     }
 
@@ -408,13 +405,16 @@ void WorldSession::HandleCharDeleteOpcode(WorldPacket & recv_data)
     if (Player* onlinePlayer = sObjectAccessor.FindPlayer(guid))
         onlinePlayer->GetSession()->LogoutPlayer(true);
 
-    Player::DeleteFromDB(guid, GetAccountId());
-
-    WorldPacket data(SMSG_CHAR_DELETE, 1);
-    data << (uint8)CHAR_DELETE_SUCCESS;
-    SendPacket(&data);
+    Player::DeleteFromDB(guid, this);
 
     sWorld.LogCharacter(this, lowguid, name, "Delete");
+}
+
+void WorldSession::SendCharDeleteResult(ResponseCodes result)
+{
+    WorldPacket data(SMSG_CHAR_DELETE, 8);
+    data << (uint8)result;
+    SendPacket(&data);
 }
 
 void WorldSession::HandlePlayerLoginOpcode(WorldPacket & recv_data)
