@@ -4314,8 +4314,8 @@ void Player::DeleteFromDB(ObjectGuid& playerguid, uint32 accountId, bool updateR
             holder->SetSize(PLAYER_DELETE_QUERY_COUNT);
             holder->SetPQuery(PLAYER_DELETE_QUERY_MAIL, "SELECT id,messageType,mailTemplateId,sender,subject,itemTextId,money,has_items FROM mail WHERE receiver='%u' AND has_items<>0 AND cod<>0", lowguid);
             holder->SetPQuery(PLAYER_DELETE_QUERY_MAIL_ITEMS,
-                "SELECT m.id, creatorGuid, giftCreatorGuid, count, duration, charges, flags, enchantments, randomPropertyId, "
-                "durability, text, item_guid, itemEntry, generated_loot "
+                "SELECT creatorGuid, giftCreatorGuid, count, duration, charges, flags, enchantments, randomPropertyId, "
+                "durability, text, item_guid, itemEntry, generated_loot, m.id "
                 "FROM mail_items mi JOIN item_instance ii ON mi.item_guid = ii.guid JOIN mail m on mi.mail_id = m.id WHERE m.receiver = %u", lowguid);
             holder->SetPQuery(PLAYER_DELETE_QUERY_PETS, "SELECT id FROM character_pet WHERE owner = '%u'", lowguid);
 
@@ -4359,7 +4359,7 @@ void Player::DeleteFromDBCallback(QueryResult*, SqlQueryHolder* result, uint32 /
         do
         {
             Field *field = resultItems->Fetch();
-            mailItemData.emplace(field[0].GetUInt32(), field);
+            mailItemData.emplace(field[13].GetUInt32(), field);
         } while (resultItems->NextRow());
     }
 
