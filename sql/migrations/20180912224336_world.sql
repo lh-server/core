@@ -1,4 +1,4 @@
--e DROP PROCEDURE IF EXISTS add_migration;
+DROP PROCEDURE IF EXISTS add_migration;
 delimiter ??
 CREATE PROCEDURE `add_migration`()
 BEGIN
