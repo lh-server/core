@@ -1630,7 +1630,6 @@ class MANGOS_DLL_SPEC Player final: public Unit
         void SendAttackSwingNotInRange();
         void SendAttackSwingBadFacingAttack();
         void SendAutoRepeatCancel();
-        void SendFeignDeathResisted();
         void SendExplorationExperience(uint32 Area, uint32 Experience);
 
         void ResetInstances(InstanceResetMethod method);
