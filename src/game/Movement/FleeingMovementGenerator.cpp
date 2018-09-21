@@ -61,6 +61,7 @@ void FleeingMovementGenerator<T>::_setTargetLocation(T &owner)
     Movement::MoveSplineInit init(owner, "FleeingMovementGenerator");
     init.Move(&path);
     init.SetWalk(_forceWalking);
+    _customSpeed = ((Creature*)&owner)->GetFleeingSpeed();
     if (_customSpeed > 0)
         init.SetVelocity(_customSpeed);
     int32 traveltime = init.Launch();
@@ -204,7 +205,6 @@ void TimedFleeingMovementGenerator::Initialize(Unit& owner)
 {
     ASSERT(owner.GetTypeId() == TYPEID_UNIT);
     _forceWalking = true;
-    _customSpeed = ((Creature*)&owner)->GetFleeingSpeed();
     FleeingMovementGenerator<Creature>::Initialize(*((Creature*)&owner));
 }
 
