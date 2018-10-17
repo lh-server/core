@@ -9,7 +9,7 @@ INSERT INTO `migrations` VALUES ('20180830232306');
 -- Add your query below.
 
 -- Add Technician in Firemaw room's left alcove group to pull with the rest of the group.
-INSERT INTO `creature_groups` (`leaderGUID`, `memberGUID`, `dist`, `angle`, `flags`) VALUES (`84558`, `84570`, `0`, `0`, `46`);
+INSERT INTO `creature_groups` (`leaderGUID`, `memberGUID`, `dist`, `angle`, `flags`) VALUES ('84558', '84570', '0', '0', '46');
 
 -- End of migration.
 END IF;
