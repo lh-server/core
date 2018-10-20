@@ -1185,6 +1185,21 @@ void Item::GetNameWithSuffix(std::string& name, const ItemPrototype* proto, cons
         }
 
         if (!nameSuffix.empty())
-            name += " " + nameSuffix;
+        {
+            // Support backwards languages
+            switch (dbcLocale)
+            {
+                case LOCALE_zhCN:
+                case LOCALE_zhTW:
+                    name = nameSuffix + name;
+                    break;
+                case LOCALE_koKR:
+                    name = nameSuffix + " " + name;
+                    break;
+                default:
+                    name += " " + nameSuffix;
+                    break;
+            }
+        }
     }
 }
