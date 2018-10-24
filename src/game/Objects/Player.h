@@ -1720,6 +1720,13 @@ class MANGOS_DLL_SPEC Player final: public Unit
         void SetPendingFarTeleport(bool pending) { mPendingFarTeleport = pending; }
         void ProcessDelayedOperations();
 
+        bool IsHasDelayedTeleport() const
+        {
+            // we should not execute delayed teleports for now dead players but has been alive at teleport
+            // because we don't want player's ghost teleported from graveyard
+            return m_bHasDelayedTeleport && (isAlive() || !m_bHasBeenAliveAtDelayedTeleport);
+        }
+
         void CheckAreaExploreAndOutdoor(void);
 
         static Team TeamForRace(uint8 race);
@@ -2412,7 +2419,6 @@ class MANGOS_DLL_SPEC Player final: public Unit
         bool m_justBoarded;
         void SetJustBoarded(bool hasBoarded) { m_justBoarded = hasBoarded; }
         bool HasJustBoarded() { return m_justBoarded; }
-
     private:
         // internal common parts for CanStore/StoreItem functions
         InventoryResult _CanStoreItem_InSpecificSlot( uint8 bag, uint8 slot, ItemPosCountVec& dest, ItemPrototype const *pProto, uint32& count, bool swap, Item *pSrcItem ) const;
@@ -2425,12 +2431,6 @@ class MANGOS_DLL_SPEC Player final: public Unit
         void UpdateOldRidingSkillToNew(bool has_epic_mount);
 
         void SetCanDelayTeleport(bool setting) { m_bCanDelayTeleport = setting; }
-        bool IsHasDelayedTeleport() const
-        {
-            // we should not execute delayed teleports for now dead players but has been alive at teleport
-            // because we don't want player's ghost teleported from graveyard
-            return m_bHasDelayedTeleport && (isAlive() || !m_bHasBeenAliveAtDelayedTeleport);
-        }
 
         bool SetDelayedTeleportFlagIfCan()
         {
