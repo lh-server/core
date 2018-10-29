@@ -334,7 +334,7 @@ void Unit::Update(uint32 update_diff, uint32 p_time)
             if (m_extraAttacks > 0)
                 --m_extraAttacks;
         }
-        resetAttackTimer(BASE_ATTACK);
+        //resetAttackTimer(BASE_ATTACK);  https://github.com/LightsHope/issues/issues/1013
 
         ExtraAttacksLocked(false);
     }
