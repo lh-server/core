@@ -36,6 +36,7 @@
 
 #include "Database/DatabaseEnv.h"
 
+// Target server framerate is 1000/WORLD_SLEEP_CONST
 #define WORLD_SLEEP_CONST 50
 
 #ifdef WIN32
@@ -53,18 +54,20 @@ void WorldRunnable::run()
     Master::ArmAnticrash();
     uint32 anticrashRearmTimer = 0;
 
-    uint32 realCurrTime = 0;
-    uint32 realPrevTime = WorldTimer::tick();
-
-    uint32 prevSleepTime = 0;                               // used for balanced full tick time length near WORLD_SLEEP_CONST
+    // Aim for WORLD_SLEEP_CONST update times
+    // If we update slower, update again immediately. If we update faster,
+    // then slow down!
+    auto prevTime = WorldTimer::getMSTime();
+    uint32 currTime = 0u;
 
     ///- While we have not World::m_stopEvent, update the world
     while (!World::IsStopped())
     {
         ++World::m_worldLoopCounter;
-        realCurrTime = WorldTimer::getMSTime();
 
-        uint32 diff = WorldTimer::tick();
+        currTime = WorldTimer::getMSTime();
+        auto diff = WorldTimer::getMSTimeDiff(prevTime, currTime);
+
         if (sWorld.getConfig(CONFIG_UINT32_PERFLOG_SLOW_WORLD_UPDATE) && diff > sWorld.getConfig(CONFIG_UINT32_PERFLOG_SLOW_WORLD_UPDATE))
             sLog.out(LOG_PERFORMANCE, "Slow world update: %ums", diff);
 
@@ -87,19 +90,21 @@ void WorldRunnable::run()
         }
 
         sWorld.Update(diff);
-        realPrevTime = realCurrTime;
 
-        // diff (D0) include time of previous sleep (d0) + tick time (t0)
-        // we want that next d1 + t1 == WORLD_SLEEP_CONST
-        // we can't know next t1 and then can use (t0 + d1) == WORLD_SLEEP_CONST requirement
-        // d1 = WORLD_SLEEP_CONST - t0 = WORLD_SLEEP_CONST - (D0 - d0) = WORLD_SLEEP_CONST + d0 - D0
-        if (diff <= WORLD_SLEEP_CONST+prevSleepTime)
-        {
-            prevSleepTime = WORLD_SLEEP_CONST+prevSleepTime-diff;
-            ACE_Based::Thread::Sleep(prevSleepTime);
-        }
-        else
-            prevSleepTime = 0;
+        // diff is the actual time since last tick
+        // updateTime is the actual time taken to update this round
+        // aim for WORLD_SLEEP_CONST tickrate
+
+        // Update at the target 1000/WORLD_SLEEP_CONST framerate
+        // Previous implementation attempted to smooth diffs out, but did not
+        // account properly for the spikes which using a fucking constant
+        // causes. If a smoothing filter is desired, consider a moving average
+        // or other simple filter.
+        auto updateTime = WorldTimer::getMSTimeDiffToNow(currTime);
+        prevTime = currTime;
+
+        if (updateTime < WORLD_SLEEP_CONST)
+            ACE_Based::Thread::Sleep(WORLD_SLEEP_CONST - updateTime);
 
         #ifdef WIN32
             if (m_ServiceStatus == 0) World::StopNow(SHUTDOWN_EXIT_CODE);
