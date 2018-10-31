@@ -2134,7 +2134,7 @@ bool ChatHandler::isValidChatMessage(const char* message)
                                     // Compare the name. If the name isn't correct, maybe it's an enchantment
                                     // instead.
                                     std::string expectedName = linkedItem->Name1;
-                                    Item::GetNameWithSuffix(expectedName, linkedItem, iProp, dbLocale, dbcLocale);
+                                    Item::GetLocalizedNameWithSuffix(expectedName, linkedItem, iProp, dbLocale, dbcLocale);
                                     if (expectedName == buffer)
                                     {
                                         hasValidRandomProperty = true;
@@ -2162,7 +2162,7 @@ bool ChatHandler::isValidChatMessage(const char* message)
                         {
                             // Finally compare base name
                             std::string expectedName = linkedItem->Name1;
-                            Item::GetNameWithSuffix(expectedName, linkedItem, nullptr, dbLocale, dbcLocale);
+                            Item::GetLocalizedNameWithSuffix(expectedName, linkedItem, nullptr, dbLocale, dbcLocale);
                             if (expectedName != buffer)
                                 return false;
                         }
