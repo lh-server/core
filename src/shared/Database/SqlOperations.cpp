@@ -24,6 +24,7 @@
 #include "DatabaseEnv.h"
 #include "DatabaseImpl.h"
 #include "Timer.h"
+#include <atomic>
 
 #define LOCK_DB_CONN(conn) SqlConnection::Lock guard(conn)
 
@@ -103,10 +104,12 @@ bool SqlQuery::Execute(SqlConnection *conn)
 class SqlResultCallbackCaller : public ACE_Based::Runnable
 {
     public:
+        SqlResultCallbackCaller() : _processing(true) {}
         typedef ACE_Based::LockedQueue<MaNGOS::IQueryCallback*, ACE_Thread_Mutex> CallbackQueue;
         CallbackQueue queue;
         virtual void run()
         {
+            uint32 start = WorldTimer::getMSTime();
             #ifndef DO_POSTGRESQL
             mysql_thread_init();
             #endif
@@ -115,18 +118,25 @@ class SqlResultCallbackCaller : public ACE_Based::Runnable
             {
                 s->Execute();
                 delete s;
+
+                if (!_processing)
+                    break;
             }
             #ifndef DO_POSTGRESQL
             mysql_thread_end();
             #endif
         }
+
+        void StopProcessing() { _processing = false; }
+private:
+        std::atomic<bool> _processing;
 };
 
 void SqlResultQueue::Update(uint32 timeout)
 {
     uint32 begin = WorldTimer::getMSTime();
     /// execute the callbacks waiting in the synchronization queue
-    int threadsCount = 6;
+    int threadsCount = 4;
     SqlResultCallbackCaller* caller = new SqlResultCallbackCaller();
     caller->incReference();
     ACE_Based::Thread** threads = new ACE_Based::Thread*[threadsCount];
@@ -151,6 +161,7 @@ void SqlResultQueue::Update(uint32 timeout)
         threads[i] = new ACE_Based::Thread(caller);
     // Now execute thread unsafe callbacks
     MaNGOS::IQueryCallback* s = NULL;
+    uint32 unsafeQueryTime = WorldTimer::getMSTime();
     while (_threadUnsafeWaitingQueries.next(s))
     {
         s->Execute();
@@ -159,9 +170,12 @@ void SqlResultQueue::Update(uint32 timeout)
         if (timeout && WorldTimer::getMSTimeDiffToNow(begin) > timeout)
             break;
     }
+    if (unsafeQueryTime > timeout)
+    {
+        sLog.out(LOG_PERFORMANCE, "Unsafe queries took longer than the timeout. %u remaining", numUnsafeQueries);
+    }
 
-    if (numUnsafeQueries > 1000) // Bottleneck here
-        sLog.out(LOG_PERFORMANCE, "Database: %u unsafe queries remaining!", numUnsafeQueries);
+    caller->StopProcessing();
 
     for (int i = 0; i < threadsCount; ++i)
     {
@@ -169,6 +183,13 @@ void SqlResultQueue::Update(uint32 timeout)
         t->wait();
         delete t;
     }
+
+    // Re-add any pending callbacks to the queue
+    while (caller->queue.next(s))
+    {
+        add(s);
+    }
+
     delete[] threads;
     caller->decReference();
  }
