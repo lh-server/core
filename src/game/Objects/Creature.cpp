@@ -803,7 +803,7 @@ void Creature::Update(uint32 update_diff, uint32 diff)
             // Raid bosses do a periodic combat pulse
             if (m_combatState && m_combatWithZoneState)
             {
-                if (WorldTimer::tickTime() % 3000 <= update_diff)
+                if (GetMap()->GetLastMapUpdate() % 3000 <= update_diff)
                     SetInCombatWithZone(false);
             }
 
