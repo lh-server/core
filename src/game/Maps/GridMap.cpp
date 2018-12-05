@@ -1053,7 +1053,7 @@ bool TerrainInfo::IsInWater(float x, float y, float pZ, GridMapLiquidData* data)
     {
         GridMapLiquidData liquid_status;
         GridMapLiquidData* liquid_ptr = data ? data : &liquid_status;
-        if (getLiquidStatus(x, y, pZ, MAP_ALL_LIQUIDS, liquid_ptr) & (LIQUID_MAP_UNDER_WATER | LIQUID_MAP_IN_WATER))
+        if (getLiquidStatus(x, y, pZ, MAP_ALL_LIQUIDS, liquid_ptr) & LIQUID_MAP_UNDER_WATER)
             return true;
     }
     return false;
