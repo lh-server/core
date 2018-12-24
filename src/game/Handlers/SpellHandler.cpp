@@ -319,10 +319,6 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
         }
     }
 
-    // Remove invisibility except Gnomish Cloaking Device, since evidence suggests
-    // it remains until cast finish
-    _player->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_ON_CAST_SPELL, 4079);
-
     // client provided targets
     SpellCastTargets targets;
 
@@ -331,10 +327,23 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
     // auto-selection buff level base at target level (in spellInfo)
     if (Unit* target = targets.getUnitTarget())
     {
+        // Cannot cast negative spells on yourself. Handle it here since casting negative
+        // spells on yourself is frequently used within the core itself for certain
+        // mechanics... ZZZ
+        if (target == _player && !IsPositiveSpell(spellInfo, _player, target))
+        {
+            recvPacket.rpos(recvPacket.wpos());                 // prevent spam at ignore packet
+            return;
+        }
+
         // if rank not found then function return NULL but in explicit cast case original spell can be casted and later failed with appropriate error message
         if (SpellEntry const *actualSpellInfo = sSpellMgr.SelectAuraRankForLevel(spellInfo, target->getLevel()))
             spellInfo = actualSpellInfo;
     }
+
+    // Remove invisibility except Gnomish Cloaking Device, since evidence suggests
+    // it remains until cast finish
+    _player->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_ON_CAST_SPELL, 4079);
 
     _player->m_castingSpell = spellId;
     if (spellInfo->SpellFamilyName == SPELLFAMILY_ROGUE)
