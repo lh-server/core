@@ -330,7 +330,11 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
         // Cannot cast negative spells on yourself. Handle it here since casting negative
         // spells on yourself is frequently used within the core itself for certain
         // mechanics... ZZZ
-        if (target == _player && !IsAreaOfEffectSpell(spellInfo) && !IsPositiveSpell(spellInfo, _player, target))
+        // Some AoE affects have the player as the unit target (TARGET_CASTER_COORDINATES),
+        // we don't need to check them because the targets are defined by the server anyway.
+        // Spells with SPELL_DAMAGE_CLASS_NONE should be castable on self, even if negative.
+        if (target == _player && spellInfo->DmgClass != SPELL_DAMAGE_CLASS_NONE &&
+            !IsAreaOfEffectSpell(spellInfo) && !IsPositiveSpell(spellInfo, _player, target))
         {
             recvPacket.rpos(recvPacket.wpos());                 // prevent spam at ignore packet
             return;
