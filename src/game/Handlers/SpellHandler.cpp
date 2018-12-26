@@ -330,7 +330,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
         // Cannot cast negative spells on yourself. Handle it here since casting negative
         // spells on yourself is frequently used within the core itself for certain
         // mechanics... ZZZ
-        if (target == _player && !IsPositiveSpell(spellInfo, _player, target))
+        if (target == _player && !IsAreaOfEffectSpell(spellInfo) && !IsPositiveSpell(spellInfo, _player, target))
         {
             recvPacket.rpos(recvPacket.wpos());                 // prevent spam at ignore packet
             return;
