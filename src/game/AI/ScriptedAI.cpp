@@ -481,3 +481,8 @@ void ScriptedAI::DoTeleportAll(float fX, float fY, float fZ, float fO)
             if (i_pl->isAlive())
                 i_pl->TeleportTo(me->GetMapId(), fX, fY, fZ, fO, TELE_TO_NOT_LEAVE_COMBAT);
 }
+
+bool ScriptedAI::FillLoot(Loot* loot, Player* looter) const
+{
+    return false;
+}

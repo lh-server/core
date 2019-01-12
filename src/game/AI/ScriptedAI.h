@@ -81,6 +81,9 @@ struct MANGOS_DLL_DECL ScriptedAI : CreatureAI
     //Called at waypoint reached or PointMovement end
     void MovementInform(uint32, uint32) override {}
 
+    // Called when populating the loot table for this creature
+    bool FillLoot(Loot* loot, Player* looter) const override;
+
     //*************
     // Variables
     //*************

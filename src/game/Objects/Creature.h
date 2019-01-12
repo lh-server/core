@@ -64,6 +64,7 @@ enum CreatureFlagsExtra
     CREATURE_FLAG_EXTRA_KEEP_POSITIVE_AURAS_ON_EVADE = 0x00001000,       // creature keeps positive auras at reset
     CREATURE_FLAG_EXTRA_ALWAYS_CRUSH                 = 0x00002000,       // creature always roll a crushing melee outcome when not miss/crit/dodge/parry/block
     CREATURE_FLAG_EXTRA_IMMUNE_AOE                   = 0x00004000,       // creature is immune to AoE
+    CREATURE_FLAG_EXTRA_SINGLE_LOOT_GENERATION       = 0x00020000        // creature will only generate loot once - no loot after subsequent deaths
 };
 
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push,N), also any gcc version not support it at some platform
@@ -661,6 +662,7 @@ class MANGOS_DLL_SPEC Creature : public Unit
         Player* GetOriginalLootRecipient() const;           // ignore group changes/etc, not for looting
         bool IsTappedBy(Player const* player) const;
         bool IsSkinnableBy(Player const* player) const { return !skinningForOthersTimer || IsTappedBy(player); }
+        bool CanHaveLoot(Player const* player) const;
 
         SpellEntry const *ReachWithSpellAttack(Unit *pVictim);
         SpellEntry const *ReachWithSpellCure(Unit *pVictim);
@@ -938,6 +940,8 @@ class MANGOS_DLL_SPEC Creature : public Unit
         float m_callForHelpDist;
 
         bool _isEscortable;
+        bool _hasDied;
+        bool _hasDiedAndRespawned;
 
     private:
         GridReference<Creature> m_gridRef;
