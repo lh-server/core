@@ -9,7 +9,7 @@ INSERT INTO `migrations` VALUES ('20180901180323');
 -- Add your query below.
 
 -- Searing totem rank 1 use correct attack spell
-UPDATE `creature_template` SET `spell1`=`3606` WHERE `entry`=`2523`;
+UPDATE `creature_template` SET `spell1`=3606 WHERE `entry`=2523;
 
 -- End of migration.
 END IF;
