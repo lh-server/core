@@ -3937,12 +3937,10 @@ bool ChatHandler::HandleFacemeCommand(char* /*args*/)
 
         float angle = atan2(dy, dx) - mO;
         angle = (angle >= 0) ? angle : 2 * M_PI_F + angle;
-
-        target->SetFacingTo(angle);
-
-        angle = angle * 180 / M_PI_F;
-
         PSendSysMessage("Rotating %f", angle);
+
+        target->SetFacingToObject(pWho);
+
         // PSendSysMessage("Facing %s", GetNameLink(pWhom).c_str());
     }
     return true;
