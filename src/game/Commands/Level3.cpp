@@ -3925,30 +3925,22 @@ bool ChatHandler::HandleFacemeCommand(char* /*args*/)
         if (HasLowerSecurity(pWhom, ObjectGuid(), false))
             return false;
 
-            // Do some calculations
-            float sX, sY, sZ, mX, mY, mZ, mO;
-            pWho->GetPosition(sX, sY, sZ);
-            pWhom->GetPosition(mX, mY, mZ);
-            mO = pWhom->GetOrientation();
+        float sX, sY, sZ, mX, mY, mZ, mO;
+        pWho->GetPosition(sX, sY, sZ);
+        pWhom->GetPosition(mX, mY, mZ);
+        mO = pWhom->GetOrientation();
 
-            float dx, dy, dz;
-            dx = sX - mX;
-            dy = sY - mY;
-            dz = sZ - mZ;
+        float dx, dy, dz;
+        dx = sX - mX;
+        dy = sY - mY;
+        dz = sZ - mZ;
 
-            float dist = sqrt(dx * dx + dy * dy + dz * dz);
-            // REMARK: This code needs the same distance calculation that is used for following
-            // Atm this means we have to subtract the bounding radiuses
-            dist = dist - pWho->GetObjectBoundingRadius() - pWhom->GetObjectBoundingRadius();
-            if (dist < 0.0f)
-                dist = 0.0f;
+        float angle = atan2(dy, dx) - mO;
+        angle = (angle >= 0) ? angle : 2 * M_PI_F + angle;
 
-            // Need to pass the relative angle to following
-            float angle = atan2(dy, dx) - mO;
-            angle = (angle >= 0) ? angle : 2 * M_PI_F + angle;
+        pWhom->SetOrientation(angle);
 
-
-        PSendSysMessage("Rotating %s for %f", GetNameLink(pWhom).c_str(), angle);
+        PSendSysMessage("Facing %s", GetNameLink(pWhom).c_str());
     }
     return true;
 }
