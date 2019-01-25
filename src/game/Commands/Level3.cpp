@@ -3940,7 +3940,10 @@ bool ChatHandler::HandleFacemeCommand(char* /*args*/)
 
         target->SetFacingTo(angle);
 
-        PSendSysMessage("Facing %s", GetNameLink(pWhom).c_str());
+        angle = angle * 180 / M_PI_F;
+
+        PSendSysMessage("Rotating %f", angle);
+        // PSendSysMessage("Facing %s", GetNameLink(pWhom).c_str());
     }
     return true;
 }
