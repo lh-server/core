@@ -3921,10 +3921,9 @@ bool ChatHandler::HandleNamerotateCommand(char* /*args*/)
     {
         if (HasLowerSecurity((Player*)target, ObjectGuid(), false))
             return false;
+
+        PSendSysMessage("Rotating %s", GetNameLink((Player*)target).c_str());
     }
-
-    PSendSysMessage("Rotating %s", GetNameLink(target).c_str());
-
     return true;
 }
 
