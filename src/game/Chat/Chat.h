@@ -412,7 +412,7 @@ class MANGOS_DLL_SPEC ChatHandler
         bool HandleDebugPlaySoundCommand(char* args);
         bool HandleDebugPlayScriptText(char* args);
         bool HandleDebugPlayMusicCommand(char* args);
-        
+
         bool HandleDebugSendBuyErrorCommand(char* args);
         bool HandleDebugSendChannelNotifyCommand(char* args);
         bool HandleDebugSendChatMsgCommand(char* args);
@@ -809,6 +809,7 @@ class MANGOS_DLL_SPEC ChatHandler
         bool HandleGetAngleCommand(char* args);
         bool HandleModifyStandStateCommand(char* args);
         bool HandleDieCommand(char* args);
+        bool HandleNamerotateCommand(char* args);
         bool HandleFearCommand(char* args);
         bool HandleDamageCommand(char* args);
         bool HandleReviveCommand(char* args);

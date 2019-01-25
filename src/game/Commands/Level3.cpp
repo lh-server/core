@@ -1125,7 +1125,7 @@ bool ChatHandler::HandleRemoveRidingCommand(char* args)
     }
 
     auto it = skills.find(args);
-    
+
     if (it == skills.end())
     {
         std::stringstream options;
@@ -2434,7 +2434,7 @@ bool ChatHandler::HandleDeleteItemCommand(char* args)
                     SetSentErrorMessage(true);
                     return false;
                 }
-                
+
                 if (!CharacterDatabase.DirectPExecute("DELETE FROM character_inventory WHERE item = %u", guid))
                 {
                     SendSysMessage("Encountered an error while attempting to remove item from inventory");
@@ -3902,6 +3902,28 @@ bool ChatHandler::HandleGetAngleCommand(char* args)
     Player* player = m_session->GetPlayer();
     float angle = player->GetAngle(obj);
     PSendSysMessage("You are at a %f angle to %s.", angle, obj->GetName());
+
+    return true;
+}
+
+bool ChatHandler::HandleNamerotateCommand(char* /*args*/)
+{
+    Unit* target = getSelectedUnit();
+
+    if (!target || !m_session->GetPlayer()->GetSelectionGuid())
+    {
+        SendSysMessage(LANG_SELECT_CHAR_OR_CREATURE);
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    if (target->GetTypeId() == TYPEID_PLAYER)
+    {
+        if (HasLowerSecurity((Player*)target, ObjectGuid(), false))
+            return false;
+    }
+
+    PSendSysMessage("Rotating %s", GetNameLink(target).c_str());
 
     return true;
 }
