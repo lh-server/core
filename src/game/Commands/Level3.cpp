@@ -3919,13 +3919,35 @@ bool ChatHandler::HandleFacemeCommand(char* /*args*/)
 
     if (target->GetTypeId() == TYPEID_PLAYER)
     {
-        if (HasLowerSecurity((Player*)target, ObjectGuid(), false))
+        Player* pWho = m_session->GetPlayer();
+        Player* pWhom = (Player*) target;
+
+        if (HasLowerSecurity(pWhom, ObjectGuid(), false))
             return false;
 
-        float target_angle = target->GetOrientation() * 180 / M_PI_F;
-        float my_angle = m_session->GetPlayer()->GetOrientation() * 180 / M_PI_F;
+            // Do some calculations
+            float sX, sY, sZ, mX, mY, mZ, mO;
+            pWho->GetRespawnCoord(sX, sY, sZ);
+            pWhom->GetRespawnCoord(mX, mY, mZ, &mO);
 
-        PSendSysMessage("Rotating %s for %f vs %f", GetNameLink((Player*)target).c_str(), target_angle, my_angle);
+            float dx, dy, dz;
+            dx = sX - mX;
+            dy = sY - mY;
+            dz = sZ - mZ;
+
+            float dist = sqrt(dx * dx + dy * dy + dz * dz);
+            // REMARK: This code needs the same distance calculation that is used for following
+            // Atm this means we have to subtract the bounding radiuses
+            dist = dist - pWho->GetObjectBoundingRadius() - pWhom->GetObjectBoundingRadius();
+            if (dist < 0.0f)
+                dist = 0.0f;
+
+            // Need to pass the relative angle to following
+            float angle = atan2(dy, dx) - mO;
+            angle = (angle >= 0) ? angle : 2 * M_PI_F + angle;
+
+
+        PSendSysMessage("Rotating %s for %f", GetNameLink(pWhom).c_str(), angle);
     }
     return true;
 }
