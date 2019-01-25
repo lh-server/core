@@ -3922,7 +3922,10 @@ bool ChatHandler::HandleFacemeCommand(char* /*args*/)
         if (HasLowerSecurity((Player*)target, ObjectGuid(), false))
             return false;
 
-        PSendSysMessage("Rotating %s for %f", GetNameLink((Player*)target).c_str(), target->GetOrientation());
+        float target_angle = target->GetOrientation() * 180 / M_PI_F;
+        float my_angle = m_session->GetPlayer()->GetOrientation() * 180 / M_PI_F;
+
+        PSendSysMessage("Rotating %s for %f vs %f", GetNameLink((Player*)target).c_str(), target_angle, my_angle);
     }
     return true;
 }
