@@ -3929,7 +3929,7 @@ bool ChatHandler::HandleFacemeCommand(char* /*args*/)
             float sX, sY, sZ, mX, mY, mZ, mO;
             pWho->GetPosition(sX, sY, sZ);
             pWhom->GetPosition(mX, mY, mZ);
-            m0 = pWhom->GetOrientation();
+            mO = pWhom->GetOrientation();
 
             float dx, dy, dz;
             dx = sX - mX;
