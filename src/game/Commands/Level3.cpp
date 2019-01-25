@@ -3919,30 +3919,10 @@ bool ChatHandler::HandleFacemeCommand(char* /*args*/)
 
     if (target->GetTypeId() == TYPEID_PLAYER)
     {
-        Player* pWho = m_session->GetPlayer();
-        Player* pWhom = (Player*) target;
-
-        if (HasLowerSecurity(pWhom, ObjectGuid(), false))
-            return false;
-
-        float sX, sY, sZ, mX, mY, mZ, mO;
-        pWho->GetPosition(sX, sY, sZ);
-        pWhom->GetPosition(mX, mY, mZ);
-        mO = pWhom->GetOrientation();
-
-        float dx, dy, dz;
-        dx = sX - mX;
-        dy = sY - mY;
-        dz = sZ - mZ;
-
-        float angle = atan2(dy, dx) - mO;
-        angle = (angle >= 0) ? angle : 2 * M_PI_F + angle;
-        PSendSysMessage("Rotating %f", angle);
-
-        target->SetFacingToObject(pWho);
-
-        // PSendSysMessage("Facing %s", GetNameLink(pWhom).c_str());
+        target->SetFacingToObject(m_session->GetPlayer());
+        PSendSysMessage("Facing %s", GetNameLink((Player*) target).c_str());
     }
+
     return true;
 }
 
