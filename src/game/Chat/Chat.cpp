@@ -1055,7 +1055,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { NODE, "commands",       SEC_PLAYER,         true,  &ChatHandler::HandleCommandsCommand,            "", nullptr },
         { NODE, "demorph",        SEC_GAMEMASTER,     false, &ChatHandler::HandleDeMorphCommand,             "", nullptr },
         { NODE, "die",            SEC_ADMINISTRATOR,  false, &ChatHandler::HandleDieCommand,                 "", nullptr },
-        { NODE, "namerotate",     SEC_MODERATOR,      false, &ChatHandler::HandleNamerotateCommand,          "", nullptr },
+        { NODE, "faceme",         SEC_MODERATOR,      false, &ChatHandler::HandleFacemeCommand,              "", nullptr },
         { NODE, "fear",           SEC_GAMEMASTER,     false, &ChatHandler::HandleFearCommand,                "", nullptr },
         { NODE, "revive",         SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleReviveCommand,              "", nullptr },
         { NODE, "dismount",       SEC_PLAYER,         false, &ChatHandler::HandleDismountCommand,            "", nullptr },

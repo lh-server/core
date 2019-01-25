@@ -809,7 +809,7 @@ class MANGOS_DLL_SPEC ChatHandler
         bool HandleGetAngleCommand(char* args);
         bool HandleModifyStandStateCommand(char* args);
         bool HandleDieCommand(char* args);
-        bool HandleNamerotateCommand(char* args);
+        bool HandleFacemeCommand(char* args);
         bool HandleFearCommand(char* args);
         bool HandleDamageCommand(char* args);
         bool HandleReviveCommand(char* args);

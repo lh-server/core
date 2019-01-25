@@ -3906,7 +3906,7 @@ bool ChatHandler::HandleGetAngleCommand(char* args)
     return true;
 }
 
-bool ChatHandler::HandleNamerotateCommand(char* /*args*/)
+bool ChatHandler::HandleFacemeCommand(char* /*args*/)
 {
     Unit* target = getSelectedUnit();
 
@@ -3922,7 +3922,7 @@ bool ChatHandler::HandleNamerotateCommand(char* /*args*/)
         if (HasLowerSecurity((Player*)target, ObjectGuid(), false))
             return false;
 
-        PSendSysMessage("Rotating %s", GetNameLink((Player*)target).c_str());
+        PSendSysMessage("Rotating %s for %f", GetNameLink((Player*)target).c_str(), target->GetOrientation());
     }
     return true;
 }
