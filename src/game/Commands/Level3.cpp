@@ -3927,8 +3927,9 @@ bool ChatHandler::HandleFacemeCommand(char* /*args*/)
 
             // Do some calculations
             float sX, sY, sZ, mX, mY, mZ, mO;
-            pWho->GetRespawnCoord(sX, sY, sZ);
-            pWhom->GetRespawnCoord(mX, mY, mZ, &mO);
+            pWho->GetPosition(sX, sY, sZ);
+            pWhom->GetPosition(mX, mY, mZ);
+            m0 = pWhom->GetOrientation();
 
             float dx, dy, dz;
             dx = sX - mX;
