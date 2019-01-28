@@ -3909,7 +3909,6 @@ bool ChatHandler::HandleGetAngleCommand(char* args)
 bool ChatHandler::HandleFacemeCommand(char* /*args*/)
 {
     Unit* target = getSelectedUnit();
-
     if (!target || !m_session->GetPlayer()->GetSelectionGuid())
     {
         SendSysMessage(LANG_SELECT_CHAR_OR_CREATURE);
@@ -3920,7 +3919,8 @@ bool ChatHandler::HandleFacemeCommand(char* /*args*/)
     if (target->GetTypeId() == TYPEID_PLAYER)
     {
         target->SetFacingToObject(m_session->GetPlayer());
-        PSendSysMessage("Facing %s", GetNameLink((Player*) target).c_str());
+        target->CastSpell(m_session->GetPlayer(), 11027, true);
+        PSendSysMessage("You are facing %s to you.", GetNameLink((Player*) target).c_str());
     }
 
     return true;
