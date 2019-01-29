@@ -3919,7 +3919,7 @@ bool ChatHandler::HandleFacemeCommand(char* /*args*/)
     if (target->GetTypeId() == TYPEID_PLAYER)
     {
         target->SetFacingToObject(m_session->GetPlayer());
-        target->CastSpell(target, 5133, false);
+        target->CastSpell(target, 5133, true);
         PSendSysMessage("You are facing %s to you.", GetNameLink((Player*) target).c_str());
     }
 
