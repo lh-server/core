@@ -3918,9 +3918,9 @@ bool ChatHandler::HandleFacemeCommand(char* /*args*/)
 
     if (target->GetTypeId() == TYPEID_PLAYER)
     {
+        target->InterruptNonMeleeSpells(true);
         target->SetFacingToObject(m_session->GetPlayer());
-        target->CastSpell(target, 5133, false);
-        PSendSysMessage("You are facing %s to you.", GetNameLink((Player*) target).c_str());
+        PSendSysMessage("%s is facing you.", GetNameLink((Player*) target).c_str());
     }
 
     return true;
