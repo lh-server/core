@@ -18,8 +18,8 @@ UPDATE `item_template` SET `BuyPrice` = 0, `SellPrice` = 0, `DisenchantID` = 0 W
         21405, 21406, 21404, -- Veiled Shadows
         21400, 21398, 21399, -- Gathering Storm
         21416, 21417, 21418, -- Unspoken Names
-        21394, 21392, 21393, -- Unyielding Strength
-    )
+        21394, 21392, 21393  -- Unyielding Strength
+    );
 
 -- End of migration.
 END IF;
