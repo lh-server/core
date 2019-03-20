@@ -134,7 +134,6 @@ private:
 
 void SqlResultQueue::Update(uint32 timeout)
 {
-    uint32 begin = WorldTimer::getMSTime();
     /// execute the callbacks waiting in the synchronization queue
     int threadsCount = 4;
     SqlResultCallbackCaller* caller = new SqlResultCallbackCaller();
@@ -161,18 +160,26 @@ void SqlResultQueue::Update(uint32 timeout)
         threads[i] = new ACE_Based::Thread(caller);
     // Now execute thread unsafe callbacks
     MaNGOS::IQueryCallback* s = NULL;
-    uint32 unsafeQueryTime = WorldTimer::getMSTime();
+    uint32 begin = WorldTimer::getMSTime();
     while (_threadUnsafeWaitingQueries.next(s))
     {
         s->Execute();
         delete s;
         --numUnsafeQueries;
-        if (timeout && WorldTimer::getMSTimeDiffToNow(begin) > timeout)
-            break;
-    }
-    if (unsafeQueryTime > timeout)
-    {
-        sLog.out(LOG_PERFORMANCE, "Unsafe queries took longer than the timeout. %u remaining", numUnsafeQueries);
+
+        if (timeout != 0)
+        {
+            uint32 unsafeQueryTime = WorldTimer::getMSTimeDiffToNow(begin);
+            if (unsafeQueryTime > timeout)
+            {
+                sLog.out(LOG_PERFORMANCE
+                        , "Unsafe queries took longer than the timeout. %u remaining, time cost:%u, threshold:%u"
+                        , numUnsafeQueries
+                        , unsafeQueryTime
+                        , timeout);
+                break;
+            }
+        }
     }
 
     caller->StopProcessing();
