@@ -4408,6 +4408,26 @@ bool ChatHandler::HandleNpcPlayEmoteCommand(char* args)
     return true;
 }
 
+bool ChatHandler::HandleNpcResetCommand(char* args)
+{
+    auto target = getSelectedCreature();
+    if (!target)
+    {
+        SendSysMessage(LANG_SELECT_CREATURE);
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    target->SetAInitializeOnRespawn(true);
+
+    target->DoKillUnit();
+    target->Respawn();
+
+    target->SetAInitializeOnRespawn(false);
+
+    return true;
+}
+
 //TODO: NpcCommands that needs to be fixed :
 
 bool ChatHandler::HandleNpcAddWeaponCommand(char* /*args*/)
