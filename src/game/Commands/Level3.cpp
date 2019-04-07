@@ -4418,12 +4418,9 @@ bool ChatHandler::HandleNpcResetCommand(char* args)
         return false;
     }
 
-    target->SetAInitializeOnRespawn(true);
-
     target->DoKillUnit();
     target->Respawn();
-
-    target->SetAInitializeOnRespawn(false);
+    target->AIM_Initialize();
 
     return true;
 }
