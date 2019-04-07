@@ -540,6 +540,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { NODE, "name",           SEC_GAMEMASTER,     false, &ChatHandler::HandleNpcNameCommand,             "", nullptr },
         { NODE, "subname",        SEC_GAMEMASTER,     false, &ChatHandler::HandleNpcSubNameCommand,          "", nullptr },
         //}
+        { NODE, "reset",        SEC_BASIC_ADMIN,      false, &ChatHandler::HandleNpcResetCommand,            "", nullptr },
 
         { MSTR, nullptr,       0,                  false, nullptr,                                           "", nullptr }
     };
