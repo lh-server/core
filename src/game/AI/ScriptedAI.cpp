@@ -330,11 +330,11 @@ void ScriptedAI::GetPlayersWithinRange(std::list<Player*>& players, float range)
     Cell::VisitWorldObjects(m_creature, searcher, range);
 }
 
-Player* ScriptedAI::GetNearestPlayer(float range)
+Player* ScriptedAI::GetNearestHostilePlayer(float range)
 {
     Player* target = nullptr;
     MaNGOS::NearestHostileUnitCheck check(m_creature, range);
-    MaNGOS::PlayerSearcher<MaNGOS::NearestHostileUnitCheck> searcher(target, check);
+    MaNGOS::PlayerLastSearcher<MaNGOS::NearestHostileUnitCheck> searcher(target, check);
     Cell::VisitWorldObjects(m_creature, searcher, range);
 
     return target;

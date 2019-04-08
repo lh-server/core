@@ -139,7 +139,7 @@ struct MANGOS_DLL_DECL ScriptedAI : CreatureAI
     void GetPlayersWithinRange(std::list<Player*>& players, float range);
 
     // Get the nearest player target within range
-    Player* GetNearestPlayer(float range);
+    Player* GetNearestHostilePlayer(float range);
 
     //Spawns a creature relative to m_creature
     Creature* DoSpawnCreature(uint32 uiId, float fX, float fY, float fZ, float fAngle, uint32 uiType, uint32 uiDespawntime);

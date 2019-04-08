@@ -459,6 +459,19 @@ namespace MaNGOS
     };
 
     template<class Check>
+    struct MANGOS_DLL_DECL PlayerLastSearcher
+    {
+        Player* &i_object;
+        Check & i_check;
+
+        PlayerLastSearcher(Player* & result, Check & check) : i_object(result), i_check(check) {}
+
+        void Visit(PlayerMapType &m);
+
+        template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED> &) {}
+    };
+
+    template<class Check>
     struct MANGOS_DLL_DECL PlayerListSearcher
     {
         std::list<Player*> &i_objects;
