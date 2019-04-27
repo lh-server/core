@@ -2003,11 +2003,21 @@ void Unit::DealMeleeDamage(CalcDamageInfo *damageInfo, bool durabilityLoss)
     if (!pVictim->isAlive() || pVictim->IsTaxiFlying() || (pVictim->GetTypeId() == TYPEID_UNIT && ((Creature*)pVictim)->IsInEvadeMode()))
         return;
 
+    auto hasWoundAnim = true;
+    if (auto const creature = pVictim->ToCreature())
+    {
+        if (creature->GetCreatureInfo()->type_flags & CREATURE_TYPEFLAGS_NO_WOUND_ANIM)
+            hasWoundAnim = false;
+    }
+
     // Hmmmm dont like this emotes client must by self do all animations
-    if (damageInfo->HitInfo & HITINFO_CRITICALHIT)
-        pVictim->HandleEmoteCommand(EMOTE_ONESHOT_WOUNDCRITICAL);
-    if (damageInfo->blocked_amount && damageInfo->TargetState != VICTIMSTATE_BLOCKS)
-        pVictim->HandleEmoteCommand(EMOTE_ONESHOT_PARRYSHIELD);
+    if (hasWoundAnim)
+    {
+        if (damageInfo->HitInfo & HITINFO_CRITICALHIT)
+            pVictim->HandleEmoteCommand(EMOTE_ONESHOT_WOUNDCRITICAL);
+        if (damageInfo->blocked_amount && damageInfo->TargetState != VICTIMSTATE_BLOCKS)
+            pVictim->HandleEmoteCommand(EMOTE_ONESHOT_PARRYSHIELD);
+    }
 
     if (damageInfo->TargetState == VICTIMSTATE_PARRY)
     {
