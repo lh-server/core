@@ -2592,11 +2592,11 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(const Unit *pVictim, WeaponAttackT
     int32 victimDefenseSkill = pVictim->GetDefenseSkillValue(this);
 
     // bonus from skills is 0.04%
-    int32    skillBonus  = 4 * (attackerWeaponSkill - victimMaxSkillValueForLevel);
+    int32    skillDiff = attackerWeaponSkill - victimMaxSkillValueForLevel;
     int32    cappedSkillDiff = std::min(attackerMaxSkillValueForLevel, attackerWeaponSkill) - victimMaxSkillValueForLevel;
-    int32    blockSkillBonus = pVictim->IsPlayer() ? skillBonus : 10 * cappedSkillDiff;
-    int32    dodgeSkillBonus = pVictim->IsPlayer() ? skillBonus : 10 * cappedSkillDiff;
-    int32    parrySkillBonus = pVictim->IsPlayer() ? skillBonus : 60 * cappedSkillDiff;
+    int32    blockSkillBonus = pVictim->IsPlayer() ? 4 * skillDiff : 10 * skillDiff;
+    int32    dodgeSkillBonus = pVictim->IsPlayer() ? 4 * skillDiff : 10 * skillDiff;
+    int32    parrySkillBonus = pVictim->IsPlayer() ? 4 * skillDiff : 60 * cappedSkillDiff;
     int32    sum = 0, tmp = 0;
     int32    roll = urand(0, 9999);
 
@@ -2888,9 +2888,7 @@ bool Unit::IsSpellBlocked(Unit *pCaster, Unit *pVictim, SpellEntry const *spellE
     float blockChance = GetUnitBlockChance();
 
     int32 skillDiff = int32(pCaster->GetWeaponSkillValue(attackType)) - int32(GetMaxSkillValueForLevel());
-    int32 cappedSkillDiff = std::min(int32(pCaster->GetMaxSkillValueForLevel(this)), int32(pCaster->GetWeaponSkillValue(attackType))) - int32(GetMaxSkillValueForLevel());
-    
-    blockChance -= pVictim->IsPlayer() ? skillDiff * 0.04f : cappedSkillDiff * 0.1f;
+    blockChance -= pVictim->IsPlayer() ? skillDiff * 0.04f : skillDiff * 0.1f;
 
     // Cannot be more than 5%
     if (blockChance > 5) blockChance = 5.0f;
@@ -3035,7 +3033,7 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit *pVictim, SpellEntry const *spell, 
     if (canDodge)
     {
         // Roll dodge
-        int32 dodgeModifier = pVictim->IsPlayer() ? skillDiff * 4 : cappedSkillDiff * 10;
+        int32 dodgeModifier = pVictim->IsPlayer() ? skillDiff * 4 : skillDiff * 10;
         int32 dodgeChance = int32(pVictim->GetUnitDodgeChance() * 100.0f) - dodgeModifier;
 
         if (dodgeChance < 0)
