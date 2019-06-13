@@ -299,6 +299,7 @@ bool Unit::IsTriggeredAtSpellProcEvent(Unit *pVictim, SpellAuraHolder* holder, S
                 return true;
             return false;
         }
+
         // SPELL_AURA_ADD_TARGET_PROC
         // Chance of proc calculated after.
         if (spellProto->EffectApplyAuraName[0] == SPELL_AURA_ADD_TARGET_TRIGGER)
@@ -320,6 +321,19 @@ bool Unit::IsTriggeredAtSpellProcEvent(Unit *pVictim, SpellAuraHolder* holder, S
     }
     // Get proc Event Entry
     spellProcEvent = sSpellMgr.GetSpellProcEvent(spellProto->Id);
+
+    // Custom hard-coded cases which depend on the proc event for firing...
+    if (procSpell)
+    {
+        // Fear Ward always procs on any Fear (except ones cast by ourselves...)
+        if (spellProto->Id == 6346 && isVictim)
+        {
+            if (procSpell->Mechanic == MECHANIC_FEAR)
+                return true;
+
+            return false;
+        }
+    }
 
     // Get EventProcFlag
     uint32 EventProcFlag;
@@ -1726,6 +1740,6 @@ SpellAuraProcResult Unit::HandleModResistanceAuraProc(Unit* /*pVictim*/, uint32 
 SpellAuraProcResult Unit::HandleModDamageAuraProc(Unit* /*pVictim*/, uint32 /*damage*/, Aura* triggeredByAura, SpellEntry const* procSpell, uint32 /*procFlag*/, uint32 /*procEx*/, uint32 /*cooldown*/)
 {
     // the aura school mask must match the spell school
-    return !(procSpell == NULL || !(GetSchoolMask(procSpell->School) & triggeredByAura->GetModifier()->m_miscvalue))
+    return (procSpell == NULL || (GetSchoolMask(procSpell->School) & triggeredByAura->GetModifier()->m_miscvalue))
         ? SPELL_AURA_PROC_OK : SPELL_AURA_PROC_FAILED;
 }

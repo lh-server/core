@@ -1167,16 +1167,20 @@ void Unit::Kill(Unit* pVictim, SpellEntry const *spellProto, bool durabilityLoss
                 creature->lootForPickPocketed = false;
 
             loot->clear();
-            if (!(creature->AI() && creature->AI()->FillLoot(loot, looter)))
-            {
-                if (uint32 lootid = creature->GetCreatureInfo()->lootid)
-                {
-                    loot->SetTeam(group_tap ? group_tap->GetTeam() : looter->GetTeam());
-                    loot->FillLoot(lootid, LootTemplates_Creature, looter, false, false, creature);
-                }
-            }
 
-            loot->generateMoneyLoot(creature->GetCreatureInfo()->mingold, creature->GetCreatureInfo()->maxgold);
+            if (creature->CanHaveLoot(looter))
+            {
+                if (!(creature->AI() && creature->AI()->FillLoot(loot, looter)))
+                {
+                    if (uint32 lootid = creature->GetCreatureInfo()->lootid)
+                    {
+                        loot->SetTeam(group_tap ? group_tap->GetTeam() : looter->GetTeam());
+                        loot->FillLoot(lootid, LootTemplates_Creature, looter, false, false, creature);
+                    }
+                }
+
+                loot->generateMoneyLoot(creature->GetCreatureInfo()->mingold, creature->GetCreatureInfo()->maxgold);
+            }
         }
 
         if (group_tap)
@@ -7068,18 +7072,16 @@ bool Unit::IsImmuneToSpell(SpellEntry const *spellInfo, bool /*castOnSelf*/)
         for (SpellImmuneList::const_iterator itr = mechanicList.begin(); itr != mechanicList.end(); ++itr)
         {
             if (itr->type == mechanic)
-            {
-                // always remove Fear Ward on fear immunity event, even if the unit has another fear immunity aura like Berserker Rage
-                if (mechanic == MECHANIC_FEAR)
-                    RemoveAurasDueToSpell(6346);
                 return true;
-            }
         }
 
+        uint32 mask = 1 << (mechanic - 1);
         AuraList const& immuneAuraApply = GetAurasByType(SPELL_AURA_MECHANIC_IMMUNITY_MASK);
         for (AuraList::const_iterator iter = immuneAuraApply.begin(); iter != immuneAuraApply.end(); ++iter)
-            if ((*iter)->GetModifier()->m_miscvalue & (1 << (mechanic - 1)))
+        {
+            if ((*iter)->GetModifier()->m_miscvalue & mask)
                 return true;
+        }
     }
 
     return false;
@@ -7346,16 +7348,6 @@ void Unit::ApplySpellImmune(uint32 spellId, uint32 op, uint32 type, bool apply)
 {
     if (apply)
     {
-        for (SpellImmuneList::iterator itr = m_spellImmune[op].begin(), next; itr != m_spellImmune[op].end(); itr = next)
-        {
-            next = itr;
-            ++next;
-            if (itr->type == type)
-            {
-                m_spellImmune[op].erase(itr);
-                next = m_spellImmune[op].begin();
-            }
-        }
         SpellImmune Immune;
         Immune.spellId = spellId;
         Immune.type = type;
@@ -7365,7 +7357,7 @@ void Unit::ApplySpellImmune(uint32 spellId, uint32 op, uint32 type, bool apply)
     {
         for (SpellImmuneList::iterator itr = m_spellImmune[op].begin(); itr != m_spellImmune[op].end(); ++itr)
         {
-            if (itr->spellId == spellId)
+            if (itr->spellId == spellId && itr->type == type)
             {
                 m_spellImmune[op].erase(itr);
                 break;

@@ -74,6 +74,9 @@ struct MANGOS_DLL_DECL ScriptedAI : CreatureAI
     // Called at waypoint reached or PointMovement end
     void MovementInform(uint32, uint32) override {}
 
+    // Called when populating the loot table for this creature
+    bool FillLoot(Loot* loot, Player* looter) const override;
+
     //*************
     // Variables
     //*************
@@ -129,7 +132,7 @@ struct MANGOS_DLL_DECL ScriptedAI : CreatureAI
     void GetPlayersWithinRange(std::list<Player*>& players, float range);
 
     // Get the nearest player target within range
-    Player* GetNearestPlayer(float range);
+    Player* GetNearestHostilePlayer(float range);
 
     // Spawns a creature relative to m_creature
     Creature* DoSpawnCreature(uint32 uiId, float fX, float fY, float fZ, float fAngle, uint32 uiType, uint32 uiDespawntime);

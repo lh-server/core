@@ -2417,3 +2417,24 @@ bool ChatHandler::HandleGoldRemoval(char* args)
     }
     return true;
 }
+
+bool ChatHandler::HandleDebugOverflowCommand(char* args)
+{
+    std::string name("\360\222\214\245\360\222\221\243\360\222\221\251\360\223\213\215\360\223\213\210\360\223\211\241\360\222\214\245\360\222\221\243\360\222\221\251\360\223\213\215\360\223\213\210\360\223\211\241");
+    // Overflow: \xd808\xdf25\xd809\xdc63\xd809\xdc69\xd80c\xdecd\xd80c\xdec8\xd80c\xde61\000\xdf25\xd809\xdc63
+
+    normalizePlayerName(name);
+
+    return true;
+}
+
+
+bool ChatHandler::HandleDebugChatFreezeCommand(char* args)
+{
+    std::string message("| |01");
+
+    auto master = GetSession()->GetMasterPlayer();
+    master->Whisper(message, LANG_UNIVERSAL, master);
+
+    return true;
+}

@@ -270,6 +270,8 @@ ChatCommand * ChatHandler::getCommandTable()
         { NODE, "movemotion",     SEC_ADMINISTRATOR,  false, &ChatHandler::HandleDebugMoveCommand,                "", nullptr },
         { NODE, "factionchange_items", SEC_ADMINISTRATOR, true, &ChatHandler::HandleFactionChangeItemsCommand,    "", nullptr },
         { NODE, "loottable",      SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleDebugLootTableCommand,           "", nullptr },
+        { NODE, "utf8overflow", SEC_ADMINISTRATOR,    true, &ChatHandler::HandleDebugOverflowCommand, "", nullptr },
+        { NODE, "chatfreeze", SEC_ADMINISTRATOR,    true, &ChatHandler::HandleDebugChatFreezeCommand, "", nullptr },
         { MSTR, nullptr,       0,                  false, nullptr,                                                "", nullptr }
     };
 
@@ -539,6 +541,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { NODE, "name",           SEC_GAMEMASTER,     false, &ChatHandler::HandleNpcNameCommand,             "", nullptr },
         { NODE, "subname",        SEC_GAMEMASTER,     false, &ChatHandler::HandleNpcSubNameCommand,          "", nullptr },
         //}
+        { NODE, "reset",        SEC_BASIC_ADMIN,      false, &ChatHandler::HandleNpcResetCommand,            "", nullptr },
 
         { MSTR, nullptr,       0,                  false, nullptr,                                           "", nullptr }
     };
@@ -972,7 +975,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { NODE, "",              SEC_GAMEMASTER,      true, &ChatHandler::HandleGMTicketGetByIdOrNameCommand,     "", nullptr },
         { MSTR, nullptr,      0,                   false,nullptr,                                                 "", nullptr }
     };
-    
+
     static ChatCommand serviceCommandTable[] =
     {
         { NODE, "del_characters",     SEC_ADMINISTRATOR,    true,  &ChatHandler::HandleServiceDeleteCharacters,   "", nullptr },
@@ -1055,6 +1058,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { NODE, "commands",       SEC_PLAYER,         true,  &ChatHandler::HandleCommandsCommand,            "", nullptr },
         { NODE, "demorph",        SEC_GAMEMASTER,     false, &ChatHandler::HandleDeMorphCommand,             "", nullptr },
         { NODE, "die",            SEC_ADMINISTRATOR,  false, &ChatHandler::HandleDieCommand,                 "", nullptr },
+        { NODE, "faceme",         SEC_MODERATOR,      false, &ChatHandler::HandleFacemeCommand,              "", nullptr },
         { NODE, "fear",           SEC_GAMEMASTER,     false, &ChatHandler::HandleFearCommand,                "", nullptr },
         { NODE, "revive",         SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleReviveCommand,              "", nullptr },
         { NODE, "dismount",       SEC_PLAYER,         false, &ChatHandler::HandleDismountCommand,            "", nullptr },
@@ -1916,7 +1920,7 @@ bool ChatHandler::isValidChatMessage(const char* message)
             break;
 
         char commandChar;
-        reader >> commandChar;
+        reader >> std::noskipws >> commandChar;
 
         // | in normal messages is escaped by ||
         if (commandChar != '|')

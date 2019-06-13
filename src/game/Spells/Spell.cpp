@@ -5108,7 +5108,7 @@ SpellCastResult Spell::CheckCast(bool strict)
      */
 
     uint32 spellCat = m_spellInfo->Category;
-    if (m_IsCastByItem)
+    if (m_CastItem)
     {
         // Find correct item category matching the current spell on item
         // used when item spells have custom categories due to wrong category
@@ -5183,12 +5183,11 @@ SpellCastResult Spell::CheckCast(bool strict)
             sWorld.getConfig(CONFIG_BOOL_VMAP_INDOOR_CHECK) &&
             VMAP::VMapFactory::createOrGetVMapManager()->isLineOfSightCalcEnabled())
     {
-        if (m_spellInfo->Attributes & SPELL_ATTR_OUTDOORS_ONLY &&
-                !m_caster->GetTerrain()->IsOutdoors(m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ()))
+        auto isOutdoors = m_caster->GetTerrain()->IsOutdoors(m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ());
+        if (m_spellInfo->Attributes & SPELL_ATTR_OUTDOORS_ONLY && !isOutdoors)
             return SPELL_FAILED_ONLY_OUTDOORS;
 
-        if (m_spellInfo->Attributes & SPELL_ATTR_INDOORS_ONLY &&
-                m_caster->GetTerrain()->IsOutdoors(m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ()))
+        if (m_spellInfo->Attributes & SPELL_ATTR_INDOORS_ONLY && isOutdoors)
             return SPELL_FAILED_ONLY_INDOORS;
     }
 
@@ -7115,8 +7114,19 @@ SpellCastResult Spell::CheckItems()
     // if not item target then required item must be equipped (for triggered case not report error)
     else
     {
-        if (m_caster->GetTypeId() == TYPEID_PLAYER && !((Player*)m_caster)->HasItemFitToSpellReqirements(m_spellInfo))
-            return m_IsTriggeredSpell ? SPELL_FAILED_DONT_REPORT : SPELL_FAILED_EQUIPPED_ITEM_CLASS;
+        if (auto player = m_caster->ToPlayer())
+        {
+            Item* ignore = nullptr;
+            if (m_attackType == BASE_ATTACK)
+                ignore = player->GetWeaponForAttack(OFF_ATTACK);
+            else if (m_attackType == OFF_ATTACK)
+                ignore = player->GetWeaponForAttack(BASE_ATTACK);
+
+            if (!player->HasItemFitToSpellReqirements(m_spellInfo, ignore))
+            {
+                return m_IsTriggeredSpell ? SPELL_FAILED_DONT_REPORT : SPELL_FAILED_EQUIPPED_ITEM_CLASS;
+            }
+        }
     }
 
     // check spell focus object
