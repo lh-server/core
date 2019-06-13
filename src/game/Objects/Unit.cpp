@@ -2477,7 +2477,7 @@ void Unit::CalculateAbsorbResistBlock(Unit *pCaster, SpellNonMeleeDamage *damage
         // Melee and Ranged Spells
         case SPELL_DAMAGE_CLASS_RANGED:
         case SPELL_DAMAGE_CLASS_MELEE:
-            blocked = IsSpellBlocked(pCaster, spellProto, attType);
+            blocked = IsSpellBlocked(pCaster, this, spellProto, attType);
             break;
         default:
             break;
@@ -2589,8 +2589,10 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(const Unit *pVictim, WeaponAttackT
 
     // bonus from skills is 0.04%
     int32    skillBonus  = 4 * (attackerWeaponSkill - victimMaxSkillValueForLevel);
-    int32    dodgeSkillBonus = pVictim->IsPlayer() ? skillBonus : 10 * (std::min(attackerMaxSkillValueForLevel, attackerWeaponSkill) - victimMaxSkillValueForLevel);
-    int32    parrySkillBonus = pVictim->IsPlayer() ? skillBonus : 60 * (std::min(attackerMaxSkillValueForLevel, attackerWeaponSkill) - victimMaxSkillValueForLevel);
+    int32    cappedSkillDiff = std::min(attackerMaxSkillValueForLevel, attackerWeaponSkill) - victimMaxSkillValueForLevel;
+    int32    blockSkillBonus = pVictim->IsPlayer() ? skillBonus : 10 * cappedSkillDiff;
+    int32    dodgeSkillBonus = pVictim->IsPlayer() ? skillBonus : 10 * cappedSkillDiff;
+    int32    parrySkillBonus = pVictim->IsPlayer() ? skillBonus : 60 * cappedSkillDiff;
     int32    sum = 0, tmp = 0;
     int32    roll = urand(0, 10000);
 
@@ -2692,10 +2694,17 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(const Unit *pVictim, WeaponAttackT
         if ((pVictim->GetTypeId() == TYPEID_PLAYER || !(((Creature*)pVictim)->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_NO_BLOCK))
           && !(GetTypeId() == TYPEID_UNIT && GetMeleeDamageSchoolMask() != SPELL_SCHOOL_MASK_NORMAL))  // can't block elemental melee attacks from mobs
         {
-            tmp = block_chance;
-            if ((tmp > 0)                                       // check if unit _can_ block
-                    && ((tmp -= skillBonus) > 0)
-                    && (roll < (sum += tmp)))
+            block_chance -= blockSkillBonus;
+
+            // Cannot be more than 5%
+            if (block_chance > 500) block_chance = 500;
+
+            // Low level reduction
+            if (!pVictim->IsPlayer() && pVictim->getLevel() < 10)
+                block_chance *= pVictim->getLevel() / 10.0f;
+
+            if (block_chance > 0 &&                         // check if unit _can_ block
+                (roll < (sum += block_chance)))
             {
                 // Critical chance
                 tmp = crit_chance;
@@ -2853,7 +2862,7 @@ void Unit::SendMeleeAttackStop(Unit* victim)
     ((Creature*)victim)->AI().EnterEvadeMode(this);*/
 }
 
-bool Unit::IsSpellBlocked(Unit *pCaster, SpellEntry const *spellEntry, WeaponAttackType attackType)
+bool Unit::IsSpellBlocked(Unit *pCaster, Unit *pVictim, SpellEntry const *spellEntry, WeaponAttackType attackType)
 {
     if (!HasInArc(M_PI_F, pCaster))
         return false;
@@ -2873,9 +2882,20 @@ bool Unit::IsSpellBlocked(Unit *pCaster, SpellEntry const *spellEntry, WeaponAtt
     }
 
     float blockChance = GetUnitBlockChance();
-    blockChance += (int32(pCaster->GetWeaponSkillValue(attackType)) - int32(GetMaxSkillValueForLevel())) * 0.04f;
 
-    if ((IsPlayer() && ToPlayer()->HasOption(PLAYER_CHEAT_UNRANDOMIZE)) ||
+    int32 skillDiff = int32(pCaster->GetWeaponSkillValue(attackType)) - int32(GetMaxSkillValueForLevel());
+    int32 cappedSkillDiff = std::min(int32(pCaster->GetMaxSkillValueForLevel(this)), int32(pCaster->GetWeaponSkillValue(attackType))) - int32(GetMaxSkillValueForLevel());
+    
+    blockChance -= pVictim->IsPlayer() ? skillDiff * 0.04f : cappedSkillDiff * 0.1f;
+
+    // Cannot be more than 5%
+    if (blockChance > 5) blockChance = 5.0f;
+
+    // Low level reduction
+    if (!pVictim->IsPlayer() && pVictim->getLevel() < 10)
+        blockChance *= pVictim->getLevel() / 10.0f;
+
+    if ((IsPlayer() && ToPlayer()->HasOption(PLAYER_CHEAT_UNRANDOMIZE)) || (blockChance < 0) ||
         (pCaster->IsPlayer() && pCaster->ToPlayer()->HasOption(PLAYER_CHEAT_UNRANDOMIZE)))
         blockChance = 0;
     return roll_chance_f(blockChance);
