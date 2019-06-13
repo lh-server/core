@@ -2928,12 +2928,6 @@ float Unit::MeleeSpellMissChance(Unit *pVictim, WeaponAttackType attType, int32 
     if (!pVictim->IsPlayer() && pVictim->getLevel() < 10)
         missChance *= pVictim->getLevel() / 10.0f;
 
-    // Hit chance depends from victim auras
-    if (attType == RANGED_ATTACK)
-        hitChance += pVictim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_RANGED_HIT_CHANCE);
-    else
-        hitChance += pVictim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_MELEE_HIT_CHANCE);
-
     // Spellmod from SPELLMOD_RESIST_MISS_CHANCE
     if (Player *modOwner = GetSpellModOwner())
         modOwner->ApplySpellMod(spell->Id, SPELLMOD_RESIST_MISS_CHANCE, hitChance, spellPtr);
@@ -2943,6 +2937,18 @@ float Unit::MeleeSpellMissChance(Unit *pVictim, WeaponAttackType attType, int32 
         hitChance += m_modRangedHitChance;
     else
         hitChance += m_modMeleeHitChance;
+
+    // There is some code in 1.12 that explicitly adds a modifier that causes the first 1% of +hit gained from
+    // talents or gear to be ignored against monsters with more than 10 Defense Skill above the attacking player’s Weapon Skill.
+    // https://us.forums.blizzard.com/en/wow/t/bug-hit-tables/185675/33
+    if (skillDiff < -10 && hitChance > 0)
+        hitChance -= 1.0f;
+
+    // Hit chance depends from victim auras
+    if (attType == RANGED_ATTACK)
+        hitChance += pVictim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_RANGED_HIT_CHANCE);
+    else
+        hitChance += pVictim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_MELEE_HIT_CHANCE);
 
     missChance -= hitChance;
 
@@ -3297,10 +3303,19 @@ float Unit::MeleeMissChanceCalc(const Unit *pVictim, WeaponAttackType attType) c
         missChance *= pVictim->getLevel() / 10.0f;
 
     // Hit chance bonus from attacker based on ratings and auras
+    float hitChance = 0.0f;
     if (attType == RANGED_ATTACK)
-        missChance -= m_modRangedHitChance;
+        hitChance = m_modRangedHitChance;
     else
-        missChance -= m_modMeleeHitChance;
+        hitChance = m_modMeleeHitChance;
+
+    // There is some code in 1.12 that explicitly adds a modifier that causes the first 1% of +hit gained from
+    // talents or gear to be ignored against monsters with more than 10 Defense Skill above the attacking player’s Weapon Skill.
+    // https://us.forums.blizzard.com/en/wow/t/bug-hit-tables/185675/33
+    if (skillDiff < -10 && hitChance > 0)
+        hitChance -= 1.0f;
+
+    missChance -= hitChance;
 
     // Modify miss chance by victim auras
     if (attType == RANGED_ATTACK)
