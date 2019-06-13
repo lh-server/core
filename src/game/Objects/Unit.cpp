@@ -2622,6 +2622,8 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(const Unit *pVictim, WeaponAttackT
 
     // bonus from skills is 0.04%
     int32    skillBonus  = 4 * (attackerWeaponSkill - victimMaxSkillValueForLevel);
+    int32    dodgeSkillBonus = pVictim->IsPlayer() ? skillBonus : 10 * (std::min(attackerMaxSkillValueForLevel, attackerWeaponSkill) - victimMaxSkillValueForLevel);
+    int32    parrySkillBonus = pVictim->IsPlayer() ? skillBonus : 60 * (std::min(attackerMaxSkillValueForLevel, attackerWeaponSkill) - victimMaxSkillValueForLevel);
     int32    sum = 0, tmp = 0;
     int32    roll = urand(0, 10000);
 
@@ -2653,10 +2655,14 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(const Unit *pVictim, WeaponAttackT
     // only players can't dodge if attacker is behind
     if (pVictim->GetTypeId() != TYPEID_PLAYER || !from_behind)
     {
-        tmp = dodge_chance;
-        if ((tmp > 0)                                           // check if unit _can_ dodge
-                && ((tmp -= skillBonus) > 0)
-                && roll < (sum += tmp))
+        dodge_chance -= dodgeSkillBonus;
+
+        // Low level reduction
+        if (!pVictim->IsPlayer() && pVictim->getLevel() < 10)
+            dodge_chance *= pVictim->getLevel() / 10.0f;
+
+        if (dodge_chance > 0 &&                         // check if unit _can_ dodge
+            (roll < (sum += dodge_chance)))
         {
             DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: DODGE <%d, %d)", sum - tmp, sum);
             return MELEE_HIT_DODGE;
@@ -2669,7 +2675,11 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(const Unit *pVictim, WeaponAttackT
     {
         if (parry_chance > 0 && (pVictim->GetTypeId() == TYPEID_PLAYER || !(((Creature*)pVictim)->GetCreatureInfo()->flags_extra & CREATURE_FLAG_EXTRA_NO_PARRY)))
         {
-            parry_chance -= skillBonus;
+            parry_chance -= parrySkillBonus;
+
+            // Low level reduction
+            if (!pVictim->IsPlayer() && pVictim->getLevel() < 10)
+                parry_chance *= pVictim->getLevel() / 10.0f;
 
             if (parry_chance > 0 &&                         // check if unit _can_ parry
                     (roll < (sum += parry_chance)))
@@ -2965,6 +2975,7 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit *pVictim, SpellEntry const *spell, 
     int32 attackerWeaponSkill = (spell->EquippedItemClass == ITEM_CLASS_WEAPON) ? int32(GetWeaponSkillValue(attType, pVictim)) : GetMaxSkillValueForLevel();
     int32 skillDiff = attackerWeaponSkill - int32(pVictim->GetMaxSkillValueForLevel(this));
     int32 fullSkillDiff = attackerWeaponSkill - int32(pVictim->GetDefenseSkillValue(this));
+    int32 cappedSkillDiff = std::min(int32(GetMaxSkillValueForLevel(pVictim)), attackerWeaponSkill) - int32(pVictim->GetMaxSkillValueForLevel(this));
 
     uint32 roll = urand(0, 10000);
 
@@ -3023,11 +3034,15 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit *pVictim, SpellEntry const *spell, 
     if (canDodge)
     {
         // Roll dodge
-        int32 dodgeChance = int32(pVictim->GetUnitDodgeChance() * 100.0f) - skillDiff * 4;
+        int32 dodgeModifier = pVictim->IsPlayer() ? skillDiff * 4 : cappedSkillDiff * 10;
+        int32 dodgeChance = int32(pVictim->GetUnitDodgeChance() * 100.0f) - dodgeModifier;
 
         if (dodgeChance < 0)
             dodgeChance = 0;
 
+        // Low level reduction
+        if (!pVictim->IsPlayer() && pVictim->getLevel() < 10)
+            dodgeChance *= pVictim->getLevel() / 10.0f;
 
         tmp += dodgeChance;
         if (roll < tmp)
@@ -3037,10 +3052,16 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit *pVictim, SpellEntry const *spell, 
     if (canParry)
     {
         // Roll parry
-        int32 parryChance = int32(pVictim->GetUnitParryChance() * 100.0f)  - skillDiff * 4;
+        int32 parryModifier = pVictim->IsPlayer() ? skillDiff * 4 : cappedSkillDiff * 60;
+        int32 parryChance = int32(pVictim->GetUnitParryChance() * 100.0f)  - parryModifier;
+
         // Can`t parry from behind
         if (parryChance < 0)
             parryChance = 0;
+
+        // Low level reduction
+        if (!pVictim->IsPlayer() && pVictim->getLevel() < 10)
+            parryChance *= pVictim->getLevel() / 10.0f;
 
         tmp += parryChance;
         if (roll < tmp)
