@@ -2598,7 +2598,7 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(const Unit *pVictim, WeaponAttackT
     int32    dodgeSkillBonus = pVictim->IsPlayer() ? skillBonus : 10 * cappedSkillDiff;
     int32    parrySkillBonus = pVictim->IsPlayer() ? skillBonus : 60 * cappedSkillDiff;
     int32    sum = 0, tmp = 0;
-    int32    roll = urand(0, 10000);
+    int32    roll = urand(0, 9999);
 
     //DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: skill bonus of %d for attacker", skillBonus);
     //DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: rolled %d, miss %d, dodge %d, parry %d, block %d, crit %d", roll, miss_chance, dodge_chance, parry_chance, block_chance, crit_chance);
@@ -2914,14 +2914,19 @@ float Unit::MeleeSpellMissChance(Unit *pVictim, WeaponAttackType attType, int32 
 
     // Calculate hit chance (more correct for chance mod)
     float hitChance = 0.0f;
+    float missChance = 0.0f;
 
     // PvP - PvE melee chances
     if (pVictim->GetTypeId() == TYPEID_PLAYER)
-        hitChance = 95.0f + skillDiff * 0.04f;
+        missChance = 5.0f - skillDiff * 0.04f;
     else if (skillDiff < -10)
-        hitChance = 93.0f + (skillDiff + 10) * 0.4f;        // 7% base chance to miss for big skill diff
+        missChance = 5.0f - skillDiff * 0.2f;
     else
-        hitChance = 95.0f + skillDiff * 0.1f;
+        missChance = 5.0f - skillDiff * 0.1f;
+
+    // Low level reduction
+    if (!pVictim->IsPlayer() && pVictim->getLevel() < 10)
+        missChance *= pVictim->getLevel() / 10.0f;
 
     // Hit chance depends from victim auras
     if (attType == RANGED_ATTACK)
@@ -2933,14 +2938,13 @@ float Unit::MeleeSpellMissChance(Unit *pVictim, WeaponAttackType attType, int32 
     if (Player *modOwner = GetSpellModOwner())
         modOwner->ApplySpellMod(spell->Id, SPELLMOD_RESIST_MISS_CHANCE, hitChance, spellPtr);
 
-    // Miss = 100 - hit
-    float missChance = 100.0f - hitChance;
-
     // Bonuses from attacker aura and ratings
     if (attType == RANGED_ATTACK)
-        missChance -= m_modRangedHitChance;
+        hitChance += m_modRangedHitChance;
     else
-        missChance -= m_modMeleeHitChance;
+        hitChance += m_modMeleeHitChance;
+
+    missChance -= hitChance;
 
     // Limit miss chance from 0 to 60%
     if (missChance < 0.0f)
@@ -2968,7 +2972,7 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit *pVictim, SpellEntry const *spell, 
     int32 fullSkillDiff = attackerWeaponSkill - int32(pVictim->GetDefenseSkillValue(this));
     int32 cappedSkillDiff = std::min(int32(GetMaxSkillValueForLevel(pVictim)), attackerWeaponSkill) - int32(pVictim->GetMaxSkillValueForLevel(this));
 
-    uint32 roll = urand(0, 10000);
+    uint32 roll = urand(0, 9999);
 
     uint32 missChance = uint32(MeleeSpellMissChance(pVictim, attType, fullSkillDiff, spell, spellPtr) * 100.0f);
     // Roll miss
@@ -3284,9 +3288,13 @@ float Unit::MeleeMissChanceCalc(const Unit *pVictim, WeaponAttackType attType) c
     if (pVictim->GetTypeId() == TYPEID_PLAYER)
         missChance -= skillDiff * 0.04f;
     else if (skillDiff < -10)
-        missChance -= (skillDiff + 10) * 0.4f - 2.0f;       // 7% base chance to miss for big skill diff
+        missChance -= skillDiff * 0.2f;
     else
         missChance -= skillDiff * 0.1f;
+
+    // Low level reduction
+    if (!pVictim->IsPlayer() && pVictim->getLevel() < 10)
+        missChance *= pVictim->getLevel() / 10.0f;
 
     // Hit chance bonus from attacker based on ratings and auras
     if (attType == RANGED_ATTACK)
