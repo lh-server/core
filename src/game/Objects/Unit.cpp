@@ -1869,65 +1869,32 @@ void Unit::CalculateMeleeDamage(Unit *pVictim, uint32 damage, CalcDamageInfo *da
             damageInfo->HitInfo     |= HITINFO_GLANCING;
             damageInfo->TargetState  = VICTIMSTATE_NORMAL;
             damageInfo->procEx |= PROC_EX_NORMAL_HIT;
-            // int32 attackerWeaponSkill = GetWeaponSkillValue(damageInfo->attackType,pVictim);
-            // int32 victimDefenseSkill = pVictim->GetDefenseSkillValue(this);
-            int SkillDiff = 0;
-            SkillDiff = pVictim->GetDefenseSkillValue(this) - GetWeaponSkillValue(damageInfo->attackType, pVictim);
-            float reducePercent = 1.0f;
-            // (Youfie) Formule de calcul de la réduction de dégâts des érafles, influencée en pré-BC par le +skill au delà de [niveau du joueur * 5]
-            // Formule d'Athan retenue et supposée comme Blizz-like au regard des multiples sources et tests concordants
-            // float reducePercent = 1 - (5*(pow(2,(victimDefenseSkill/5) - (attackerWeaponSkill/5) - 1))/100);
-            // Après tentative d'implémentation "propre" de la formule et de nombreux échecs, mise en place de celle-ci après calcul manuel des différentes valeurs
-            // cf. http://nostalrius.org/forum/viewtopic.php?p=43964#p43964 pour infos et sources
-            if (SkillDiff >= 15)
-                reducePercent = 0.6500f;
-            if (SkillDiff <= 0)
-                reducePercent = 1;
-            switch (SkillDiff)
-            {
-                case 14 :
-                    reducePercent = 0.7018f;
-                    break;
-                case 13 :
-                    reducePercent = 0.7469f;
-                    break;
-                case 12 :
-                    reducePercent = 0.7860f;
-                    break;
-                case 11 :
-                    reducePercent = 0.8203f;
-                    break;
-                case 10 :
-                    reducePercent = 0.8500f;
-                    break;
-                case 9 :
-                    reducePercent = 0.8759f;
-                    break;
-                case 8 :
-                    reducePercent = 0.8984f;
-                    break;
-                case 7 :
-                    reducePercent = 0.9180f;
-                    break;
-                case 6 :
-                    reducePercent = 0.9351f;
-                    break;
-                case 5 :
-                    reducePercent = 0.9500f;
-                    break;
-                case 4 :
-                    reducePercent = 0.9629f;
-                    break;
-                case 3 :
-                    reducePercent = 0.9742f;
-                    break;
-                case 2 :
-                    reducePercent = 0.9840f;
-                    break;
-                case 1 :
-                    reducePercent = 0.9926f;
-                    break;
+
+            // Baeza formula: https://wowwiki.fandom.com/wiki/Weapon_skill?diff=349241&oldid=347613
+            // Low end : 1.3 - 0.05*(defense - skill) min of 0.01 and max of 0.91
+            // If the attacker is a caster then this is reduced by 0.7 and max of 0.6
+            // High end : 1.2 - 0.03*(defense - skill) min of 0.2 and max of 0.99
+            // If the attacker is a caster then this is reduced by 0.3
+
+            int32 skillDiff = pVictim->GetDefenseSkillValue(this) - GetWeaponSkillValue(damageInfo->attackType, pVictim);
+            float low = 1.3f - 0.05f * skillDiff;
+            float high = 1.2f - 0.03f * skillDiff;
+            float lowCap = 0.91f;
+            float highCap = 0.99f;
+
+            if ((getClassMask() & CLASSMASK_WAND_USERS) != 0) {
+                low -= 0.7f;
+                high -= 0.3f;
+                lowCap = 0.6f;
             }
+
+            if (low < 0.01f) low = 0.01f;
+            if (high < 0.2f) high = 0.2f;
+
+            if (low > lowCap) low = lowCap;
+            if (high > highCap) high = highCap;
+
+            float reducePercent = frand(low,high);
 
             // sLog.outString("SkillDiff = %i, reducePercent = %f", SkillDiff, reducePercent); // Pour tests & débug via la console
 
