@@ -3440,7 +3440,10 @@ float Unit::GetUnitCriticalChance(WeaponAttackType attackType, const Unit *pVict
         crit += pVictim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_MELEE_CRIT_CHANCE);
 
     // Apply crit chance from defence skill
-    crit += (int32(GetMaxSkillValueForLevel(pVictim)) - int32(pVictim->GetDefenseSkillValue(this))) * 0.04f;
+    int32 skillDiff = int32(GetWeaponSkillValue(attackType, pVictim)) - int32(pVictim->GetDefenseSkillValue(this));
+    int32 cappedSkillDiff = std::min(int32(GetMaxSkillValueForLevel(pVictim)), int32(GetWeaponSkillValue(attackType, pVictim))) - int32(pVictim->GetDefenseSkillValue(this));
+
+    crit += (pVictim->IsPlayer() || skillDiff > 0) ? skillDiff * 0.04f : cappedSkillDiff * 0.2f;
 
     if (crit < 0.0f)
         crit = 0.0f;
