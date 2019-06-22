@@ -9985,8 +9985,13 @@ void Unit::UpdateModelData()
         SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, (GetObjectScale() / displayEntry->scale) * modelInfo->bounding_radius);
 
         // never actually update combat_reach for player, it's always the same. Below player case is for initialization
-        if (GetTypeId() == TYPEID_PLAYER)
-            SetFloatValue(UNIT_FIELD_COMBATREACH, 1.5f);
+        if (GetTypeId() == TYPEID_PLAYER) 
+        {
+            if (getRace() == RACE_TAUREN && GetDisplayId() == GetNativeDisplayId())
+                SetFloatValue(UNIT_FIELD_COMBATREACH, 4.05f);
+            else
+                SetFloatValue(UNIT_FIELD_COMBATREACH, 1.5f);
+        }
         else
             SetFloatValue(UNIT_FIELD_COMBATREACH, (GetObjectScale() / displayEntry->scale) * modelInfo->combat_reach);
 
@@ -11934,14 +11939,14 @@ void Unit::InitPlayerDisplayIds()
     switch (gender)
     {
         case GENDER_FEMALE:
-            SetDisplayId(info->displayId_f);
             SetNativeDisplayId(info->displayId_f);
+            SetDisplayId(info->displayId_f);
             if (getRace() == RACE_TAUREN)
                 setNativeScale(DEFAULT_TAUREN_FEMALE_SCALE);
             break;
         case GENDER_MALE:
-            SetDisplayId(info->displayId_m);
             SetNativeDisplayId(info->displayId_m);
+            SetDisplayId(info->displayId_m);
             if (getRace() == RACE_TAUREN)
                 setNativeScale(DEFAULT_TAUREN_MALE_SCALE);
             break;
