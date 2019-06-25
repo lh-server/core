@@ -2700,8 +2700,8 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(const Unit *pVictim, WeaponAttackT
         {
             block_chance -= blockSkillBonus;
 
-            // Cannot be more than 5%
-            if (block_chance > 500) block_chance = 500;
+            // mobs cannot block more than 5% of attacks regardless of rating difference
+            if (!pVictim->IsPlayer() && block_chance > 500) block_chance = 500;
 
             // Low level reduction
             if (!pVictim->IsPlayer() && pVictim->getLevel() < 10)
@@ -2890,8 +2890,8 @@ bool Unit::IsSpellBlocked(Unit *pCaster, Unit *pVictim, SpellEntry const *spellE
     int32 skillDiff = int32(pCaster->GetWeaponSkillValue(attackType)) - int32(GetMaxSkillValueForLevel());
     blockChance -= pVictim->IsPlayer() ? skillDiff * 0.04f : skillDiff * 0.1f;
 
-    // Cannot be more than 5%
-    if (blockChance > 5) blockChance = 5.0f;
+    // mobs cannot block more than 5% of attacks regardless of rating difference
+    if (!pVictim->IsPlayer() && blockChance > 5) blockChance = 5.0f;
 
     // Low level reduction
     if (!pVictim->IsPlayer() && pVictim->getLevel() < 10)
