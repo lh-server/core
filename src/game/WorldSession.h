@@ -539,7 +539,13 @@ class MANGOS_DLL_SPEC WorldSession
 
         void SetAccountFlags(uint32 f) { _accountFlags = f; }
         uint32 GetAccountFlags() const { return _accountFlags; }
-        uint32      _accountFlags;
+        void SetInviteID(uint32 id) { _inviteID = id; }
+        bool IsAccountRestricted() const;
+        void SendRestrictedHelp(int32 entry);
+        uint32 GetInviteID() const { return _inviteID; }
+        uint32 _accountFlags;
+        uint32 _inviteID;
+        bool _restricted;
 
         uint32 m_idleTime;
 

@@ -822,7 +822,14 @@ enum MangosStrings
     LANG_GUILD_VETERAN                  = 813,
     LANG_GUILD_MEMBER                   = 814,
     LANG_GUILD_INITIATE                 = 815,
-    // Room for in-game strings           816-899 not used
+
+    // invite restriction strings
+    LANG_INV_AUCTION_LIST_RESTRICTED   = 816,
+    LANG_INV_MAIL_SEND_RESTRICTED      = 817,
+    LANG_INV_PARTY_INVITE_RESTRICTED   = 818,
+    LANG_INV_WHISPER_RESTRICTED        = 819,
+    LANG_INV_TRADE_SEND_RESTRICTED     = 820,
+    // Room for in-game strings           821-899 not used
 
     // More Modify Options
     LANG_YOU_CHANGE_STR = 900,

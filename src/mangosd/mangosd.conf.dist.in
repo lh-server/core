@@ -1880,7 +1880,7 @@ WorldChan.MinLevel          = 1
 WorldChan.Cooldown          = 0
 WorldChan.CooldownMaxLevel  = 0
 WorldChan.CooldownScaling   = 0
-WhisperDiffZone.MinLevel    = 1
+Whisper.MinLevel    = 1
 YellRange.LinearScale.MaxLevel      = 0
 YellRange.QuadraticScale.MaxLevel   = 0
 ChannelInvite.MinLevel = 10
@@ -1888,6 +1888,11 @@ WhisperRestriction = 0
 SayMinLevel = 0;
 SayEmoteMinLevel = 0;
 YellMinLevel = 0;
+
+# Invite system (limits trades/whispers/invites until above RestrictionCap or referred by an existing player)
+Invites.Enable = false
+Invites.RestrictionCap = 15
+Invites.HelpURL = https://lightshope.org/invite
 
 # Database logs
 LogsDB.Chat                 = 0

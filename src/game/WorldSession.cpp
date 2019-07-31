@@ -40,6 +40,7 @@
 #include "BattleGroundMgr.h"
 #include "MapManager.h"
 #include "SocialMgr.h"
+#include "Config/Config.h"
 
 #include "PlayerBotMgr.h"
 #include "Anticheat.h"
@@ -876,6 +877,14 @@ void WorldSession::SendNotification(int32 string_id, ...)
     }
 }
 
+void WorldSession::SendRestrictedHelp(int32 entry)
+{
+    SendNotification(
+        entry, sWorld.getConfig(CONFIG_UINT32_INVITE_RESTRICT_CAP),
+        sConfig.GetStringDefault("Invites.HelpURL", "<missing entry>").c_str()
+    );
+}
+
 const char * WorldSession::GetMangosString(int32 entry) const
 {
     return sObjectMgr.GetMangosString(entry, GetSessionDbLocaleIndex());
@@ -1387,4 +1396,10 @@ bool WorldSession::CharacterScreenIdleKick(uint32 currTime)
     }
 
     return false;
+}
+
+bool WorldSession::IsAccountRestricted() const
+{
+    return sWorld.getConfig(CONFIG_BOOL_ENABLE_INVITES) && !GetInviteID()
+        && GetAccountMaxLevel() < sWorld.getConfig(CONFIG_UINT32_INVITE_RESTRICT_CAP);
 }

@@ -732,6 +732,7 @@ void World::LoadConfigSettings(bool reload)
     setConfig(CONFIG_BOOL_OUTDOORPVP_SI_ENABLE, "OutdoorPvP.SI.Enable", true);
 
     setConfig(CONFIG_UINT32_ANTIFLOOD_SANCTION,       "Antiflood.Sanction", CHEAT_ACTION_KICK);
+    setConfig(CONFIG_BOOL_ENABLE_INVITES,             "Invites.Enable", false);
 
     m_relocation_ai_notify_delay = sConfig.GetIntDefault("Visibility.AIRelocationNotifyDelay", 1000u);
     m_relocation_lower_limit_sq  = pow(sConfig.GetFloatDefault("Visibility.RelocationLowerLimit", 10), 2);
@@ -971,7 +972,7 @@ void World::LoadNostalriusConfig(bool reload)
     setConfig(CONFIG_UINT32_SAY_MIN_LEVEL,                              "SayMinLevel", 0);
     setConfig(CONFIG_UINT32_YELL_MIN_LEVEL,                             "YellMinLevel", 0);
     setConfig(CONFIG_UINT32_SAY_EMOTE_MIN_LEVEL,                        "SayEmoteMinLevel", 0);
-    setConfig(CONFIG_UINT32_WHISP_DIFF_ZONE_MIN_LEVEL,                  "WhisperDiffZone.MinLevel", 0);
+    setConfig(CONFIG_UINT32_WHISP_MIN_LEVEL,                            "Whisper.MinLevel", 0);
     setConfig(CONFIG_UINT32_YELLRANGE_LINEARSCALE_MAXLEVEL,             "YellRange.LinearScale.MaxLevel", 0);
     setConfig(CONFIG_UINT32_YELLRANGE_QUADRATICSCALE_MAXLEVEL,          "YellRange.QuadraticScale.MaxLevel", 0);
     setConfig(CONFIG_UINT32_YELLRANGE_MIN,                              "YellRange.Min", 0);
@@ -1033,6 +1034,7 @@ void World::LoadNostalriusConfig(bool reload)
     setConfig(CONFIG_UINT32_WAR_EFFORT_AUTOCOMPLETE_PERIOD,             "WarEffortResourceCompletePeriod", 86400);
 
     setConfig(CONFIG_UINT32_ACCOUNT_CONCURRENT_AUCTION_LIMIT,           "Auction.AccountConcurrentLimit", 0);
+    setConfig(CONFIG_UINT32_INVITE_RESTRICT_CAP,                        "Invites.RestrictionCap",         0);
 
     if (getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_CHAT))
         setConfig(CONFIG_BOOL_GM_JOIN_OPPOSITE_FACTION_CHANNELS, false);

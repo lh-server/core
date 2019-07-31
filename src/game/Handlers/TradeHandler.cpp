@@ -256,6 +256,29 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& recvPacket)
     TradeData* my_trade = _player->m_trade;
     if (!my_trade)
         return;
+
+    if (IsAccountRestricted())
+    {
+        if (my_trade->GetMoney())
+        {
+            SendRestrictedHelp(LANG_INV_TRADE_SEND_RESTRICTED);
+            SendTradeStatus(TRADE_STATUS_TRIAL_ACCOUNT);
+            my_trade->SetAccepted(false, false);
+            return;
+        }
+
+        for (int i = 0; i < TRADE_SLOT_TRADED_COUNT; ++i)
+        {
+            if (my_trade->GetItem(TradeSlots(i)))
+            {
+                SendRestrictedHelp(LANG_INV_TRADE_SEND_RESTRICTED);
+                SendTradeStatus(TRADE_STATUS_TRIAL_ACCOUNT);
+                my_trade->SetAccepted(false, false);
+                return;
+            }
+        }
+    }
+
     double lastModificationTimeInMS = difftime(time(NULL), my_trade->GetLastModificationTime()) * 1000;
     if (lastModificationTimeInMS < my_trade->GetScamPreventionDelay()) // if we are not outside the delay period since last modification
     {

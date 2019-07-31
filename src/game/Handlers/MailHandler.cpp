@@ -108,11 +108,19 @@ public:
  */
 void WorldSession::HandleSendMail(WorldPacket & recv_data)
 {
+    if (IsAccountRestricted())
+    {
+        SendRestrictedHelp(LANG_INV_MAIL_SEND_RESTRICTED);
+        return;
+    }
+
     ObjectGuid mailboxGuid;
     uint64 unk3;
     uint32 unk1, unk2;
     uint8 unk4;
+
     recv_data >> mailboxGuid;
+
     if (!CheckMailBox(mailboxGuid))
         return;
 
